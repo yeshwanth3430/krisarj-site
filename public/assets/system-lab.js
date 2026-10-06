@@ -1,5 +1,6 @@
 // System lab: edit a 2 × 2 or 3 × 3 system Ax = b and see the solution, the row picture and the column picture.
-// Usage: SystemLab.mount(element, presets, { steps: true }) once Plotly has loaded; steps: true also lists the elimination steps.
+// Usage: SystemLab.mount(element, presets, { steps: true, lu: true }) once Plotly has loaded.
+// steps: true lists the elimination steps; lu: true shows PA = LU and the two triangular solves.
 // A preset: { label, cols: [names], rows: [names], A: [[...]], b: [...], meaning: [what each unknown is], neg: "what a negative means" }.
 (function () {
   "use strict";
@@ -65,7 +66,7 @@
         if (zero(M[i][c])) continue;
         for (var j = c; j <= n; j++) M[i][j] -= l * M[r][j];
         M[i][c] = 0;
-        steps.push({ kind: "elim", row: i, prow: r, l: l, M: snap(), piv: pivots.slice() });
+        steps.push({ kind: "elim", row: i, prow: r, col: c, l: l, M: snap(), piv: pivots.slice() });
       }
       r++;
     }
@@ -79,6 +80,22 @@
       return row.map(function (v, j) { return isPiv(i, j) ? "\\boxed{" + tex(v) + "}" : tex(v); }).join(" & ");
     }).join(" \\\\ ") + "\\end{array}\\right]";
   }
+
+
+  // PA = LU from the elimination record: multipliers go into L; a row exchange swaps the rows of P and of L built so far.
+  function factor(A, b) {
+    var n = A.length, E = eliminate(A, b), perm = [], L = [];
+    for (var i = 0; i < n; i++) { perm.push(i); L.push(new Array(n).fill(0)); }
+    E.steps.forEach(function (st) {
+      if (st.kind === "swap") { var t = perm[st.a]; perm[st.a] = perm[st.b]; perm[st.b] = t; var u = L[st.a]; L[st.a] = L[st.b]; L[st.b] = u; }
+      else if (st.kind === "elim") L[st.row][st.col] = st.l;
+    });
+    for (i = 0; i < n; i++) L[i][i] = 1;
+    var U = E.M.map(function (r) { return r.slice(0, n); });
+    var P = perm.map(function (k) { var row = new Array(n).fill(0); row[k] = 1; return row; });
+    return { P: P, perm: perm, L: L, U: U, pivots: E.pivots, swapped: perm.some(function (k, i) { return k !== i; }) };
+  }
+  function texMat(M) { return "\\begin{bmatrix}" + M.map(function (r) { return r.map(tex).join(" & "); }).join(" \\\\ ") + "\\end{bmatrix}"; }
 
   // The part of the plane n·p = d inside the box, as a flat polygon.
   function planeInBox(n, d, box, color, name) {
@@ -131,12 +148,13 @@
       "</div>" +
       '<div class="sl-out"></div>' +
       (opts.steps ? '<details class="check sl-steps-box" open><summary>Elimination, step by step</summary><div class="sl-steps"></div></details>' : "") +
+      (opts.lu ? '<details class="check sl-lu-box" open><summary>A = LU, and solving with it</summary><div class="sl-lu"></div></details>' : "") +
       '<div class="figs sl-plots">' +
         '<figure class="fig"><div class="plot3d-box sl-row"></div><figcaption>Row picture: one line (or plane) per rule.</figcaption></figure>' +
         '<figure class="fig"><div class="plot3d-box sl-col"></div><figcaption>Column picture: mix the columns to reach b.</figcaption></figure>' +
       "</div>";
     var pick = root.querySelector(".sl-pick"), grid = root.querySelector(".sl-grid"), out = root.querySelector(".sl-out");
-    var rowDiv = root.querySelector(".sl-row"), colDiv = root.querySelector(".sl-col"), stepsDiv = root.querySelector(".sl-steps");
+    var rowDiv = root.querySelector(".sl-row"), colDiv = root.querySelector(".sl-col"), stepsDiv = root.querySelector(".sl-steps"), luDiv = root.querySelector(".sl-lu");
     var P, lastN = 0;
 
     function build() {
@@ -202,6 +220,36 @@
         }
         stepsDiv.innerHTML = sh.replace(/\+ -/g, "- ") + "</ol>";
         if (window.renderMathInElement) renderMathInElement(stepsDiv, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
+      }
+      if (luDiv) {
+        var Fz = factor(A, b), names = ["x", "y", "z"], h2 = "";
+        var full = Fz.pivots.length === n;
+        h2 += "<p>" + (Fz.swapped ? "A row exchange was needed, so the factorization is $PA = LU$:" : "No row exchanges, so $A = LU$:") + "</p>";
+        h2 += "<p>$" + (Fz.swapped ? texMat(Fz.P) + texMat(A) : texMat(A)) + " = " + texMat(Fz.L) + texMat(Fz.U) + "$</p>";
+        h2 += '<p class="note-soft">$L$ holds the multipliers $\\ell_{ij}$ below its diagonal of 1s. $U$ holds the pivots on its diagonal.</p>';
+        if (!full) {
+          h2 += '<p class="lab-warn">$U$ has a 0 where a pivot should be, so the matrix is singular. The factorization exists, but back substitution can\'t give one answer.</p>';
+        } else {
+          var pb = Fz.perm.map(function (k) { return b[k]; }), c = [];
+          h2 += "<p><b>Step 1, forward:</b> solve $Lc = " + (Fz.swapped ? "Pb" : "b") + "$ from the top down.</p><ul>";
+          for (var i = 0; i < n; i++) {
+            var sum = 0, terms = [];
+            for (var j = 0; j < i; j++) { sum += Fz.L[i][j] * c[j]; if (Math.abs(Fz.L[i][j]) > 1e-12) terms.push(tex(Fz.L[i][j]) + "(" + tex(c[j]) + ")"); }
+            c.push(pb[i] - sum);
+            h2 += "<li>$" + (terms.length ? terms.join(" + ") + " + c_" + (i + 1) + " = " + tex(pb[i]) + " \\;\\Rightarrow\\; " : "") + "c_" + (i + 1) + " = " + tex(c[i]) + "$</li>";
+          }
+          h2 += "</ul><p><b>Step 2, back:</b> solve $Ux = c$ from the bottom up.</p><ul>";
+          var x = new Array(n).fill(0);
+          for (i = n - 1; i >= 0; i--) {
+            var rest = 0, tt = [];
+            for (j = i + 1; j < n; j++) { rest += Fz.U[i][j] * x[j]; if (Math.abs(Fz.U[i][j]) > 1e-12) tt.push(tex(Fz.U[i][j]) + "(" + tex(x[j]) + ")"); }
+            x[i] = (c[i] - rest) / Fz.U[i][i];
+            h2 += "<li>$" + coef(Fz.U[i][i]) + names[i] + (tt.length ? " + " + tt.join(" + ") : "") + " = " + tex(c[i]) + " \\;\\Rightarrow\\; " + names[i] + " = " + tex(x[i]) + "$</li>";
+          }
+          h2 += "</ul><p class=\"note-soft\">Change only the target $b$ and $L$, $U$ stay the same: only these two quick solves are redone.</p>";
+        }
+        luDiv.innerHTML = h2.replace(/\+ -/g, "- ");
+        if (window.renderMathInElement) renderMathInElement(luDiv, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
       }
       if (n !== lastN) { Plotly.purge(rowDiv); Plotly.purge(colDiv); lastN = n; }   // 2D <-> 3D needs a fresh plot
       if (window.renderMathInElement) renderMathInElement(out, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
@@ -313,5 +361,5 @@
     build();
   }
 
-  window.SystemLab = { mount: mount, solve: solve, eliminate: eliminate };
+  window.SystemLab = { mount: mount, solve: solve, eliminate: eliminate, factor: factor };
 })();

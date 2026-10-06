@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Factorization into A = LU · Slides</title>
+<meta name="description" content="Linear Algebra Lesson 4 as a slide carousel: A = LU, solving many targets, the cost of elimination and PA = LU on a portfolio-mix example.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=8">
+<style>
+  /* One slide = one 1080 × 1350 page (LinkedIn's portrait carousel size). Always light. */
+  @page { size: 1080px 1350px; margin: 0; }
+  html, body { margin: 0; background: #e9e5dc; }
+  body { font: 34px/1.5 var(--serif); color: var(--ink); }
+  .slide {
+    position: relative; overflow: hidden; box-sizing: border-box;
+    width: 1080px; height: 1350px; margin: 0 auto 24px; padding: 96px 84px 130px;
+    background: var(--paper); display: flex; flex-direction: column;
+    font-size: 38px; line-height: 1.45;   /* set here, so print styles for the notes don't shrink it */
+    break-after: page; page-break-after: always;
+  }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .kicker { font: 600 22px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .slide h1 { font: 700 82px/1.06 var(--sans); letter-spacing: -.02em; margin: 22px 0 30px; }
+  .slide h2 { font: 700 60px/1.12 var(--sans); letter-spacing: -.015em; margin: 14px 0 34px; padding: 0; border: 0; }
+  .slide p { margin: 0 0 26px; }
+  .slide ul, .slide ol { margin: 0 0 26px; padding-left: 40px; }
+  .slide li { margin: 0 0 14px; }
+  .lead { font-size: 44px; line-height: 1.38; }
+  .soft { color: var(--ink-soft); }
+  .slide table { display: table; width: 100%; font-size: 32px; margin: 10px 0 28px; }
+  .slide th { font-size: 24px; }
+  .slide th, .slide td { padding: 12px 16px; }
+  .slide .box { font-size: 34px; margin: 10px 0 26px; padding: 18px 24px; }
+  .slide .box > .label { font-size: 18px; }
+  .slide figure.fig { width: 100%; max-width: 660px; align-self: center; margin: 6px 0 0; padding: 18px; }
+  .slide .figs { width: 100%; }
+  .slide .figs figure.fig { max-width: none; }
+  .slide figure.fig figcaption { font-size: 26px; }
+  .slide .fig .tick { font-size: 12px; }
+  .slide .figs { gap: 22px; }
+  .slide img.plot { display: block; align-self: center; max-width: 100%; max-height: 440px; width: auto; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .slide .katex { font-size: 1.04em; }
+  .answer { font-size: 1em; }
+  .foot {
+    position: absolute; left: 84px; right: 84px; bottom: 48px;
+    display: flex; justify-content: space-between; gap: 20px;
+    padding-top: 18px; border-top: 2px solid var(--rule);
+    font: 500 21px/1 var(--sans); color: var(--ink-soft);
+  }
+  .cover { justify-content: center; }
+  .cover h1 { font-size: 104px; }
+  .cover .lead { font-size: 44px; }
+  .chip { display: inline-block; font: 600 24px/1 var(--sans); color: var(--accent); border: 2px solid var(--accent); border-radius: 999px; padding: 12px 20px; margin: 0 10px 12px 0; }
+  .center { text-align: center; }
+  .grow { flex: 1; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  @media screen and (max-width: 1100px) { .slide { zoom: .5; } }
+</style>
+</head>
+<body>
+
+<!-- 1. Cover -->
+<section class="slide cover">
+  <div class="kicker">Linear Algebra · Lesson 4</div>
+  <h1>Factorization into A = LU</h1>
+  <p class="lead">Record elimination <b>once</b>, then solve for any new target in two quick passes.</p>
+  <p class="lead soft">Shown on a real money question: the same funds, many clients.</p>
+  <div><span class="chip">L from the multipliers</span><span class="chip">Factor once, solve many</span><span class="chip">MIT 18.06, Lecture 4</span></div>
+</section>
+
+<!-- 2. Problem -->
+<section class="slide">
+  <div class="kicker">The problem</div>
+  <h2>Same funds, new targets every day</h2>
+  <p>Nifty, bond and midcap funds; rules for budget, return and market exposure. The matrix $A$ never changes:</p>
+  $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} $$
+  <p>But each client brings a different target $b$: ₹10 lakh at 11.1%, ₹10 lakh at 9.8%, ₹15 lakh...</p>
+  <div class="box finance"><span class="label">The idea</span><p>Don't redo elimination for every client. Save it as $A = LU$.</p></div>
+</section>
+
+<!-- 3. Inverse of product -->
+<section class="slide">
+  <div class="kicker">One tool first</div>
+  <h2>Undo in reverse order</h2>
+  $$ (AB)^{-1} = B^{-1}A^{-1} $$
+  <p>Check: $AB\,B^{-1}A^{-1} = A\,I\,A^{-1} = I$.</p>
+  <div class="box intuition"><span class="label">Shoes and socks</span><p>Socks on, then shoes. To undo: shoes off first, then socks.</p></div>
+  <p>Elimination applied $E_{21}$, $E_{31}$, $E_{32}$. To undo it: $E_{32}^{-1}$ first, $E_{21}^{-1}$ last.</p>
+</section>
+
+<!-- 4. 2x2 -->
+<section class="slide">
+  <div class="kicker">2 × 2</div>
+  <h2>From EA = U to A = LU</h2>
+  $$ \begin{bmatrix} 1 & 0 \\ -12 & 1 \end{bmatrix}\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix} = \begin{bmatrix} 1 & 1 \\ 0 & -5 \end{bmatrix} $$
+  <p>Move $E$ to the other side (its inverse adds back 12 × row 1):</p>
+  $$ \underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 \\ 12 & 1 \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} 1 & 1 \\ 0 & -5 \end{bmatrix}}_{U} $$
+  <p><b>L</b>ower triangular with the multiplier; <b>U</b>pper triangular with the pivots.</p>
+</section>
+
+<!-- 5. 3x3 -->
+<section class="slide">
+  <div class="kicker">3 × 3</div>
+  <h2>The multipliers go straight into L</h2>
+  $$ \underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ \mathbf{12} & 1 & 0 \\ \mathbf{1} & \mathbf{0.2} & 1 \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{bmatrix}}_{U} $$
+  <div class="box theorem"><span class="label">Key fact</span><p>No row exchanges ⇒ the multipliers $\ell_{21} = 12$, $\ell_{31} = 1$, $\ell_{32} = 0.2$ sit directly in $L$. No extra work.</p></div>
+</section>
+
+<!-- 6. E vs L -->
+<section class="slide">
+  <div class="kicker">Why not E?</div>
+  <h2>E is messy, L is clean</h2>
+  $$ E = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ \mathbf{1.4} & -0.2 & 1 \end{bmatrix} \qquad L = \begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ \mathbf{1} & 0.2 & 1 \end{bmatrix} $$
+  <p>Going forward, steps interfere: removing 0.2 × the new row 2 quietly adds back $0.2 \times 12 = 2.4$ of row 1, so $-1 + 2.4 = 1.4$.</p>
+  <p>Going backward with $L$, nothing interferes. That's why software stores $L$ and $U$.</p>
+</section>
+
+<!-- 7. Solving -->
+<section class="slide">
+  <div class="kicker">Solving</div>
+  <h2>Two triangular passes</h2>
+  <p><b>Forward:</b> $Lc = b$, top down. &nbsp; <b>Back:</b> $Ux = c$, bottom up.</p>
+  <p>Client: $b = (10, 98, 5.2)$</p>
+  <ul>
+    <li>$c_1 = 10$, $c_2 = 98 - 120 = -22$, $c_3 = 5.2 - 10 + 4.4 = -0.4$</li>
+    <li>$z = 1$, then $-5y + 3 = -22 \Rightarrow y = 5$, then $x = 4$</li>
+  </ul>
+  <p><span class="answer">₹4 lakh Nifty, ₹5 lakh bonds, ₹1 lakh midcap.</span> No new elimination needed.</p>
+</section>
+
+<!-- 8. Cost -->
+<section class="slide">
+  <div class="kicker">The cost</div>
+  <h2>Factor once, solve many</h2>
+  <img class="plot" style="max-height:660px" src="img/l4-cost.png" alt="Operation counts: n cubed over 3 versus n squared">
+  <p style="margin-top:24px">Factoring: about $\tfrac13 n^3$ operations. Each new target: about $n^2$. For 1,000 assets: 333 million once, then 1 million per client.</p>
+</section>
+
+<!-- 9. LDU -->
+<section class="slide">
+  <div class="kicker">A variation</div>
+  <h2>A = LDU</h2>
+  <p>Pull the pivots out of $U$ into a diagonal matrix $D$:</p>
+  $$ U = \begin{bmatrix} 1 & 0 & 0 \\ 0 & -5 & 0 \\ 0 & 0 & -0.4 \end{bmatrix}\begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & -0.6 \\ 0 & 0 & 1 \end{bmatrix} $$
+  <p>Now both triangular factors have 1s on the diagonal, and the pivots sit in the middle.</p>
+</section>
+
+<!-- 10. PA = LU -->
+<section class="slide">
+  <div class="kicker">Row exchanges</div>
+  <h2>PA = LU</h2>
+  <p>A credit fund (12%, like Nifty) puts a 0 in a pivot position. Swap rows first, then factor:</p>
+  $$ P_{23}A = \begin{bmatrix} 1 & 0 & 0 \\ 1 & 1 & 0 \\ 12 & 0 & 1 \end{bmatrix}\begin{bmatrix} 1 & 1 & 1 \\ 0 & -1 & 0.2 \\ 0 & 0 & 3 \end{bmatrix} $$
+  <div class="box definition"><span class="label">Permutations</span><p>$n!$ of them (6 for 3 × 3). Closed under multiplication. $P^{-1} = P^T$.</p></div>
+</section>
+
+<!-- 11. Singular -->
+<section class="slide">
+  <div class="kicker">Watch out</div>
+  <h2>Singular matrices can have LU too</h2>
+  <p>The balanced fund (half Nifty, half bonds) factors with the <b>same</b> $L$:</p>
+  $$ U = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & \mathbf{0} \end{bmatrix} $$
+  <p>The trouble shows up on $U$'s diagonal: a 0 pivot, so back substitution fails.</p>
+  <div class="box pitfall"><span class="label">Test</span><p>All pivots on $U$'s diagonal non-zero ⇔ invertible.</p></div>
+</section>
+
+<!-- 12. Takeaways -->
+<section class="slide">
+  <div class="kicker">Recap</div>
+  <h2>Key takeaways</h2>
+  <ol class="lead" style="font-size:36px">
+    <li>$(AB)^{-1} = B^{-1}A^{-1}$: reverse order.</li>
+    <li>$A = LU$: multipliers in $L$, pivots in $U$.</li>
+    <li>$L$ is clean; $E$ is messy.</li>
+    <li>Solve: forward $Lc = b$, back $Ux = c$.</li>
+    <li>$n^3/3$ to factor, $n^2$ per target.</li>
+    <li>Row swaps: $PA = LU$.</li>
+  </ol>
+</section>
+
+<!-- 13. Closing -->
+<section class="slide cover">
+  <div class="kicker">Quant from First Principles</div>
+  <h1 style="font-size:76px">The full interactive lesson is free</h1>
+  <p class="lead">A lab that factors your own matrix into $L$ and $U$ and solves for any target, plus worked hedging and options examples:</p>
+  <p class="lead"><b>learn.krisarj.com</b></p>
+  <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
+</section>
+
+<script>
+// Footer with page numbers on every slide.
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  slides.forEach(function (s, i) {
+    var f = document.createElement("div");
+    f.className = "foot";
+    f.innerHTML = "<span>Quant from First Principles · learn.krisarj.com</span><span>" + (i + 1) + " / " + slides.length + "</span>";
+    s.appendChild(f);
+  });
+})();
+window.addEventListener("load", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {
+    delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>

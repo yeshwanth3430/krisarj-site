@@ -23,6 +23,13 @@ const LESSONS = [
     page: "linear-algebra/02_elimination-with-matrices.html",
     slides: "linear-algebra/02_elimination-with-matrices-slides.html",
     plots: { e3U: "linear-algebra/img/l2-planes-U.png" }
+  },
+  {
+    slug: "la-04-factorization-into-a-lu",
+    title: "Linear Algebra · Lesson 4 · Factorization into A = LU",
+    page: "linear-algebra/04_factorization-into-a-lu.html",
+    slides: "linear-algebra/04_factorization-into-a-lu-slides.html",
+    plots: { costChart: { file: "linear-algebra/img/l4-cost.png", width: 560, height: 420 } }
   }
 ];
 
@@ -44,9 +51,11 @@ async function open(browser, rel, viewport) {
   for (const L of LESSONS) {
     // 1. Notes page: plot images, then the A4 report
     const notes = await open(browser, L.page, { width: 1100, height: 900 });
-    for (const [id, out] of Object.entries(L.plots)) {
-      const data = await notes.evaluate((id) => { const gd = document.getElementById(id);
-        return Plotly.toImage({ data: gd.data, layout: Object.assign({}, gd.layout, { updatemenus: [] }) }, { format: "png", width: 1000, height: 760, scale: 2 }); }, id);
+    for (const [id, spec] of Object.entries(L.plots)) {
+      // a plot is "file.png", or { file, width, height } to export on a smaller canvas (bigger text on the slide)
+      const out = typeof spec === "string" ? spec : spec.file, w = spec.width || 1000, h = spec.height || 760;
+      const data = await notes.evaluate(([id, w, h]) => { const gd = document.getElementById(id);
+        return Plotly.toImage({ data: gd.data, layout: Object.assign({}, gd.layout, { updatemenus: [] }) }, { format: "png", width: w, height: h, scale: 3 }); }, [id, w, h]);
       fs.writeFileSync(path.join(PUBLIC, out), Buffer.from(data.split(",")[1], "base64"));
       console.log("  image", out);
     }

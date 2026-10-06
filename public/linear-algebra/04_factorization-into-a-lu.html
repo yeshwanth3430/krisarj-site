@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Factorization into A = LU · Topic 2 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 2, Lesson 4: Factorization into A = LU, explained from zero: inverse of a product, L from the multipliers, LDU, solving many targets, cost of elimination, PA = LU.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=8">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-02-2">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-02.html">Topic 2</a> / <b>Factorization into A = LU</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 4</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 2 · Lesson 4 (MIT 18.06, Lecture 4)</p>
+  <h1>Factorization into A = LU</h1>
+  <p class="subtitle">Record elimination once as $A = LU$, then solve for any new target with two quick triangular passes. Plus what elimination costs, and $PA = LU$ when rows must be swapped.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-04-factorization-into-a-lu-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-04-factorization-into-a-lu-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F04_factorization-into-a-lu" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">Inverse of a product</a></li>
+        <li><a href="#t2">2 × 2: from EA = U to A = LU</a></li>
+        <li><a href="#t3">3 × 3: the multipliers go straight into L</a></li>
+        <li><a href="#t4">Pulling out the pivots: A = LDU</a></li>
+        <li><a href="#t5">Solving with L and U</a></li>
+        <li><a href="#t6">How expensive is elimination?</a></li>
+        <li><a href="#t7">Row exchanges: PA = LU</a></li>
+        <li><a href="#t8">Singular matrices and LU</a></li>
+        <li><a href="#t9">Summary</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">Inverse of a product</a><span>$(AB)^{-1} = B^{-1}A^{-1}$: undo in reverse order. Plus the transpose.</span></li>
+      <li><a href="#t2">2 × 2: from EA = U to A = LU</a><span>Move the elimination matrix to the other side and $L$ appears.</span></li>
+      <li><a href="#t3">3 × 3: the multipliers go straight into L</a><span>The three-fund portfolio: $L$ is just the multipliers 12, 1, 0.2, with no messy mixing.</span></li>
+      <li><a href="#t4">Pulling out the pivots: A = LDU</a><span>Split the pivots into a diagonal matrix $D$.</span></li>
+      <li><a href="#t5">Solving with L and U</a><span>Two triangular solves. New targets reuse the same $L$ and $U$.</span></li>
+      <li><a href="#t6">How expensive is elimination?</a><span>About $n^3/3$ steps to factor, then only $n^2$ per new target.</span></li>
+      <li><a href="#t7">Row exchanges: PA = LU</a><span>When a row swap is needed, and the family of permutation matrices.</span></li>
+      <li><a href="#t8">Singular matrices and LU</a><span>A singular matrix can still have $A = LU$: the zero pivot sits at the bottom of $U$.</span></li>
+      <li class="no-print"><a href="#t9">Summary</a><span>The key ideas and words on one screen.</span></li>
+    </ol>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>This lesson finishes elimination, so it leans on <a href="02_elimination-with-matrices.html">Lesson 2: Elimination with Matrices</a>. Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="02_elimination-with-matrices.html#t3">The 3 × 3 portfolio, eliminated step by step</a>: multipliers 12, 1, 0.2 and $U$.</li>
+      <li><a href="02_elimination-with-matrices.html#t6">Elimination matrices</a>: $E_{32}E_{31}E_{21}A = U$, and why order matters.</li>
+      <li><a href="02_elimination-with-matrices.html#t8">Undoing a step</a>: $E_{21}^{-1}$ adds back what $E_{21}$ subtracted.</li>
+      <li><a href="02_elimination-with-matrices.html#t7">Permutation matrices</a> and <a href="02_elimination-with-matrices.html#t5">when elimination breaks down</a>.</li>
+      <li><a href="01_geometry-of-linear-equations.html#t7">The three-fund portfolio</a> and its "change only the target" example (Lesson 1).</li>
+    </ul>
+    <p class="note-soft">Lesson 3 (Multiplication and Inverse Matrices) covers inverses of whole matrices. Here we only need inverses of single elimination steps, which Lesson 2 already gave us.</p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box finance"><span class="label">The running example: the portfolio, factored once</span>
+      <p>In Lesson 2 we eliminated the three-fund portfolio and reached $U$:</p>
+      $$ \underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix}}_{A} \xrightarrow{\;\ell_{21} = 12,\;\; \ell_{31} = 1,\;\; \ell_{32} = 0.2\;} \underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{bmatrix}}_{U} $$
+      <p>Now think like a fund desk: the <b>funds and rules stay the same</b> ($A$ is fixed) but <b>clients bring different targets</b> every day: ₹10 lakh at 11.1%, ₹10 lakh at 9.8%, ₹15 lakh... Redoing elimination for each is wasteful. This lesson records elimination once, as $A = LU$, and reuses it.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. Inverse of a product</h3>
+    <p>Strang starts with one basic fact, because $L$ will turn out to be a product of inverses.</p>
+    <div class="box theorem"><span class="label">Inverse of a product</span>
+      <p>If $A$ and $B$ are invertible, then $(AB)^{-1} = B^{-1}A^{-1}$: the same inverses, <b>in reverse order</b>.</p>
+    </div>
+    <p><b>Check it:</b> $(AB)(B^{-1}A^{-1}) = A\,(BB^{-1})\,A^{-1} = A\,I\,A^{-1} = AA^{-1} = I$. We only moved parentheses (Lesson 2), and the middle pair cancelled first.</p>
+    <div class="box intuition"><span class="label">Shoes and socks</span>
+      <p>You put on socks, then shoes. To undo it you take off the shoes first, then the socks. Undoing always goes in reverse order. In elimination: we applied $E_{21}$, then $E_{31}$, then $E_{32}$; to undo them we apply $E_{32}^{-1}$ first and $E_{21}^{-1}$ last.</p>
+    </div>
+    <p>The <dfn class="term" tabindex="0" data-def="Flip a matrix across its diagonal: row i becomes column i. Written Aᵀ.">transpose</dfn> $A^T$ swaps rows and columns: the entry in row $i$, column $j$ of $A$ is in row $j$, column $i$ of $A^T$. For our two-fund matrix:</p>
+    $$ A = \begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix} \qquad A^T = \begin{bmatrix} 1 & 12 \\ 1 & 7 \end{bmatrix} $$
+    <p>In $A$ each <b>column</b> is a fund; in $A^T$ each <b>row</b> is a fund. Transposes follow the same reverse-order rule, $(AB)^T = B^TA^T$, and for an invertible matrix $(A^{-1})^T = (A^T)^{-1}$: you may transpose and invert in either order. Transposes return in Lesson 5.</p>
+
+    <details class="check"><summary>Check yourself: what is $(ABC)^{-1}$?</summary>
+      <p>$C^{-1}B^{-1}A^{-1}$. Check: $ABC\,C^{-1}B^{-1}A^{-1}$ collapses from the middle outwards to $I$.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. 2 × 2: from EA = U to A = LU</h3>
+    <p>The two-fund portfolio took one elimination step ($\ell_{21} = 12$):</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 0 \\ -12 & 1 \end{bmatrix}}_{E_{21}}\underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 1 \\ 0 & -5 \end{bmatrix}}_{U}. $$
+    <p>That has the elimination matrix on the left of $A$. Strang wants $A$ alone on one side. Multiply both sides by $E_{21}^{-1}$, which <b>adds back</b> 12 × row 1 (Lesson 2):</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 \\ 12 & 1 \end{bmatrix}}_{L = E_{21}^{-1}}\underbrace{\begin{bmatrix} 1 & 1 \\ 0 & -5 \end{bmatrix}}_{U}. $$
+    <p><b>Check:</b> row 2 of $LU$ is $12 \times (1, 1) + 1 \times (0, -5) = (12, 7)$ ✓, the return rule.</p>
+    <div class="box definition"><span class="label">A = LU</span>
+      <p>$U$ is <b>upper</b> triangular with the <b>pivots</b> on its diagonal. $L$ is <dfn class="term" tabindex="0" data-def="Only zeros above the diagonal.">lower triangular</dfn> with <b>1s</b> on its diagonal and the <b>multipliers</b> below it. "L" for lower, "U" for upper.</p>
+    </div>
+    <p>In words: <i>the return rule = 12 × (budget rule) + (the eliminated rule $-5y = -15$)</i>. $L$ records how to rebuild each original rule from the rows of $U$.</p>
+
+    <details class="check"><summary>Check yourself (Strang's example): factor $A = \left[\begin{smallmatrix} 2 & 1 \\ 8 & 7 \end{smallmatrix}\right]$.</summary>
+      <p>$\ell_{21} = 8/2 = 4$, so $U = \left[\begin{smallmatrix} 2 & 1 \\ 0 & 3 \end{smallmatrix}\right]$ and $L = \left[\begin{smallmatrix} 1 & 0 \\ 4 & 1 \end{smallmatrix}\right]$. Check: $4(2, 1) + (0, 3) = (8, 7)$ ✓.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. 3 × 3: the multipliers go straight into L</h3>
+    <p>For the three-fund portfolio, Lesson 2 gave $E_{32}E_{31}E_{21}A = U$. Undo the three steps <b>in reverse order</b> (<a href="#t1">topic 1</a>):</p>
+    $$ A = E_{21}^{-1}\,E_{31}^{-1}\,E_{32}^{-1}\,U = LU. $$
+    <p>Each inverse just flips the sign of its multiplier, and the product comes out remarkably clean:</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}}_{E_{21}^{-1}} \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 1 & 0 & 1 \end{bmatrix}}_{E_{31}^{-1}} \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0.2 & 1 \end{bmatrix}}_{E_{32}^{-1}} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ \mathbf{12} & 1 & 0 \\ \mathbf{1} & \mathbf{0.2} & 1 \end{bmatrix}}_{L} $$
+    $$ \underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ 1 & 0.2 & 1 \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{bmatrix}}_{U} $$
+    <p><b>Check row 3:</b> $1 \times (1, 1, 1) + 0.2 \times (0, -5, 3) + 1 \times (0, 0, -0.4) = (1, 1 - 1, 1 + 0.6 - 0.4) = (1, 0, 1.2)$ ✓, the exposure rule.</p>
+
+    <div class="box theorem"><span class="label">The key fact of this lesson</span>
+      <p>With no row exchanges, <b>the multipliers go directly into $L$</b>: $\ell_{21} = 12$, $\ell_{31} = 1$, $\ell_{32} = 0.2$ sit in exactly their positions. To get $L$ there is no work at all, just keep a record of the multipliers as you eliminate.</p>
+    </div>
+
+    <h4>Why L is clean but E is messy</h4>
+    <p>Compare with the single elimination matrix from Lesson 2:</p>
+    $$ E = E_{32}E_{31}E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ \mathbf{1.4} & -0.2 & 1 \end{bmatrix} \qquad\text{vs}\qquad L = E^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ \mathbf{1} & 0.2 & 1 \end{bmatrix} $$
+    <p>Where does $E$'s $1.4$ come from? Going <b>forward</b>, row 3 had 1 × row 1 removed directly, and then lost 0.2 × the <i>new</i> row 2, which itself was "row 2 − 12 × row 1". That second step quietly <b>added back</b> $0.2 \times 12 = 2.4$ of row 1. Net effect on row 1: $-1 + 2.4 = +1.4$. The steps interfere.</p>
+    <p>Going <b>backward</b> with $L$, nothing interferes: each original row is simply "its multipliers × the rows of $U$ above it, plus its own row of $U$". Strang: "the multipliers just sit in the matrix $L$." This is why software stores $L$ and $U$, never $E$.</p>
+
+    <details class="check"><summary>Check yourself (MIT problem 4.1): find $L$ and $U$ for $A = \left[\begin{smallmatrix} 1 & 3 & 0 \\ 2 & 4 & 0 \\ 2 & 0 & 1 \end{smallmatrix}\right]$.</summary>
+      <p>Multipliers: $\ell_{21} = 2$ gives row 2 $= (0, -2, 0)$; $\ell_{31} = 2$ gives row 3 $= (0, -6, 1)$; $\ell_{32} = -6/-2 = 3$ gives row 3 $= (0, 0, 1)$. So $U = \left[\begin{smallmatrix} 1 & 3 & 0 \\ 0 & -2 & 0 \\ 0 & 0 & 1 \end{smallmatrix}\right]$ and $L = \left[\begin{smallmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 2 & 3 & 1 \end{smallmatrix}\right]$, the multipliers 2, 2, 3 in place.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. Pulling out the pivots: A = LDU</h3>
+    <p>$L$ has 1s on its diagonal but $U$ has the pivots. To balance them, divide each row of $U$ by its pivot and collect the pivots in a <dfn class="term" tabindex="0" data-def="A matrix with non-zero entries only on its diagonal.">diagonal matrix</dfn> $D$:</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{bmatrix}}_{U} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & -5 & 0 \\ 0 & 0 & -0.4 \end{bmatrix}}_{D}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & -0.6 \\ 0 & 0 & 1 \end{bmatrix}}_{\text{new } U} $$
+    <p>Row 2 of $U$ divided by $-5$ is $(0, 1, -0.6)$; row 3 divided by $-0.4$ is $(0, 0, 1)$. Now $A = LDU$, with 1s on the diagonals of both triangular factors and the pivots $1, -5, -0.4$ in the middle. Strang mostly stays with $A = LU$; $LDU$ is the same information arranged symmetrically.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. Solving with L and U</h3>
+    <p>Once $A = LU$ is known, solving $Ax = b$ means solving $L(Ux) = b$. Call $Ux = c$ and do it in two easy triangular passes:</p>
+    <ol class="step-list">
+      <li><b>Forward:</b> solve $Lc = b$ from the <b>top</b> down. (This is exactly what elimination did to $b$.)</li>
+      <li><b>Back:</b> solve $Ux = c$ from the <b>bottom</b> up. (Back substitution, as in Lesson 2.)</li>
+    </ol>
+    <h4>Client 1: ₹10 lakh, ₹1,11,000 return, 7.4 exposure</h4>
+    <p>$b = (10, 111, 7.4)$. <b>Forward</b>, $Lc = b$:</p>
+    <ul>
+      <li>$c_1 = 10$.</li>
+      <li>$12c_1 + c_2 = 111$, so $c_2 = 111 - 120 = -9$.</li>
+      <li>$1c_1 + 0.2c_2 + c_3 = 7.4$, so $c_3 = 7.4 - 10 + 1.8 = -0.8$.</li>
+    </ul>
+    <p><b>Back</b>, $Ux = c$: $-0.4z = -0.8$ gives $z = 2$; $-5y + 3(2) = -9$ gives $y = 3$; $x + 3 + 2 = 10$ gives $x = 5$. <span class="answer">₹5 lakh Nifty, ₹3 lakh bonds, ₹2 lakh midcap</span>, as before. Notice $c = (10, -9, -0.8)$ is exactly the right-hand side elimination produced in Lesson 2.</p>
+
+    <h4>Client 2: same funds, a new target</h4>
+    <p>$b = (10, 98, 5.2)$: ₹10 lakh, ₹98 thousand return, 5.2 exposure. <b>No new elimination</b>, just the two passes with the same $L$ and $U$:</p>
+    <ul>
+      <li><b>Forward:</b> $c_1 = 10$; $c_2 = 98 - 12(10) = -22$; $c_3 = 5.2 - 10 - 0.2(-22) = 5.2 - 10 + 4.4 = -0.4$.</li>
+      <li><b>Back:</b> $-0.4z = -0.4$ gives $z = 1$; $-5y + 3(1) = -22$ gives $y = 5$; $x + 5 + 1 = 10$ gives $x = 4$.</li>
+    </ul>
+    <p><span class="answer">₹4 lakh Nifty, ₹5 lakh bonds, ₹1 lakh midcap</span>, the answer Lesson 1 found for this target. Check: $48 + 35 + 15 = 98$ ✓.</p>
+
+    <h4>Client 3: ₹15 lakh</h4>
+    <p>$b = (15, 159, 9.6)$. Forward: $c = (15,\ 159 - 180,\ 9.6 - 15 + 4.2) = (15, -21, -1.2)$. Back: $z = 3$, then $-5y + 9 = -21$ so $y = 6$, then $x = 15 - 6 - 3 = 6$. <span class="answer">₹6 lakh, ₹6 lakh, ₹3 lakh.</span></p>
+    <div class="box intuition"><span class="label">Factor once, solve many</span>
+      <p>The hard part, elimination on $A$, was done <b>once</b>. Each new client costs only two triangular passes. With many targets and the same funds, $A = LU$ is how it's done in practice.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. How expensive is elimination?</h3>
+    <p>A practical question Strang asks: for an $n \times n$ matrix, how many operations does elimination take? Count one "multiply a row entry and subtract" as one operation.</p>
+    <ul>
+      <li>Clearing column 1 changes almost every entry below row 1: about $n^2$ operations.</li>
+      <li>Column 2 works on a matrix one size smaller: about $(n - 1)^2$. Then $(n - 2)^2$, and so on down to $1^2$.</li>
+    </ul>
+    $$ n^2 + (n-1)^2 + \cdots + 2^2 + 1^2 \;\approx\; \int_0^n x^2\,dx \;=\; \tfrac13 n^3. $$
+    <div class="box theorem"><span class="label">The cost</span>
+      <p><b>Factoring $A = LU$: about $\tfrac13 n^3$ operations.</b> Each right-hand side $b$ (forward + back): about $n^2$. Doubling the size of the problem makes factoring 8 times as expensive, but each new target only 4 times.</p>
+    </div>
+    <figure class="fig" style="max-width:720px;margin:20px auto">
+      <div id="costChart" class="plot3d-box" style="height:380px"></div>
+      <figcaption><b>Operations needed (log scale).</b> For $n = 1000$ (say, 1,000 assets): factoring takes about 333 million operations; each new target only 1 million.</figcaption>
+    </figure>
+    <p class="note-soft">Strang's aside: computing with determinants instead would cost about $n!$ operations, astronomically more. Elimination is the method that scales.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t7">7. Row exchanges: PA = LU</h3>
+    <p>So far, no row exchanges. What if a 0 lands in a pivot position? Lesson 2's <b>credit fund</b> (12% return, beta 0) did exactly that. The fix: do the needed row exchange <b>first</b>, then factor. For the credit-fund matrix, swap rows 2 and 3 with $P_{23}$:</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}}_{P_{23}}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 12 & 12 & 15 \\ 1 & 0 & 1.2 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 1 & 1 & 0 \\ 12 & 0 & 1 \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -1 & 0.2 \\ 0 & 0 & 3 \end{bmatrix}}_{U} $$
+    <p>After the swap the rows are budget, exposure, return. The multipliers are $\ell_{21} = 1$ (exposure − budget), $\ell_{31} = 12$ (return − 12 × budget), and $\ell_{32} = 0$ (that row was already done). They sit in $L$ as before.</p>
+    <div class="box definition"><span class="label">PA = LU</span>
+      <p>Every invertible matrix can be factored as $PA = LU$, where $P$ puts the rows in an order that needs no exchanges during elimination.</p>
+    </div>
+
+    <h4>The family of permutation matrices</h4>
+    <p>For 3 × 3 there are exactly <b>6</b> permutation matrices, all the ways to reorder the rows of $I$:</p>
+    $$
+    \begin{bmatrix} 1&0&0\\0&1&0\\0&0&1 \end{bmatrix}
+    \begin{bmatrix} 0&1&0\\1&0&0\\0&0&1 \end{bmatrix}
+    \begin{bmatrix} 0&0&1\\0&1&0\\1&0&0 \end{bmatrix}
+    \begin{bmatrix} 1&0&0\\0&0&1\\0&1&0 \end{bmatrix}
+    \begin{bmatrix} 0&1&0\\0&0&1\\1&0&0 \end{bmatrix}
+    \begin{bmatrix} 0&0&1\\1&0&0\\0&1&0 \end{bmatrix}
+    $$
+    <p>The identity (no change), three single swaps, and two cycles that move all three rows. For $n \times n$ there are $n!$ of them: 24 for 4 × 4.</p>
+    <ul>
+      <li><b>Closed family:</b> multiply two permutations and you get another one (reordering twice is still a reordering). Inverses stay in the family too. Mathematicians call this a <i>group</i>.</li>
+      <li><b>Inverse = transpose:</b> $P^{-1} = P^T$. A single swap is its own inverse; the two cycles are each other's inverses.</li>
+    </ul>
+
+    <details class="check"><summary>Check yourself: why is $P^{-1} = P^T$ for $P = \left[\begin{smallmatrix} 0&1&0\\0&0&1\\1&0&0 \end{smallmatrix}\right]$?</summary>
+      <p>$P$ sends row 2 to the top, row 3 to the middle, row 1 to the bottom. $P^T = \left[\begin{smallmatrix} 0&0&1\\1&0&0\\0&1&0 \end{smallmatrix}\right]$ sends them back: $P^TP = I$.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t8">8. Singular matrices and LU</h3>
+    <p>A point from the recitation: <b>a singular matrix can still have an LU factorization</b>. What fails is not the factoring but the solving. Take Lesson 2's <b>balanced fund</b> (half Nifty, half bonds):</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 9.5 \\ 1 & 0 & 0.5 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ 1 & 0.2 & 1 \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & \mathbf{0} \end{bmatrix}}_{U} $$
+    <p>Elimination never needed a row exchange, so $L$ and $U$ exist, and $L$ is <b>identical</b> to the good portfolio's (the first two columns are the same funds). The difference shows up at the bottom of $U$: a <b>0 where the third pivot should be</b>. Forward substitution works ($c = (10, -9, -0.8)$), but back substitution hits $0 \cdot z = -0.8$: no solution.</p>
+    <div class="box pitfall"><span class="label">Watch out</span>
+      <p>"Has an LU factorization" does not mean "invertible". Look at the diagonal of $U$: all pivots non-zero ⇔ invertible.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- Summary: website only (left out of the PDF report) -->
+    <div class="no-print">
+    <h3 class="topic" id="t9">9. Summary</h3>
+    <div class="summary">
+      <h3>Key ideas</h3>
+      <ol>
+        <li>$(AB)^{-1} = B^{-1}A^{-1}$ and $(AB)^T = B^TA^T$: reverse order. (<a href="#t1">topic 1</a>)</li>
+        <li>Elimination $EA = U$ rewritten as $A = LU$ with $L = E^{-1}$: lower triangular, 1s on the diagonal. (<a href="#t2">topic 2</a>)</li>
+        <li>With no row exchanges, the multipliers go straight into $L$. For the portfolio: 12, 1, 0.2. $E$ is messy (1.4), $L$ is clean. (<a href="#t3">topic 3</a>)</li>
+        <li>$A = LDU$ splits the pivots into a diagonal $D$. (<a href="#t4">topic 4</a>)</li>
+        <li>Solve $Ax = b$ as $Lc = b$ (forward) then $Ux = c$ (back). New targets reuse $L$ and $U$. (<a href="#t5">topic 5</a>)</li>
+        <li>Factoring costs about $n^3/3$ operations; each new right-hand side about $n^2$. (<a href="#t6">topic 6</a>)</li>
+        <li>Row exchanges: $PA = LU$. There are $n!$ permutation matrices, and $P^{-1} = P^T$. (<a href="#t7">topic 7</a>)</li>
+        <li>A singular matrix can have $A = LU$; the zero pivot appears on $U$'s diagonal. (<a href="#t8">topic 8</a>)</li>
+      </ol>
+    </div>
+    <h4>Words in this lesson</h4>
+    <dl class="vocab">
+      <dt>$A = LU$</dt><dd>$A$ as lower triangular $L$ (multipliers) times upper triangular $U$ (pivots).</dd>
+      <dt>Lower / upper triangular</dt><dd>Zeros above / below the diagonal.</dd>
+      <dt>$A = LDU$</dt><dd>The pivots pulled out into a diagonal matrix $D$.</dd>
+      <dt>Inverse of a product</dt><dd>$(AB)^{-1} = B^{-1}A^{-1}$.</dd>
+      <dt>Transpose $A^T$</dt><dd>Rows and columns swapped; $(AB)^T = B^TA^T$.</dd>
+      <dt>Forward substitution</dt><dd>Solving $Lc = b$ from the top row down.</dd>
+      <dt>Operation count</dt><dd>About $n^3/3$ to factor; $n^2$ per right-hand side.</dd>
+      <dt>$PA = LU$</dt><dd>Row exchanges done first by a permutation $P$, then factor.</dd>
+      <dt>Permutation group</dt><dd>The $n!$ permutation matrices; closed under multiplication and inverses; $P^{-1} = P^T$.</dd>
+    </dl>
+    </div>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: rebalance every day</a></li>
+        <li><a href="#ex2">Lot sizes: many client payoffs</a></li>
+        <li><a href="#ex3">Try your own inputs</a></li>
+      </ol>
+    </nav>
+
+    <p>The other two examples from <a href="01_geometry-of-linear-equations.html#examples">Lesson 1</a>, now factored. The theme of both: the <b>matrix stays the same</b> (same hedges, same products) while the <b>target changes</b>, which is exactly where $A = LU$ pays off.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, rebalanced every day</h3>
+    <p>Your hedges are fixed: Nifty futures, Nifty IT futures and Bank Nifty futures, with risk profiles $(1, 0, 0)$, $(1, 1, 0)$ and $(1, 0, 1)$ for (market, currency, rates). Your portfolio's exposures change every day.</p>
+
+    <h4>Factor once</h4>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}}_{L = I}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}}_{U = A} $$
+    <p>Every multiplier is 0 (nothing below the diagonal to clear), so $L = I$ and $U = A$. Forward substitution does nothing ($c = b$); only back substitution is left.</p>
+
+    <h4>Solve every day</h4>
+    <table>
+      <tr><th>Day</th><th>Exposures $b$ (market, currency, rates)</th><th>Back substitution</th><th>Sell (Nifty, IT, Bank Nifty)</th></tr>
+      <tr><td>Monday</td><td>$(10, 3, 2)$</td><td>$z = 2$, $y = 3$, $x = 10 - 3 - 2 = 5$</td><td>$(5, 3, 2)$</td></tr>
+      <tr><td>Tuesday</td><td>$(12, 4, 1)$</td><td>$z = 1$, $y = 4$, $x = 12 - 4 - 1 = 7$</td><td>$(7, 4, 1)$</td></tr>
+      <tr><td>Wednesday</td><td>$(9, 2, 3)$</td><td>$z = 3$, $y = 2$, $x = 9 - 2 - 3 = 4$</td><td>$(4, 2, 3)$</td></tr>
+    </table>
+    <p>Three days, three hedges, <b>one</b> factorization. A real desk with hundreds of risk factors works the same way: factor the hedge matrix once, then re-solve each time the exposures move.</p>
+
+    <h4>If the rules are listed in another order: PA = LU</h4>
+    <p>List the currency rule first and the matrix starts with a 0 pivot. The fix from <a href="02_elimination-with-matrices.html#ex1">Lesson 2</a> becomes part of the factorization:</p>
+    $$ \underbrace{\begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}}_{P_{12}}\underbrace{\begin{bmatrix} 0 & 1 & 0 \\ 1 & 1 & 1 \\ 0 & 0 & 1 \end{bmatrix}}_{A} = \underbrace{I}_{L}\;\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}}_{U} $$
+    <p>Each day, reorder $b$ the same way ($Pb$), then solve as above.</p>
+
+    <details class="check"><summary>Check yourself: Thursday's exposures are $(15, 5, 5)$. What do you sell?</summary>
+      <p>$z = 5$, $y = 5$, $x = 15 - 5 - 5 = 5$: sell 5 of each.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, many client payoffs</h3>
+    <p>Your products are fixed: futures, the 19,900 call and the 20,100 call. Each client asks for a different payoff across the three expiry levels 19,800 / 20,000 / 20,200.</p>
+
+    <h4>Factor once</h4>
+    <p>Lesson 2's elimination used $\ell_{21} = 0$, $\ell_{31} = -1$, $\ell_{32} = 3$. They go straight into $L$:</p>
+    $$ \underbrace{\begin{bmatrix} -200 & 0 & 0 \\ 0 & 100 & 0 \\ 200 & 300 & 100 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -1 & 3 & 1 \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} -200 & 0 & 0 \\ 0 & 100 & 0 \\ 0 & 0 & 100 \end{bmatrix}}_{U} $$
+    <p><b>Check row 3:</b> $-1 \times (-200, 0, 0) + 3 \times (0, 100, 0) + (0, 0, 100) = (200, 300, 100)$ ✓.</p>
+
+    <h4>Solve for each client</h4>
+    <p>For each target $b$: forward $c_1 = b_1$, $c_2 = b_2$, $c_3 = b_3 + c_1 - 3c_2$; then back $z = c_3/100$, $y = c_2/100$, $x = c_1/(-200)$.</p>
+    <table>
+      <tr><th>Client</th><th>Payoff wanted $b$</th><th>Forward: $c$</th><th>Lots (futures, 19,900 C, 20,100 C)</th></tr>
+      <tr><td>A</td><td>$(-200, 100, 700)$</td><td>$(-200,\ 100,\ 700 - 200 - 300) = (-200, 100, 200)$</td><td>$(1, 1, 2)$</td></tr>
+      <tr><td>B</td><td>$(0, 100, 500)$</td><td>$(0,\ 100,\ 500 + 0 - 300) = (0, 100, 200)$</td><td>$(0, 1, 2)$</td></tr>
+      <tr><td>C</td><td>$(-400, 200, 900)$</td><td>$(-400,\ 200,\ 900 - 400 - 600) = (-400, 200, -100)$</td><td>$(2, 2, -1)$</td></tr>
+    </table>
+    <p>Client C's answer has $-1$: <b>sell</b> (write) one lot of the 20,100 call. Check: $2(-200, 0, 200) + 2(0, 100, 300) - 1(0, 0, 100) = (-400, 200, 900)$ ✓.</p>
+
+    <h4>Singular: futures, call and put at one strike</h4>
+    <p>The parity matrix needs a row exchange and then still runs out of pivots. Factoring still works:</p>
+    $$ P_{23}A = \begin{bmatrix} 1 & 0 & 0 \\ -1 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}\begin{bmatrix} -200 & 0 & 200 \\ 0 & 200 & 200 \\ 0 & 0 & \mathbf{0} \end{bmatrix} $$
+    <p>But the 0 on $U$'s diagonal means no client payoff that is non-zero at 20,000 can ever be built: back substitution gets stuck on the last row.</p>
+
+    <details class="check"><summary>Check yourself: which lots give the payoff $(-200, 0, 200)$?</summary>
+      <p>Forward: $c = (-200,\ 0,\ 200 - 200 - 0) = (-200, 0, 0)$. Back: $z = 0$, $y = 0$, $x = 1$. Just one lot of futures, whose payoff is exactly $(-200, 0, 200)$.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Try your own inputs</h3>
+    <p>Pick an example and the lab factors it: $A = LU$ (or $PA = LU$ when a row exchange is needed), then shows the forward and back solves. <b>Change only the target $b$</b> and watch $L$ and $U$ stay exactly the same.</p>
+    <div id="syslab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="02_elimination-with-matrices.html">← Lesson 2: Elimination with Matrices</a>
+    <span class="off">Next: Topic 3 (coming soon)</span>
+  </nav>
+  </div>
+</main>
+<script defer src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script defer src="../assets/system-lab.js?v=5"></script>
+<script>
+// Interactive figures: Notes topic 6 (cost of elimination) and the Examples tab (system lab with A = LU).
+window.addEventListener("load", function () {
+  if (!window.Plotly) return;
+  var css = getComputedStyle(document.documentElement);
+  function c(v) { return css.getPropertyValue(v).trim(); }
+  var blue = c("--def-b"), green = c("--ex-b"), orange = c("--int-b"), red = c("--warn-b"), ink = c("--ink"), soft = c("--ink-soft"), rule = c("--rule");
+
+  var paper2 = c("--paper-2");
+  // Fixed range + whole-number ticks, so the numbers never jump while rotating or zooming.
+  function axis(t, lo, hi) {
+    return { title: { text: t, font: { size: 15, color: ink } }, range: [lo, hi], autorange: false,
+      tickmode: "linear", tick0: 0, dtick: 1, tickfont: { size: 12, color: soft },
+      gridcolor: rule, gridwidth: 1, zeroline: true, zerolinecolor: soft, zerolinewidth: 3,
+      showbackground: true, backgroundcolor: paper2, showspikes: false, linecolor: soft, showline: true };
+  }
+  function scene(xr, yr, zr, eye) {
+    var span = function (r) { return r[1] - r[0]; }, m = Math.max(span(xr), span(yr), span(zr));
+    return { xaxis: axis("x", xr[0], xr[1]), yaxis: axis("y", yr[0], yr[1]), zaxis: axis("z", zr[0], zr[1]),
+      aspectmode: "manual", aspectratio: { x: span(xr) / m * 1.3, y: span(yr) / m * 1.3, z: span(zr) / m * 1.3 },
+      dragmode: "turntable", camera: { eye: eye, up: { x: 0, y: 0, z: 1 } } };
+  }
+  var layout = {
+    margin: { l: 0, r: 0, t: 0, b: 60 }, paper_bgcolor: "rgba(0,0,0,0)", showlegend: true, uirevision: "keep",
+    legend: { orientation: "h", x: 0, y: -0.02, yanchor: "top", font: { color: ink, size: 12 }, bgcolor: "rgba(0,0,0,0)" },
+    scene: scene([-2, 2], [-2, 2], [-2, 4], { x: 1.7, y: -1.5, z: 0.9 })
+  };
+  var config = { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["toImage"] };
+
+  // ---- Notes, topics 7 & 8: the portfolio-mix example in 3D ----
+  // The part of the plane n·p = d that lies inside the box, as a flat polygon (triangle fan).
+  function planeInBox(n, d, box, color, name) {
+    var f = function (p) { return n[0] * p[0] + n[1] * p[1] + n[2] * p[2] - d; };
+    var pts = [];
+    for (var m = 0; m < 8; m++) {
+      var p = [box[0][m & 1], box[1][(m >> 1) & 1], box[2][(m >> 2) & 1]];
+      for (var a = 0; a < 3; a++) {
+        if ((m >> a) & 1) continue;
+        var q = p.slice(); q[a] = box[a][1];
+        var fp = f(p), fq = f(q);
+        if (fp === fq || fp * fq > 0) continue;
+        var t = fp / (fp - fq), r = [p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1]), p[2] + t * (q[2] - p[2])];
+        if (!pts.some(function (s) { return Math.abs(s[0] - r[0]) + Math.abs(s[1] - r[1]) + Math.abs(s[2] - r[2]) < 1e-9; })) pts.push(r);
+      }
+    }
+    var c = [0, 1, 2].map(function (k) { return pts.reduce(function (s, p) { return s + p[k]; }, 0) / pts.length; });
+    var u = Math.abs(n[0]) < 0.9 * Math.hypot(n[0], n[1], n[2]) ? [0, -n[2], n[1]] : [-n[2], 0, n[0]];
+    var v = [n[1] * u[2] - n[2] * u[1], n[2] * u[0] - n[0] * u[2], n[0] * u[1] - n[1] * u[0]];
+    function dot(x, y) { return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]; }
+    pts.sort(function (p, q) {
+      var dp = [p[0] - c[0], p[1] - c[1], p[2] - c[2]], dq = [q[0] - c[0], q[1] - c[1], q[2] - c[2]];
+      return Math.atan2(dot(dp, v), dot(dp, u)) - Math.atan2(dot(dq, v), dot(dq, u));
+    });
+    var I = [], J = [], K = [];
+    for (var k = 1; k < pts.length - 1; k++) { I.push(0); J.push(k); K.push(k + 1); }
+    return { type: "mesh3d", name: name, showlegend: true, opacity: 0.45, color: color, flatshading: true, hoverinfo: "name",
+      x: pts.map(function (p) { return p[0]; }), y: pts.map(function (p) { return p[1]; }), z: pts.map(function (p) { return p[2]; }),
+      i: I, j: J, k: K };
+  }
+  function seg3(a, b, color, name, dash) {
+    return { type: "scatter3d", mode: "lines+markers", name: name, line: { color: color, width: dash ? 5 : 8, dash: dash ? "dash" : "solid" },
+      marker: { size: [2, 5], color: color }, x: [a[0], b[0]], y: [a[1], b[1]], z: [a[2], b[2]] };
+  }
+  function pfScene(r, ticks, titles, eye) {
+    var S = scene(r[0], r[1], r[2], eye);
+    ["xaxis", "yaxis", "zaxis"].forEach(function (k, i) { S[k].dtick = ticks[i]; S[k].title.text = titles[i]; });
+    return S;
+  }
+  var FUNDS = ["Nifty (₹ lakh)", "bonds (₹ lakh)", "midcap (₹ lakh)"];
+  var TARGETS = ["budget (₹ lakh)", "return (₹ thousand)", "exposure (₹ lakh)"];
+
+  // ---- Notes, topic 6: cost of factoring vs each new right-hand side ----
+  if (document.getElementById("costChart")) {
+    var ns = ["n = 10", "n = 100", "n = 1,000", "n = 10,000"];
+    Plotly.newPlot("costChart", [
+      { type: "bar", name: "Factor A = LU (about n³/3)", x: ns, y: [333, 333333, 333333333, 333333333333], marker: { color: blue } },
+      { type: "bar", name: "Each new target b (about n²)", x: ns, y: [100, 1e4, 1e6, 1e8], marker: { color: green } }
+    ], { barmode: "group", meta: { noFrame: true }, font: { color: ink }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+      margin: { l: 70, r: 10, t: 10, b: 40 }, legend: { orientation: "h", x: 0, y: 1.14, font: { color: ink, size: 12 } },
+      xaxis: { color: soft }, yaxis: { type: "log", title: { text: "operations (log scale)" }, gridcolor: rule, color: soft, exponentformat: "power" } }, config);
+  }
+
+  if (window.SystemLab) SystemLab.mount(document.getElementById("syslab"), [
+    { label: "Portfolio mix · 2 × 2", cols: ["Nifty fund", "Bond fund"], rows: ["budget", "return"], A: [[1, 1], [12, 7]], b: [10, 105],
+      meaning: ["₹ lakh in the Nifty fund", "₹ lakh in the bond fund"], neg: "borrowing, or selling short" },
+    { label: "Portfolio mix · 3 × 3", cols: ["Nifty fund", "Bond fund", "Midcap fund"], rows: ["budget", "return", "exposure"], A: [[1, 1, 1], [12, 7, 15], [1, 0, 1.2]], b: [10, 111, 7.4],
+      meaning: ["₹ lakh in the Nifty fund", "₹ lakh in the bond fund", "₹ lakh in the midcap fund"], neg: "borrowing, or selling short" },
+    { label: "Portfolio mix · two Nifty funds (singular)", cols: ["Nifty fund A", "Nifty fund B"], rows: ["budget", "return"], A: [[1, 1], [12, 12]], b: [10, 105],
+      meaning: ["₹ lakh in Nifty fund A", "₹ lakh in Nifty fund B"], neg: "borrowing, or selling short" },
+    { label: "Hedging · 2 × 2", cols: ["Nifty fut", "Nifty IT fut"], rows: ["market", "currency"], A: [[1, 1], [0, 1]], b: [8, 3],
+      meaning: ["units of Nifty futures to sell", "units of Nifty IT futures to sell"], neg: "buy those futures instead of selling" },
+    { label: "Hedging · 3 × 3", cols: ["Nifty fut", "Nifty IT fut", "Bank Nifty fut"], rows: ["market", "currency", "rates"], A: [[1, 1, 1], [0, 1, 0], [0, 0, 1]], b: [10, 3, 2],
+      meaning: ["units of Nifty futures to sell", "units of Nifty IT futures to sell", "units of Bank Nifty futures to sell"], neg: "buy those futures instead of selling" },
+    { label: "Hedging · Nifty ETF + Nifty futures (singular)", cols: ["Nifty fut", "Nifty ETF short"], rows: ["market", "currency"], A: [[1, 1], [0, 0]], b: [8, 3],
+      meaning: ["units of Nifty futures to sell", "units of Nifty ETF to short"], neg: "buy instead of selling" },
+    { label: "Lot sizes · 2 × 2", cols: ["Futures", "20,000 call"], rows: ["Nifty at 19,800", "Nifty at 20,200"], A: [[-200, 0], [200, 200]], b: [-200, 600],
+      meaning: ["lots of futures to buy", "lots of the 20,000 call to buy"], neg: "sell (write) that many lots" },
+    { label: "Lot sizes · 3 × 3", cols: ["Futures", "19,900 call", "20,100 call"], rows: ["Nifty at 19,800", "Nifty at 20,000", "Nifty at 20,200"], A: [[-200, 0, 0], [0, 100, 0], [200, 300, 100]], b: [-200, 100, 700],
+      meaning: ["lots of futures to buy", "lots of the 19,900 call to buy", "lots of the 20,100 call to buy"], neg: "sell (write) that many lots" },
+    { label: "Lot sizes · futures, call, put (singular)", cols: ["Futures", "20,000 call", "20,000 put"], rows: ["Nifty at 19,800", "Nifty at 20,000", "Nifty at 20,200"], A: [[-200, 0, 200], [0, 0, 0], [200, 200, 0]], b: [-200, 100, 700],
+      meaning: ["lots of futures to buy", "lots of the 20,000 call to buy", "lots of the 20,000 put to buy"], neg: "sell (write) that many lots" }
+  ], { lu: true });
+
+  // Plots drawn while their tab was hidden need a resize once the tab is shown.
+  document.querySelectorAll(".tabs button[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      setTimeout(function () { document.querySelectorAll(".plot3d-box").forEach(function (el) { Plotly.Plots.resize(el); }); }, 0);
+    });
+  });
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=4"></script>
+</body>
+</html>
