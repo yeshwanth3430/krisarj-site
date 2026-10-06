@@ -351,9 +351,29 @@
       <p>We only divided by $5 = 12 - 7$, which is not zero <b>because the two funds have different returns</b>. So a solution exists for every $(B, R)$, and it is the only one. If the returns were equal we would be dividing by zero: that is the singular case in <a href="#t8">topic 8</a>.</p>
     </details>
 
-    <div class="box definition"><span class="label">Definition: span and column space</span>
-      <p>The set of <b>all</b> linear combinations of some vectors is their <b>span</b>. The span of the columns of $A$ is the <b>column space</b> of $A$. Here the column space is all of $\mathbb{R}^2$.</p>
-      <p>In plain words: $Ax = b$ has a solution exactly when $b$ is in the column space of $A$.</p>
+    <div class="box definition"><span class="label">Definition: span</span>
+      <p>The <b>span</b> of some vectors is the set of <b>every</b> point you can reach by mixing them: scale each one by any number (positive, negative or zero) and add. In portfolio words: every (budget, return) result you can get from these funds, in any amounts.</p>
+    </div>
+    <p>See how the span grows as we add funds:</p>
+    <table>
+      <tr><th>Funds you may use</th><th>Their span</th><th>What it means</th></tr>
+      <tr><td>Nifty only, $(1, 12)$</td><td>a <b>line</b> through the origin: return $= 12 \times$ budget</td><td>whatever you invest, you earn exactly 12%</td></tr>
+      <tr><td>Bonds only, $(1, 7)$</td><td>a different <b>line</b>: return $= 7 \times$ budget</td><td>you earn exactly 7%</td></tr>
+      <tr><td>Nifty and bonds</td><td>the <b>whole plane</b> $\mathbb{R}^2$</td><td>any budget with any return (using negative amounts if needed)</td></tr>
+    </table>
+
+    <div class="box definition"><span class="label">Definition: column space</span>
+      <p>The <b>column space</b> of a matrix $A$ is the span of its columns. Strang writes it $C(A)$. For us the columns are the funds, so $C(A)$ is <b>every target your funds can produce</b>.</p>
+      <p>For our matrix $A = \begin{bmatrix} 1 &amp; 1 \\ 12 &amp; 7 \end{bmatrix}$, the column space is all of $\mathbb{R}^2$.</p>
+    </div>
+
+    <div class="box theorem"><span class="label">Why the column space matters</span>
+      <p>$Ax = b$ has a solution <b>exactly when $b$ is in the column space of $A$</b>.</p>
+      <p>The reason is one sentence: $Ax$ is always a combination of the columns of $A$ (see <a href="#t10">topic 10</a>), so asking "is there an $x$ with $Ax = b$?" is the same as asking "is $b$ one of those combinations?".</p>
+      <ul>
+        <li><b>Nifty + bonds:</b> $C(A)$ is the whole plane, so every target, including $(10, 105)$, has a solution.</li>
+        <li><b>Two Nifty funds</b> (<a href="#t8">topic 8</a>): $C(A)$ is only the line return $= 12 \times$ budget. The target $(10, 120)$ is on it (solvable); $(10, 105)$ is not (no solution).</li>
+      </ul>
     </div>
 
     <div class="box pitfall"><span class="label">Watch out: maths says yes, the market may say no</span>
