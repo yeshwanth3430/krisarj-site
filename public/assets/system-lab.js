@@ -1,5 +1,5 @@
 // System lab: edit a 2 × 2 or 3 × 3 system Ax = b and see the solution, the row picture and the column picture.
-// Usage: SystemLab.mount(element, presets) once Plotly has loaded.
+// Usage: SystemLab.mount(element, presets, { steps: true }) once Plotly has loaded; steps: true also lists the elimination steps.
 // A preset: { label, cols: [names], rows: [names], A: [[...]], b: [...], meaning: [what each unknown is], neg: "what a negative means" }.
 (function () {
   "use strict";
@@ -44,6 +44,42 @@
     return { rankA: rankA, rankAb: rankAb, x: x, n: m };
   }
 
+
+  // Elimination as taught in lecture 2: clear each column below its pivot; exchange rows only when the pivot position is 0.
+  function eliminate(A, b) {
+    var n = A.length, M = A.map(function (r, i) { return r.slice().concat([b[i]]); }), steps = [], pivots = [];
+    var scale = Math.max(1, Math.max.apply(null, M.map(function (r) { return Math.max.apply(null, r.map(Math.abs)); })));
+    var zero = function (v) { return Math.abs(v) < TOL * scale; };
+    var snap = function () { return M.map(function (r) { return r.slice(); }); };
+    for (var c = 0, r = 0; c < n && r < n; c++) {
+      if (zero(M[r][c])) {
+        var k = -1;
+        for (var i = r + 1; i < n; i++) if (!zero(M[i][c])) { k = i; break; }
+        if (k < 0) { steps.push({ kind: "stuck", col: c, row: r, M: snap(), piv: pivots.slice() }); continue; }
+        var t = M[r]; M[r] = M[k]; M[k] = t;
+        steps.push({ kind: "swap", a: r, b: k, M: snap(), piv: pivots.slice() });
+      }
+      pivots.push([r, c]);
+      for (i = r + 1; i < n; i++) {
+        var l = M[i][c] / M[r][c];
+        if (zero(M[i][c])) continue;
+        for (var j = c; j <= n; j++) M[i][j] -= l * M[r][j];
+        M[i][c] = 0;
+        steps.push({ kind: "elim", row: i, prow: r, l: l, M: snap(), piv: pivots.slice() });
+      }
+      r++;
+    }
+    return { M: M, steps: steps, pivots: pivots };
+  }
+  function tex(v) { var r = Math.round(v * 1e4) / 1e4; if (Math.abs(r) < 1e-9) r = 0; return String(r); }
+  function coef(v) { var t = tex(v); return t === "1" ? "" : t === "-1" ? "-" : t; }
+  function texAug(M, piv) {
+    var n = M.length, isPiv = function (i, j) { return piv.some(function (p) { return p[0] === i && p[1] === j; }); };
+    return "\\left[\\begin{array}{" + "c".repeat(n) + "|c}" + M.map(function (row, i) {
+      return row.map(function (v, j) { return isPiv(i, j) ? "\\boxed{" + tex(v) + "}" : tex(v); }).join(" & ");
+    }).join(" \\\\ ") + "\\end{array}\\right]";
+  }
+
   // The part of the plane n·p = d inside the box, as a flat polygon.
   function planeInBox(n, d, box, color, name) {
     var f = function (p) { return n[0] * p[0] + n[1] * p[1] + n[2] * p[2] - d; };
@@ -80,7 +116,8 @@
     return [lo - span * pad, hi + span * pad];
   }
 
-  function mount(root, presets) {
+  function mount(root, presets, opts) {
+    opts = opts || {};
     if (!root || !window.Plotly) return;
     var colors = [css("--def-b"), css("--ex-b"), css("--int-b")], red = css("--warn-b"), ink = css("--ink"), soft = css("--ink-soft"), rule = css("--rule");
     var config = { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["toImage"] };
@@ -93,12 +130,13 @@
         '<div class="sl-grid"></div>' +
       "</div>" +
       '<div class="sl-out"></div>' +
+      (opts.steps ? '<details class="check sl-steps-box" open><summary>Elimination, step by step</summary><div class="sl-steps"></div></details>' : "") +
       '<div class="figs sl-plots">' +
         '<figure class="fig"><div class="plot3d-box sl-row"></div><figcaption>Row picture: one line (or plane) per rule.</figcaption></figure>' +
         '<figure class="fig"><div class="plot3d-box sl-col"></div><figcaption>Column picture: mix the columns to reach b.</figcaption></figure>' +
       "</div>";
     var pick = root.querySelector(".sl-pick"), grid = root.querySelector(".sl-grid"), out = root.querySelector(".sl-out");
-    var rowDiv = root.querySelector(".sl-row"), colDiv = root.querySelector(".sl-col");
+    var rowDiv = root.querySelector(".sl-row"), colDiv = root.querySelector(".sl-col"), stepsDiv = root.querySelector(".sl-steps");
     var P, lastN = 0;
 
     function build() {
@@ -143,6 +181,28 @@
           "<p>One of them: " + R.x.map(function (v, j) { return esc(P.meaning[j]) + " = " + fmt(v); }).join("; ") + ".</p>";
       }
       out.innerHTML = h;
+      if (stepsDiv) {
+        var E = eliminate(A, b), names = ["x", "y", "z"], sh = "<ol class=\"sl-steplist\">";
+        sh += "<li>Start with the augmented matrix $[A \\mid b]$: $" + texAug(A.map(function (r, i) { return r.concat([b[i]]); }), []) + "$</li>";
+        E.steps.forEach(function (st) {
+          if (st.kind === "elim") sh += "<li>Row " + (st.row + 1) + " − (" + fmt(st.l) + ") × row " + (st.prow + 1) + ": multiplier $\\ell_{" + (st.row + 1) + (st.prow + 1) + "} = " + tex(st.l) + "$. $" + texAug(st.M, st.piv) + "$</li>";
+          else if (st.kind === "swap") sh += "<li><b>Row exchange:</b> 0 in the pivot position, so swap rows " + (st.a + 1) + " and " + (st.b + 1) + ". $" + texAug(st.M, st.piv) + "$</li>";
+          else sh += '<li class="lab-warn"><b>Stuck:</b> 0 in the pivot position of column ' + (st.col + 1) + " and no non-zero entry below it. No pivot here, so the matrix is singular.</li>";
+        });
+        if (E.pivots.length === n) {
+          sh += "<li>Upper triangular: $Ux = c$ with pivots " + E.pivots.map(function (p) { return fmt(E.M[p[0]][p[1]]); }).join(", ") + ". <b>Back substitution</b>, from the bottom row up:<ul>";
+          var x = new Array(n).fill(0);
+          for (var i = n - 1; i >= 0; i--) {
+            var rest = 0, terms = [];
+            for (var j = i + 1; j < n; j++) { rest += E.M[i][j] * x[j]; if (Math.abs(E.M[i][j]) > 1e-12) terms.push(tex(E.M[i][j]) + "(" + tex(x[j]) + ")"); }
+            x[i] = (E.M[i][n] - rest) / E.M[i][i];
+            sh += "<li>$" + coef(E.M[i][i]) + names[i] + (terms.length ? " + " + terms.join(" + ") : "") + " = " + tex(E.M[i][n]) + " \\;\\Rightarrow\\; " + names[i] + " = " + tex(x[i]) + "$</li>";
+          }
+          sh += "</ul></li>";
+        }
+        stepsDiv.innerHTML = sh.replace(/\+ -/g, "- ") + "</ol>";
+        if (window.renderMathInElement) renderMathInElement(stepsDiv, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
+      }
       if (n !== lastN) { Plotly.purge(rowDiv); Plotly.purge(colDiv); lastN = n; }   // 2D <-> 3D needs a fresh plot
       if (window.renderMathInElement) renderMathInElement(out, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
       if (n === 2) draw2(A, b, R); else draw3(A, b, R);
@@ -253,5 +313,5 @@
     build();
   }
 
-  window.SystemLab = { mount: mount, solve: solve };
+  window.SystemLab = { mount: mount, solve: solve, eliminate: eliminate };
 })();

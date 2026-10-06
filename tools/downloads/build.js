@@ -16,6 +16,13 @@ const LESSONS = [
     page: "linear-algebra/01_geometry-of-linear-equations.html",
     slides: "linear-algebra/01_geometry-of-linear-equations-slides.html",
     plots: { t7row: "linear-algebra/img/l1-3x3-row.png", t7col: "linear-algebra/img/l1-3x3-col.png" }
+  },
+  {
+    slug: "la-02-elimination-with-matrices",
+    title: "Linear Algebra · Lesson 2 · Elimination with Matrices",
+    page: "linear-algebra/02_elimination-with-matrices.html",
+    slides: "linear-algebra/02_elimination-with-matrices-slides.html",
+    plots: { e3U: "linear-algebra/img/l2-planes-U.png" }
   }
 ];
 
@@ -38,14 +45,15 @@ async function open(browser, rel, viewport) {
     // 1. Notes page: plot images, then the A4 report
     const notes = await open(browser, L.page, { width: 1100, height: 900 });
     for (const [id, out] of Object.entries(L.plots)) {
-      const data = await notes.evaluate((id) => Plotly.toImage(document.getElementById(id), { format: "png", width: 1000, height: 760, scale: 2 }), id);
+      const data = await notes.evaluate((id) => { const gd = document.getElementById(id);
+        return Plotly.toImage({ data: gd.data, layout: Object.assign({}, gd.layout, { updatemenus: [] }) }, { format: "png", width: 1000, height: 760, scale: 2 }); }, id);
       fs.writeFileSync(path.join(PUBLIC, out), Buffer.from(data.split(",")[1], "base64"));
       console.log("  image", out);
     }
     await notes.evaluate(async () => {
       document.querySelectorAll("details").forEach((d) => (d.open = true));
       for (const el of document.querySelectorAll(".tab-panel[data-panel='notes'] .plot3d-box")) {
-        const src = await Plotly.toImage(el, { format: "png", width: 1000, height: 700, scale: 2 });
+        const src = await Plotly.toImage({ data: el.data, layout: Object.assign({}, el.layout, { updatemenus: [] }) }, { format: "png", width: 1000, height: 700, scale: 2 });
         const img = document.createElement("img");
         img.src = src; img.style.width = "100%"; img.alt = "";
         el.replaceWith(img);

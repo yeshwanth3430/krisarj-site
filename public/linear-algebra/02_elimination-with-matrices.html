@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elimination with Matrices · Topic 2 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 2, Lesson 2: Elimination with Matrices, explained from zero: pivots, back substitution, elimination and permutation matrices, built on a portfolio-mix example.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=7">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-02-1">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-02.html">Topic 2</a> / <b>Elimination with Matrices</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 2</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 2 · Lesson 2 (MIT 18.06, Lecture 2)</p>
+  <h1>Elimination with Matrices</h1>
+  <p class="subtitle">Solve $Ax = b$ the way every computer does: eliminate down to an upper triangular $U$, then back-substitute. And see every step as a matrix.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-02-elimination-with-matrices-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-02-elimination-with-matrices-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F02_elimination-with-matrices" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">The idea of elimination</a></li>
+        <li><a href="#t2">2 × 2 by elimination</a></li>
+        <li><a href="#t3">3 × 3, step by step</a></li>
+        <li><a href="#t4">Back substitution</a></li>
+        <li><a href="#t5">When elimination breaks down</a></li>
+        <li><a href="#t6">Elimination as matrices</a></li>
+        <li><a href="#t7">Row exchanges: permutations</a></li>
+        <li><a href="#t8">Undoing a step: inverses</a></li>
+        <li><a href="#t9">Summary</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">The idea of elimination</a><span>Turn the system into a triangle you can solve from the bottom up. Pivots and multipliers.</span></li>
+      <li><a href="#t2">2 × 2 by elimination</a><span>The two-fund portfolio in one step, and what elimination does to the row picture.</span></li>
+      <li><a href="#t3">3 × 3, step by step</a><span>The three-fund portfolio: augmented matrix, three elimination steps, the upper triangular $U$.</span></li>
+      <li><a href="#t4">Back substitution</a><span>Solve $Ux = c$ from the last equation up.</span></li>
+      <li><a href="#t5">When elimination breaks down</a><span>A 0 in the pivot position: fixed by a row exchange, or a sign the matrix is singular.</span></li>
+      <li><a href="#t6">Elimination as matrices</a><span>Each step is a multiplication by an elimination matrix $E$. Row times matrix combines rows.</span></li>
+      <li><a href="#t7">Row exchanges: permutations</a><span>The matrix $P$ that swaps rows, and why $PA \ne AP$.</span></li>
+      <li><a href="#t8">Undoing a step: inverses</a><span>Every step can be reversed, which is why elimination gives the right answer.</span></li>
+      <li class="no-print"><a href="#t9">Summary</a><span>The key ideas and words on one screen.</span></li>
+    </ol>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>From <a href="01_geometry-of-linear-equations.html">Lesson 1: The Geometry of Linear Equations</a>. Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="01_geometry-of-linear-equations.html#t3">Matrix form $Ax = b$</a>: rows of $A$ are rules, columns are funds.</li>
+      <li><a href="01_geometry-of-linear-equations.html#t3mv">Matrix × vector, two ways</a>: $Ax$ is a combination of the columns of $A$.</li>
+      <li><a href="01_geometry-of-linear-equations.html#t4">The row picture</a>: each equation is a line (or plane).</li>
+      <li><a href="01_geometry-of-linear-equations.html#t7">The three-fund portfolio (3 × 3)</a>: the system we solve here.</li>
+      <li><a href="01_geometry-of-linear-equations.html#t8">Singular matrices</a>: columns that add no new direction.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box finance"><span class="label">The running example: the same portfolio, solved properly</span>
+      <p>In Lesson 1 we split <b>₹10 lakh</b> between funds to hit a budget, a return and a market exposure. We found the answers by drawing pictures and by spotting tricks. That doesn't scale: with 50 funds and 50 rules nobody can draw or guess.</p>
+      <p>This lesson gives the method every computer uses: <b>elimination</b>. We apply it to the same two systems:</p>
+      $$
+      \underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}\begin{bmatrix} x \\ y \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix}}_{\text{Nifty + bonds}}
+      \qquad
+      \underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix}\begin{bmatrix} x \\ y \\ z \end{bmatrix} = \begin{bmatrix} 10 \\ 111 \\ 7.4 \end{bmatrix}}_{\text{Nifty + bonds + midcap}}
+      $$
+      <p class="note-soft">Rows: budget (₹ lakh), return (₹ thousand), market exposure (₹ lakh). Unknowns: ₹ lakh in each fund.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. The idea of elimination</h3>
+    <p>Some systems are easy. If the last equation has only one unknown, you solve it at once, then work upwards:</p>
+    $$ \begin{aligned} x + y + z &= 10 \\ -5y + 3z &= -9 \\ -0.4z &= -0.8 \end{aligned} \qquad\Rightarrow\qquad z = 2,\; y = 3,\; x = 5. $$
+    <p>Its matrix is <dfn class="term" tabindex="0" data-def="A square matrix with only zeros below the main diagonal (the diagonal from top-left to bottom-right).">upper triangular</dfn>: zeros everywhere below the diagonal. <b>Elimination</b> turns any (good) system into one like this, without changing its solution.</p>
+
+    <div class="box definition"><span class="label">Elimination in one sentence</span>
+      <p>Use the first equation to remove $x$ from every equation below it; then use the new second equation to remove $y$ from every equation below it; and so on, until the matrix is upper triangular. Strang: "it's the way every software package solves equations."</p>
+    </div>
+    <p>Two words do all the work:</p>
+    <ul>
+      <li>The <dfn class="term" tabindex="0" data-def="The number on the diagonal used to clear the entries below it. Pivots can never be 0.">pivot</dfn> is the diagonal entry we use to clear the entries below it.</li>
+      <li>The <dfn class="term" tabindex="0" data-def="How many times the pivot row is subtracted: entry to clear ÷ pivot. Written ℓ (ell), e.g. ℓ21 for row 2, column 1.">multiplier</dfn> is how many times we subtract the pivot row: <b>multiplier = (entry to clear) ÷ (pivot)</b>. The multiplier for row $i$, column $j$ is written $\ell_{ij}$ ("ell").</li>
+    </ul>
+    <div class="box intuition"><span class="label">Why subtracting equations is allowed</span>
+      <p>If two statements are true, their difference is true too. Subtracting 12 × (budget rule) from the return rule gives a new rule that every correct portfolio still satisfies, and we can undo it by adding back (<a href="#t8">topic 8</a>). So the solution never changes.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. 2 × 2 by elimination</h3>
+    <p>The two-fund portfolio: $x + y = 10$ (budget) and $12x + 7y = 105$ (return).</p>
+    <ol class="step-list">
+      <li><b>Pivot:</b> the $1$ in the top-left corner.</li>
+      <li><b>Multiplier:</b> the entry to clear is $12$, so $\ell_{21} = 12 / 1 = 12$.</li>
+      <li><b>Subtract</b> 12 × row 1 from row 2, on both sides: $(12x + 7y) - 12(x + y) = 105 - 12(10)$, which is $-5y = -15$.</li>
+    </ol>
+    $$ \left[\begin{array}{cc|c} \boxed{1} & 1 & 10 \\ 12 & 7 & 105 \end{array}\right] \;\xrightarrow{\;R_2 - 12R_1\;}\; \left[\begin{array}{cc|c} \boxed{1} & 1 & 10 \\ 0 & \boxed{-5} & -15 \end{array}\right] $$
+    <p>Now back-substitute: $-5y = -15$ gives $y = 3$, then $x + 3 = 10$ gives $x = 7$. <span class="answer">₹7 lakh Nifty, ₹3 lakh bonds</span>, the same answer as Lesson 1. The pivots are $1$ and $-5$.</p>
+
+    <figure class="fig" style="max-width:460px;margin:20px auto">
+      <svg viewBox="0 0 360 300" role="img" aria-label="Row picture before and after elimination: the return line is replaced by the horizontal line y = 3 through the same point">
+        <line class="grid" x1="96" y1="20" x2="96" y2="260"/><line class="grid" x1="152" y1="20" x2="152" y2="260"/><line class="grid" x1="208" y1="20" x2="208" y2="260"/><line class="grid" x1="264" y1="20" x2="264" y2="260"/><line class="grid" x1="320" y1="20" x2="320" y2="260"/>
+        <line class="grid" x1="40" y1="185" x2="350" y2="185"/><line class="grid" x1="40" y1="110" x2="350" y2="110"/><line class="grid" x1="40" y1="35" x2="350" y2="35"/>
+        <line class="axis" x1="40" y1="260" x2="350" y2="260"/><line class="axis" x1="40" y1="260" x2="40" y2="20"/>
+        <text class="tick" x="92" y="276">2</text><text class="tick" x="148" y="276">4</text><text class="tick" x="204" y="276">6</text><text class="tick" x="260" y="276">8</text><text class="tick" x="312" y="276">10</text>
+        <text class="tick" x="26" y="189">5</text><text class="tick" x="20" y="114">10</text><text class="tick" x="20" y="39">15</text>
+        <text class="tick" x="350" y="296" text-anchor="end">x: Nifty (₹ lakh)</text><text class="tick" x="46" y="16">y: bonds (₹ lakh)</text>
+        <line class="l2 dash" x1="40" y1="35" x2="285" y2="260" stroke-opacity=".45"/>
+        <line class="l1" x1="40" y1="110" x2="320" y2="260"/>
+        <line class="l3" x1="40" y1="215" x2="350" y2="215"/>
+        <circle class="hit" cx="236" cy="215" r="6"/><text class="lbl ci" x="244" y="206">(7, 3)</text>
+        <text class="lbl c1" x="70" y="119" transform="rotate(28.2 70 119)">budget: x + y = 10</text>
+        <text class="lbl c2" x="96" y="70" fill-opacity=".7">before: 12x + 7y = 105</text>
+        <text class="lbl c3" x="48" y="236">after: −5y = −15 (y = 3)</text>
+      </svg>
+      <figcaption><b>What elimination does to the row picture.</b> The return line (dashed) is replaced by the horizontal line $y = 3$. Different line, <b>same crossing point</b> $(7, 3)$: the solution didn't change, it just became easy to read.</figcaption>
+    </figure>
+
+    <details class="check"><summary>Check yourself (MIT problem 2.1): eliminate $2x + 3y = 5$, $6x + 15y = 12$. What are the multiplier and the pivots?</summary>
+      <p>$\ell_{21} = 6/2 = 3$. Row 2 − 3 × row 1 gives $6y = -3$. Pivots $2$ and $6$. Back-substitute: $y = -\tfrac12$, then $2x = 5 + \tfrac32$, so $x = \tfrac{13}{4}$.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. 3 × 3, step by step</h3>
+    <p>Write the coefficients and the right-hand side side by side. Tacking $b$ on as an extra column gives the <dfn class="term" tabindex="0" data-def="The matrix A with the right-hand side b tacked on as an extra column: [A | b]. Every row operation is done to both.">augmented matrix</dfn> $[A \mid b]$, so whatever we do to an equation's left side we also do to its right side.</p>
+    $$ [A \mid b] = \left[\begin{array}{ccc|c} 1 & 1 & 1 & 10 \\ 12 & 7 & 15 & 111 \\ 1 & 0 & 1.2 & 7.4 \end{array}\right] \quad \begin{matrix} \text{budget} \\ \text{return} \\ \text{exposure} \end{matrix} $$
+
+    <h4>Column 1: clear everything below the first pivot</h4>
+    <p>The first pivot is the $1$ in the top-left corner.</p>
+    <ul>
+      <li><b>Step (2, 1):</b> $\ell_{21} = 12/1 = 12$. Row 2 − 12 × row 1: $(12, 7, 15, 111) - (12, 12, 12, 120) = (0, -5, 3, -9)$.</li>
+      <li><b>Step (3, 1):</b> $\ell_{31} = 1/1 = 1$. Row 3 − 1 × row 1: $(1, 0, 1.2, 7.4) - (1, 1, 1, 10) = (0, -1, 0.2, -2.6)$.</li>
+    </ul>
+    $$ \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & -5 & 3 & -9 \\ 0 & -1 & 0.2 & -2.6 \end{array}\right] $$
+    <p>The Nifty amount $x$ is now gone from rules 2 and 3. They form a smaller 2 × 2 system in $y$ and $z$, and we simply repeat.</p>
+
+    <h4>Column 2: clear below the second pivot</h4>
+    <p>The second pivot is the $-5$ that has appeared in row 2, column 2.</p>
+    <ul>
+      <li><b>Step (3, 2):</b> $\ell_{32} = (-1)/(-5) = 0.2$. Row 3 − 0.2 × row 2: $(0, -1, 0.2, -2.6) - (0, -1, 0.6, -1.8) = (0, 0, -0.4, -0.8)$.</li>
+    </ul>
+    $$ [U \mid c] = \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \boxed{-5} & 3 & -9 \\ 0 & 0 & \boxed{-0.4} & -0.8 \end{array}\right] $$
+    <div class="box theorem"><span class="label">Result of elimination</span>
+      <p>$A$ has become the upper triangular matrix $U$, and $b$ has become $c = (10, -9, -0.8)$. The new system $Ux = c$ has <b>exactly the same solution</b> as $Ax = b$. The <b>pivots</b> $1, -5, -0.4$ sit on the diagonal of $U$.</p>
+    </div>
+    <p class="note-soft">A preview Strang drops in passing: multiply the pivots and you get the <i>determinant</i> of $A$. Here $1 \times (-5) \times (-0.4) = 2$. Determinants come much later.</p>
+
+    <figure class="fig plot3d">
+      <div id="e3U" class="plot3d-box"></div>
+      <figcaption><b>The row picture, before and after elimination (use the buttons; drag to rotate).</b> Elimination swaps the return and exposure planes for new ones, ending with the flat plane $z = 2$. All three still meet at the same point $(5, 3, 2)$.</figcaption>
+    </figure>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. Back substitution</h3>
+    <p>$Ux = c$ is triangular, so solve it <b>from the bottom up</b>. Each equation has only one new unknown:</p>
+    <ol class="step-list">
+      <li><b>Row 3:</b> $-0.4z = -0.8$, so $z = 2$.</li>
+      <li><b>Row 2:</b> $-5y + 3(2) = -9$, so $-5y = -15$ and $y = 3$.</li>
+      <li><b>Row 1:</b> $x + 3 + 2 = 10$, so $x = 5$.</li>
+    </ol>
+    <p><span class="answer">₹5 lakh Nifty, ₹3 lakh bonds, ₹2 lakh midcap</span>, the answer Lesson 1 found by substitution. Check it in the <b>original</b> rules: $5 + 3 + 2 = 10$ ✓, $60 + 21 + 30 = 111$ ✓, $5 + 0 + 2.4 = 7.4$ ✓.</p>
+    <div class="box intuition"><span class="label">The whole method</span>
+      <p><b>Forward elimination</b> ($A \to U$, $b \to c$), then <b>back substitution</b> ($Ux = c$, bottom row first). That is all a computer does to solve $Ax = b$, just faster and with millions of rows.</p>
+    </div>
+
+    <details class="check"><summary>Check yourself (Strang's lecture example): eliminate $x + 2y + z = 2$, $3x + 8y + z = 12$, $4y + z = 2$.</summary>
+      <p>$\ell_{21} = 3$: row 2 becomes $2y - 2z = 6$. $\ell_{31} = 0$: nothing to do. $\ell_{32} = 4/2 = 2$: row 3 becomes $5z = -10$. Pivots $1, 2, 5$. Back substitution: $z = -2$, then $2y + 4 = 6$ so $y = 1$, then $x + 2 - 2 = 2$ so $x = 2$.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. When elimination breaks down</h3>
+    <p><b>Pivots can never be 0</b>: we divide by them to find multipliers. So what if a 0 lands in a pivot position? Strang separates two cases.</p>
+
+    <h4>Temporary failure: fixed by a row exchange</h4>
+    <p>Replace the bond fund with a <b>credit fund</b> that also earns 12% but has no market exposure (beta 0). Its column is $(1, 12, 0)$. With target $(10, 126, 7.4)$:</p>
+    $$ \left[\begin{array}{ccc|c} 1 & 1 & 1 & 10 \\ 12 & 12 & 15 & 126 \\ 1 & 0 & 1.2 & 7.4 \end{array}\right] \xrightarrow{\;R_2 - 12R_1,\;\; R_3 - R_1\;} \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \mathbf{0} & 3 & 6 \\ 0 & -1 & 0.2 & -2.6 \end{array}\right] $$
+    <p>A $0$ in the second pivot position: Nifty and the credit fund earn the same, so removing $x$ from the return rule removed $y$ too. But there is a non-zero entry <b>below</b> it, so <b>exchange rows 2 and 3</b>:</p>
+    $$ \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \boxed{-1} & 0.2 & -2.6 \\ 0 & 0 & \boxed{3} & 6 \end{array}\right] \quad\Rightarrow\quad z = 2,\; y = 3,\; x = 5. $$
+    <p>Three pivots after the exchange, so the matrix is fine (invertible). Swapping the order of two equations never changes the solution.</p>
+
+    <h4>Permanent failure: the matrix is singular</h4>
+    <p>Now replace the midcap fund with the <b>balanced fund</b> from <a href="01_geometry-of-linear-equations.html#t8">Lesson 1</a> (half Nifty, half bonds), column $(1, 9.5, 0.5)$:</p>
+    $$ \left[\begin{array}{ccc|c} 1 & 1 & 1 & 10 \\ 12 & 7 & 9.5 & 111 \\ 1 & 0 & 0.5 & 7.4 \end{array}\right] \longrightarrow \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \boxed{-5} & -2.5 & -9 \\ 0 & -1 & -0.5 & -2.6 \end{array}\right] \xrightarrow{\;R_3 - 0.2R_2\;} \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \boxed{-5} & -2.5 & -9 \\ 0 & 0 & \mathbf{0} & -0.8 \end{array}\right] $$
+    <p>A $0$ in the third pivot position and <b>nothing below it</b> to swap in. Only <b>two pivots</b>. The last row reads $0 = -0.8$: <b>no solution</b>. (With a target on the funds' plane, such as $(10, 95, 5)$, the last row becomes $0 = 0$ and there are infinitely many solutions.)</p>
+    <div class="box theorem"><span class="label">Pivots decide everything</span>
+      <p>An $n \times n$ matrix is <b>invertible</b> exactly when elimination (with row exchanges where needed) produces <b>$n$ non-zero pivots</b>. Fewer pivots means <b>singular</b>: no solution or infinitely many, just as the pictures in <a href="01_geometry-of-linear-equations.html#t8">Lesson 1</a> showed.</p>
+    </div>
+    <p class="note-soft">The 2 × 2 version: two Nifty funds give $\left[\begin{smallmatrix} 1 & 1 \\ 12 & 12 \end{smallmatrix}\right] \to \left[\begin{smallmatrix} 1 & 1 \\ 0 & 0 \end{smallmatrix}\right]$, one pivot, and the return rule becomes $0 = -15$.</p>
+
+    <details class="check"><summary>Check yourself: in Strang's example, which number in place of the 8 causes a temporary failure, and which number in place of the last 1 causes a permanent one?</summary>
+      <p>An $8 \to 6$ makes the second pivot $0$, but row 3 has a $4$ below it, so a row exchange fixes it. A last entry of $-4$ instead of $1$ makes the third pivot $-4 - (-4) = 0$ with nothing below: permanent failure, singular matrix.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. Elimination as matrices</h3>
+    <p>Strang's main point: every step of elimination is a <b>matrix multiplication</b>. To see why, we need the "row" twin of Lesson 1's key fact.</p>
+    <div class="box theorem"><span class="label">Columns and rows</span>
+      <p><b>Matrix × column</b> = a combination of the <b>columns</b> of the matrix (<a href="01_geometry-of-linear-equations.html#t3mv">Lesson 1</a>).</p>
+      <p><b>Row × matrix</b> = a combination of the <b>rows</b> of the matrix: $\begin{bmatrix} a & b & c \end{bmatrix} A = a\,(\text{row } 1) + b\,(\text{row } 2) + c\,(\text{row } 3)$.</p>
+    </div>
+    <p>So the row $\begin{bmatrix} -12 & 1 & 0 \end{bmatrix}$ times $A$ gives $-12\,(\text{row } 1) + 1\,(\text{row } 2) = (0, -5, 3)$: exactly the new row 2 from step (2, 1).</p>
+
+    <h4>Elimination matrices</h4>
+    <p>Stack three such rows and you get the matrix that does a whole step. Start from the <dfn class="term" tabindex="0" data-def="The matrix with 1s on the diagonal and 0s elsewhere. It changes nothing: IA = A. The matrix version of the number 1.">identity matrix</dfn> $I$ (which leaves every row alone) and put $-\ell_{ij}$ in position $(i, j)$:</p>
+    $$
+    E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad
+    E_{31} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -1 & 0 & 1 \end{bmatrix} \quad
+    E_{32} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -0.2 & 1 \end{bmatrix}
+    $$
+    <p>$E_{21}$ subtracts 12 × row 1 from row 2 and leaves rows 1 and 3 unchanged. Check one entry the way Strang does: row 2 of $E_{21}$ times column 3 of $A$ is $-12(1) + 1(15) + 0(1.2) = 3$ ✓, the new entry in row 2, column 3.</p>
+    $$ E_{32}\,\big(E_{31}\,(E_{21}A)\big) = U. $$
+
+    <h4>Moving the parentheses</h4>
+    <p>Matrix multiplication is <b>associative</b>: you may regroup a product without changing it. So the three steps combine into <b>one matrix that does all of elimination</b>:</p>
+    $$ (E_{32}E_{31}E_{21})\,A = U, \qquad E = E_{32}E_{31}E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 1.4 & -0.2 & 1 \end{bmatrix}. $$
+    <p>Check the bottom row: $1.4(\text{row } 1) - 0.2(\text{row } 2) + 1(\text{row } 3) = (1.4 - 2.4 + 1,\ 1.4 - 1.4 + 0,\ 1.4 - 3 + 1.2) = (0, 0, -0.4)$ ✓, the last row of $U$.</p>
+    <div class="box pitfall"><span class="label">Watch out: order matters</span>
+      <p>You may move the parentheses, but you may <b>not</b> change the order: in general $AB \ne BA$. For example $E_{21}E_{32}$ has a $0$ where $E_{32}E_{21}$ has a non-zero entry. Notice too that $E$ contains a messy $1.4$ even though the multipliers were the clean numbers $12, 1, 0.2$. Strang's fix, going back from $U$ to $A$ instead, is the subject of Lesson 4 ($A = LU$).</p>
+    </div>
+
+    <details class="check"><summary>Check yourself: what does the row $\begin{bmatrix} 1 & 2 & 7 \end{bmatrix}$ times a 3 × 3 matrix produce?</summary>
+      <p>A row: $1 \times$ row 1 $+ 2 \times$ row 2 $+ 7 \times$ row 3 of that matrix. (Strang's example in the lecture.)</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t7">7. Row exchanges: permutation matrices</h3>
+    <p>The row exchange in <a href="#t5">topic 5</a> is also a matrix. To find it, <b>do the exchange to the identity matrix</b>:</p>
+    $$ P_{23} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}: \qquad P_{23}A \text{ is } A \text{ with rows 2 and 3 swapped.} $$
+    <p>A matrix that only reorders rows is a <dfn class="term" tabindex="0" data-def="The identity matrix with its rows reordered. PA reorders the rows of A; AP reorders its columns.">permutation matrix</dfn>. For a 2 × 2:</p>
+    $$ \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\begin{bmatrix} a & b \\ c & d \end{bmatrix} = \begin{bmatrix} c & d \\ a & b \end{bmatrix} \quad\text{(rows swapped)} $$
+    $$ \begin{bmatrix} a & b \\ c & d \end{bmatrix}\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} = \begin{bmatrix} b & a \\ d & c \end{bmatrix} \quad\text{(columns swapped)} $$
+    <div class="box theorem"><span class="label">Left acts on rows, right acts on columns</span>
+      <p>Multiplying <b>on the left</b> does row operations (all of elimination). Multiplying <b>on the right</b> does column operations. Since $PA$ and $AP$ are different matrices, this is another case of $AB \ne BA$.</p>
+    </div>
+    <p>In portfolio terms: swapping two <b>rows</b> just lists the rules in a different order. Swapping two <b>columns</b> relabels which fund is $x$ and which is $y$.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t8">8. Undoing a step: inverses</h3>
+    <p>$E_{21}$ subtracted 12 × row 1 from row 2. The step that <b>undoes</b> it adds 12 × row 1 back:</p>
+    $$ E_{21}^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \qquad E_{21}^{-1}E_{21} = I. $$
+    <p>The matrix that undoes another is its <dfn class="term" tabindex="0" data-def="The matrix that undoes A: A⁻¹A = I. Not every matrix has one; singular matrices don't.">inverse</dfn>, written $E^{-1}$. Every elimination step and every row exchange can be undone like this.</p>
+    <div class="box theorem"><span class="label">Why elimination gives the right answer</span>
+      <p>Every step can be reversed, so $Ax = b$ and $Ux = c$ have exactly the same solutions: anything that solves one solves the other. That's why the answer we read off $U$ is the answer to the original portfolio.</p>
+    </div>
+    <p>Inverses of whole matrices, and how to compute them, are the next lesson.</p>
+
+    <details class="check"><summary>Check yourself: what is the inverse of $E_{32}$ (which subtracts 0.2 × row 2 from row 3)?</summary>
+      <p>Add 0.2 × row 2 back to row 3: the identity with $+0.2$ in position $(3, 2)$.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <!-- Summary: website only (left out of the PDF report) -->
+    <div class="no-print">
+    <h3 class="topic" id="t9">9. Summary</h3>
+    <div class="summary">
+      <h3>Key ideas</h3>
+      <ol>
+        <li><b>Elimination</b> turns $Ax = b$ into an upper triangular $Ux = c$ with the same solution: clear each column below its pivot, using multiplier $\ell_{ij} = $ entry ÷ pivot. (<a href="#t1">topic 1</a>)</li>
+        <li>Do every step to the augmented matrix $[A \mid b]$, so the right-hand side comes along. (<a href="#t3">topic 3</a>)</li>
+        <li><b>Back substitution</b> solves $Ux = c$ from the last row up. The portfolio: $z = 2$, $y = 3$, $x = 5$. (<a href="#t4">topic 4</a>)</li>
+        <li>A 0 in a pivot position: exchange with a lower row if you can (temporary failure); if nothing below is non-zero, the matrix is <b>singular</b>. $n$ pivots ⇔ invertible. (<a href="#t5">topic 5</a>)</li>
+        <li>Each step is a multiplication by an elimination matrix: $E_{32}E_{31}E_{21}A = U$. Row × matrix combines rows. (<a href="#t6">topic 6</a>)</li>
+        <li>You can move parentheses (associative) but not swap order: $AB \ne BA$. Left multiplication acts on rows, right on columns. (<a href="#t6">topic 6</a>, <a href="#t7">topic 7</a>)</li>
+        <li>Every step is reversible ($E^{-1}$ adds back what $E$ subtracted), so elimination never changes the solution. (<a href="#t8">topic 8</a>)</li>
+      </ol>
+    </div>
+    <h4>Words in this lesson</h4>
+    <dl class="vocab">
+      <dt>Elimination</dt><dd>Subtracting multiples of rows to get zeros below the diagonal.</dd>
+      <dt>Pivot</dt><dd>The non-zero diagonal entry used to clear the entries below it.</dd>
+      <dt>Multiplier $\ell_{ij}$</dt><dd>Entry to clear ÷ pivot: how many times the pivot row is subtracted.</dd>
+      <dt>Upper triangular $U$</dt><dd>Only zeros below the diagonal.</dd>
+      <dt>Augmented matrix</dt><dd>$[A \mid b]$: the right-hand side tacked on as an extra column.</dd>
+      <dt>Back substitution</dt><dd>Solving $Ux = c$ from the bottom row up.</dd>
+      <dt>Elimination matrix $E_{ij}$</dt><dd>The identity with $-\ell_{ij}$ in position $(i, j)$.</dd>
+      <dt>Identity $I$</dt><dd>1s on the diagonal; $IA = A$.</dd>
+      <dt>Permutation matrix $P$</dt><dd>The identity with rows reordered; $PA$ swaps rows, $AP$ swaps columns.</dd>
+      <dt>Associative</dt><dd>$(AB)C = A(BC)$: parentheses can move. Order can't: $AB \ne BA$.</dd>
+      <dt>Inverse $E^{-1}$</dt><dd>The matrix that undoes $E$: $E^{-1}E = I$.</dd>
+    </dl>
+    </div>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging by elimination</a></li>
+        <li><a href="#ex2">Lot sizes by elimination</a></li>
+        <li><a href="#ex3">Try your own inputs</a></li>
+      </ol>
+    </nav>
+
+    <p>The two other examples from <a href="01_geometry-of-linear-equations.html#examples">Lesson 1</a>, now solved by elimination. Same matrices, new method.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging by elimination</h3>
+    <p>Recall the setup: sell $x$ Nifty futures, $y$ Nifty IT futures and $z$ Bank Nifty futures to cancel market, currency and rate exposure. Each column is a hedge's risk profile.</p>
+
+    <h4>2 × 2: already triangular</h4>
+    $$ \left[\begin{array}{cc|c} 1 & 1 & 8 \\ 0 & 1 & 3 \end{array}\right] \quad \begin{matrix} \text{market} \\ \text{currency} \end{matrix} $$
+    <p>There is already a $0$ below the first pivot (Nifty futures carry no currency risk), so $\ell_{21} = 0$ and there is nothing to eliminate. Pivots $1, 1$. Back substitution: $y = 3$, then $x = 8 - 3 = 5$. <span class="answer">Sell 5 Nifty and 3 Nifty IT futures.</span></p>
+
+    <h4>The same problem, rules written in a different order</h4>
+    <p>Suppose you list the currency rule first. Nothing about the hedge has changed, but now:</p>
+    $$ \left[\begin{array}{cc|c} 0 & 1 & 3 \\ 1 & 1 & 8 \end{array}\right] \quad \begin{matrix} \text{currency} \\ \text{market} \end{matrix} $$
+    <p>A $0$ in the first pivot position. There is a non-zero entry below it, so this is a <b>temporary failure</b>: exchange the rows with $P = \left[\begin{smallmatrix} 0 & 1 \\ 1 & 0 \end{smallmatrix}\right]$ and you are back to the triangular system above. The same happens in 3 × 3 with the rules ordered (currency, market, rates):</p>
+    $$ P_{12}\left[\begin{array}{ccc|c} 0 & 1 & 0 & 3 \\ 1 & 1 & 1 & 10 \\ 0 & 0 & 1 & 2 \end{array}\right] = \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \boxed{1} & 0 & 3 \\ 0 & 0 & \boxed{1} & 2 \end{array}\right] \quad\Rightarrow\quad z = 2,\; y = 3,\; x = 10 - 3 - 2 = 5. $$
+    <p><span class="answer">Sell 5 Nifty, 3 Nifty IT and 2 Bank Nifty futures.</span> Hedging problems often arrive nearly triangular: each special hedge (IT for currency, Bank Nifty for rates) touches only its own risk plus the market.</p>
+
+    <h4>Singular: no pivot for currency</h4>
+    <p>With a Nifty ETF in place of Nifty IT futures, both columns are $(1, 0)$:</p>
+    $$ \left[\begin{array}{cc|c} \boxed{1} & 1 & 8 \\ 0 & \mathbf{0} & 3 \end{array}\right] $$
+    <p>A $0$ in the second pivot position and no row below to swap in: <b>one pivot only</b>, so the matrix is singular. The last row says $0 = 3$: no hedge exists, exactly as Lesson 1's picture showed.</p>
+
+    <details class="check"><summary>Check yourself: with rows ordered (rates, currency, market), which permutation makes the 3 × 3 hedging matrix triangular?</summary>
+      <p>The rows are $(0, 0, 1)$, $(0, 1, 0)$, $(1, 1, 1)$. Exchanging rows 1 and 3 ($P_{13}$) puts $(1, 1, 1)$ on top and gives the triangular matrix again.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes by elimination</h3>
+    <p>Recall the setup: $x, y, z$ are lots of each product, rows are expiry scenarios, entries are payoffs in Nifty points per lot.</p>
+
+    <h4>2 × 2: futures and the 20,000 call</h4>
+    $$ \left[\begin{array}{cc|c} -200 & 0 & -200 \\ 200 & 200 & 600 \end{array}\right] \quad \begin{matrix} \text{Nifty at 19,800} \\ \text{Nifty at 20,200} \end{matrix} $$
+    <p>Pivot $-200$. Multiplier $\ell_{21} = 200 / (-200) = -1$. Subtracting $-1$ times row 1 means <b>adding</b> row 1:</p>
+    $$ \xrightarrow{\;R_2 - (-1)R_1\;} \left[\begin{array}{cc|c} \boxed{-200} & 0 & -200 \\ 0 & \boxed{200} & 400 \end{array}\right] \quad\Rightarrow\quad y = 2,\; x = 1. $$
+    <p><span class="answer">1 lot of futures, 2 lots of the call.</span> A negative multiplier is fine; only a <b>zero pivot</b> is a problem.</p>
+
+    <h4>3 × 3: futures, 19,900 call, 20,100 call</h4>
+    $$ \left[\begin{array}{ccc|c} -200 & 0 & 0 & -200 \\ 0 & 100 & 0 & 100 \\ 200 & 300 & 100 & 700 \end{array}\right] \quad \begin{matrix} 19{,}800 \\ 20{,}000 \\ 20{,}200 \end{matrix} $$
+    <ul>
+      <li><b>Step (2, 1):</b> already $0$, so $\ell_{21} = 0$.</li>
+      <li><b>Step (3, 1):</b> $\ell_{31} = 200/(-200) = -1$, so add row 1 to row 3: $(0, 300, 100, 500)$.</li>
+      <li><b>Step (3, 2):</b> $\ell_{32} = 300/100 = 3$, so row 3 − 3 × row 2: $(0, 0, 100, 200)$.</li>
+    </ul>
+    $$ [U \mid c] = \left[\begin{array}{ccc|c} \boxed{-200} & 0 & 0 & -200 \\ 0 & \boxed{100} & 0 & 100 \\ 0 & 0 & \boxed{100} & 200 \end{array}\right] \quad\Rightarrow\quad z = 2,\; y = 1,\; x = 1. $$
+    <p><span class="answer">1 lot of futures, 1 lot of the 19,900 call, 2 lots of the 20,100 call.</span> As matrices: $E_{32}E_{31}A = U$ with</p>
+    $$ E_{31} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 1 & 0 & 1 \end{bmatrix}, \qquad E_{32} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -3 & 1 \end{bmatrix}. $$
+    <p class="note-soft">$E_{31}$ has $+1$, not $-1$: the entry is always $-\ell_{ij}$, and here $\ell_{31} = -1$.</p>
+
+    <h4>Singular: futures, call and put at one strike</h4>
+    $$ \left[\begin{array}{ccc|c} -200 & 0 & 200 & -200 \\ 0 & 0 & 0 & 100 \\ 200 & 200 & 0 & 700 \end{array}\right] \xrightarrow{\;R_3 + R_1\;} \left[\begin{array}{ccc|c} \boxed{-200} & 0 & 200 & -200 \\ 0 & \mathbf{0} & 0 & 100 \\ 0 & 200 & 200 & 500 \end{array}\right] \xrightarrow{\;P_{23}\;} \left[\begin{array}{ccc|c} \boxed{-200} & 0 & 200 & -200 \\ 0 & \boxed{200} & 200 & 500 \\ 0 & 0 & \mathbf{0} & 100 \end{array}\right] $$
+    <p>The second pivot position held a $0$, and a row exchange fixed it. But then the <b>third</b> pivot position holds a $0$ with nothing below: <b>two pivots</b>, singular. The last row says $0 = 100$: these three products can't pay 100 points at 20,000, because none of them pays anything there. Put–call parity (futures = call − put) is the hidden dependence.</p>
+
+    <details class="check"><summary>Check yourself: in the 3 × 3 lot system, what are the pivots, and what is their product?</summary>
+      <p>Pivots $-200, 100, 100$. Product $-2{,}000{,}000$: non-zero, so the matrix is invertible (and that product is its determinant).</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Try your own inputs</h3>
+    <p>Pick an example, change any number, and watch elimination run: every multiplier, every row exchange, the pivots (boxed), and the back substitution, plus both pictures. Try making a pivot 0: change the bond return from 7 to 12 in the 3 × 3 portfolio.</p>
+    <div id="syslab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="01_geometry-of-linear-equations.html">← Lesson 1: The Geometry of Linear Equations</a>
+    <span class="off">Next: Lesson 3 (coming soon)</span>
+  </nav>
+  </div>
+</main>
+<script defer src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script defer src="../assets/system-lab.js?v=3"></script>
+<script>
+// Interactive figures: Notes topic 3 (planes before / after elimination) and the Examples tab (system lab with elimination steps).
+window.addEventListener("load", function () {
+  if (!window.Plotly) return;
+  var css = getComputedStyle(document.documentElement);
+  function c(v) { return css.getPropertyValue(v).trim(); }
+  var blue = c("--def-b"), green = c("--ex-b"), orange = c("--int-b"), red = c("--warn-b"), ink = c("--ink"), soft = c("--ink-soft"), rule = c("--rule");
+
+  var paper2 = c("--paper-2");
+  // Fixed range + whole-number ticks, so the numbers never jump while rotating or zooming.
+  function axis(t, lo, hi) {
+    return { title: { text: t, font: { size: 15, color: ink } }, range: [lo, hi], autorange: false,
+      tickmode: "linear", tick0: 0, dtick: 1, tickfont: { size: 12, color: soft },
+      gridcolor: rule, gridwidth: 1, zeroline: true, zerolinecolor: soft, zerolinewidth: 3,
+      showbackground: true, backgroundcolor: paper2, showspikes: false, linecolor: soft, showline: true };
+  }
+  function scene(xr, yr, zr, eye) {
+    var span = function (r) { return r[1] - r[0]; }, m = Math.max(span(xr), span(yr), span(zr));
+    return { xaxis: axis("x", xr[0], xr[1]), yaxis: axis("y", yr[0], yr[1]), zaxis: axis("z", zr[0], zr[1]),
+      aspectmode: "manual", aspectratio: { x: span(xr) / m * 1.3, y: span(yr) / m * 1.3, z: span(zr) / m * 1.3 },
+      dragmode: "turntable", camera: { eye: eye, up: { x: 0, y: 0, z: 1 } } };
+  }
+  var layout = {
+    margin: { l: 0, r: 0, t: 0, b: 60 }, paper_bgcolor: "rgba(0,0,0,0)", showlegend: true, uirevision: "keep",
+    legend: { orientation: "h", x: 0, y: -0.02, yanchor: "top", font: { color: ink, size: 12 }, bgcolor: "rgba(0,0,0,0)" },
+    scene: scene([-2, 2], [-2, 2], [-2, 4], { x: 1.7, y: -1.5, z: 0.9 })
+  };
+  var config = { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["toImage"] };
+
+  // ---- Notes, topics 7 & 8: the portfolio-mix example in 3D ----
+  // The part of the plane n·p = d that lies inside the box, as a flat polygon (triangle fan).
+  function planeInBox(n, d, box, color, name) {
+    var f = function (p) { return n[0] * p[0] + n[1] * p[1] + n[2] * p[2] - d; };
+    var pts = [];
+    for (var m = 0; m < 8; m++) {
+      var p = [box[0][m & 1], box[1][(m >> 1) & 1], box[2][(m >> 2) & 1]];
+      for (var a = 0; a < 3; a++) {
+        if ((m >> a) & 1) continue;
+        var q = p.slice(); q[a] = box[a][1];
+        var fp = f(p), fq = f(q);
+        if (fp === fq || fp * fq > 0) continue;
+        var t = fp / (fp - fq), r = [p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1]), p[2] + t * (q[2] - p[2])];
+        if (!pts.some(function (s) { return Math.abs(s[0] - r[0]) + Math.abs(s[1] - r[1]) + Math.abs(s[2] - r[2]) < 1e-9; })) pts.push(r);
+      }
+    }
+    var c = [0, 1, 2].map(function (k) { return pts.reduce(function (s, p) { return s + p[k]; }, 0) / pts.length; });
+    var u = Math.abs(n[0]) < 0.9 * Math.hypot(n[0], n[1], n[2]) ? [0, -n[2], n[1]] : [-n[2], 0, n[0]];
+    var v = [n[1] * u[2] - n[2] * u[1], n[2] * u[0] - n[0] * u[2], n[0] * u[1] - n[1] * u[0]];
+    function dot(x, y) { return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]; }
+    pts.sort(function (p, q) {
+      var dp = [p[0] - c[0], p[1] - c[1], p[2] - c[2]], dq = [q[0] - c[0], q[1] - c[1], q[2] - c[2]];
+      return Math.atan2(dot(dp, v), dot(dp, u)) - Math.atan2(dot(dq, v), dot(dq, u));
+    });
+    var I = [], J = [], K = [];
+    for (var k = 1; k < pts.length - 1; k++) { I.push(0); J.push(k); K.push(k + 1); }
+    return { type: "mesh3d", name: name, showlegend: true, opacity: 0.45, color: color, flatshading: true, hoverinfo: "name",
+      x: pts.map(function (p) { return p[0]; }), y: pts.map(function (p) { return p[1]; }), z: pts.map(function (p) { return p[2]; }),
+      i: I, j: J, k: K };
+  }
+  function seg3(a, b, color, name, dash) {
+    return { type: "scatter3d", mode: "lines+markers", name: name, line: { color: color, width: dash ? 5 : 8, dash: dash ? "dash" : "solid" },
+      marker: { size: [2, 5], color: color }, x: [a[0], b[0]], y: [a[1], b[1]], z: [a[2], b[2]] };
+  }
+  function pfScene(r, ticks, titles, eye) {
+    var S = scene(r[0], r[1], r[2], eye);
+    ["xaxis", "yaxis", "zaxis"].forEach(function (k, i) { S[k].dtick = ticks[i]; S[k].title.text = titles[i]; });
+    return S;
+  }
+  var FUNDS = ["Nifty (₹ lakh)", "bonds (₹ lakh)", "midcap (₹ lakh)"];
+  var TARGETS = ["budget (₹ lakh)", "return (₹ thousand)", "exposure (₹ lakh)"];
+
+  // ---- Notes, topic 3: the three planes before and after elimination ----
+  if (document.getElementById("e3U")) {
+    var Le = JSON.parse(JSON.stringify(layout));
+    var boxE = [[3, 7], [1, 5], [0, 4]];
+    Le.scene = pfScene(boxE, [1, 1, 1], FUNDS, { x: 1.7, y: -1.5, z: 0.9 });
+    Le.margin.t = 44;
+    var before = [true, true, true, false, false, true], after = [true, false, false, true, true, true], all = [0, 1, 2, 3, 4, 5];
+    Le.updatemenus = [{ type: "buttons", direction: "right", x: 0, y: 1.02, xanchor: "left", yanchor: "bottom", showactive: true, active: 1,
+      bgcolor: paper2, bordercolor: rule, font: { color: ink, size: 13 },
+      buttons: [{ label: "Before: A", method: "restyle", args: [{ visible: before }, all] },
+                { label: "After elimination: U", method: "restyle", args: [{ visible: after }, all] }] }];
+    var eTraces = [
+      planeInBox([1, 1, 1], 10, boxE, blue, "row 1: x + y + z = 10"),
+      planeInBox([12, 7, 15], 111, boxE, green, "row 2: 12x + 7y + 15z = 111"),
+      planeInBox([1, 0, 1.2], 7.4, boxE, orange, "row 3: x + 1.2z = 7.4"),
+      planeInBox([0, -5, 3], -9, boxE, green, "new row 2: −5y + 3z = −9"),
+      planeInBox([0, 0, -0.4], -0.8, boxE, orange, "new row 3: −0.4z = −0.8 (z = 2)"),
+      { type: "scatter3d", mode: "markers+text", name: "solution (5, 3, 2)", marker: { color: red, size: 7 },
+        x: [5], y: [3], z: [2], text: ["(5, 3, 2)"], textposition: "middle right", textfont: { color: red, size: 15 } }
+    ];
+    eTraces.forEach(function (t, i) { t.visible = after[i]; });
+    Plotly.newPlot("e3U", eTraces, Le, config);
+  }
+
+  if (window.SystemLab) SystemLab.mount(document.getElementById("syslab"), [
+    { label: "Portfolio mix · 2 × 2", cols: ["Nifty fund", "Bond fund"], rows: ["budget", "return"], A: [[1, 1], [12, 7]], b: [10, 105],
+      meaning: ["₹ lakh in the Nifty fund", "₹ lakh in the bond fund"], neg: "borrowing, or selling short" },
+    { label: "Portfolio mix · 3 × 3", cols: ["Nifty fund", "Bond fund", "Midcap fund"], rows: ["budget", "return", "exposure"], A: [[1, 1, 1], [12, 7, 15], [1, 0, 1.2]], b: [10, 111, 7.4],
+      meaning: ["₹ lakh in the Nifty fund", "₹ lakh in the bond fund", "₹ lakh in the midcap fund"], neg: "borrowing, or selling short" },
+    { label: "Portfolio mix · two Nifty funds (singular)", cols: ["Nifty fund A", "Nifty fund B"], rows: ["budget", "return"], A: [[1, 1], [12, 12]], b: [10, 105],
+      meaning: ["₹ lakh in Nifty fund A", "₹ lakh in Nifty fund B"], neg: "borrowing, or selling short" },
+    { label: "Hedging · 2 × 2", cols: ["Nifty fut", "Nifty IT fut"], rows: ["market", "currency"], A: [[1, 1], [0, 1]], b: [8, 3],
+      meaning: ["units of Nifty futures to sell", "units of Nifty IT futures to sell"], neg: "buy those futures instead of selling" },
+    { label: "Hedging · 3 × 3", cols: ["Nifty fut", "Nifty IT fut", "Bank Nifty fut"], rows: ["market", "currency", "rates"], A: [[1, 1, 1], [0, 1, 0], [0, 0, 1]], b: [10, 3, 2],
+      meaning: ["units of Nifty futures to sell", "units of Nifty IT futures to sell", "units of Bank Nifty futures to sell"], neg: "buy those futures instead of selling" },
+    { label: "Hedging · Nifty ETF + Nifty futures (singular)", cols: ["Nifty fut", "Nifty ETF short"], rows: ["market", "currency"], A: [[1, 1], [0, 0]], b: [8, 3],
+      meaning: ["units of Nifty futures to sell", "units of Nifty ETF to short"], neg: "buy instead of selling" },
+    { label: "Lot sizes · 2 × 2", cols: ["Futures", "20,000 call"], rows: ["Nifty at 19,800", "Nifty at 20,200"], A: [[-200, 0], [200, 200]], b: [-200, 600],
+      meaning: ["lots of futures to buy", "lots of the 20,000 call to buy"], neg: "sell (write) that many lots" },
+    { label: "Lot sizes · 3 × 3", cols: ["Futures", "19,900 call", "20,100 call"], rows: ["Nifty at 19,800", "Nifty at 20,000", "Nifty at 20,200"], A: [[-200, 0, 0], [0, 100, 0], [200, 300, 100]], b: [-200, 100, 700],
+      meaning: ["lots of futures to buy", "lots of the 19,900 call to buy", "lots of the 20,100 call to buy"], neg: "sell (write) that many lots" },
+    { label: "Lot sizes · futures, call, put (singular)", cols: ["Futures", "20,000 call", "20,000 put"], rows: ["Nifty at 19,800", "Nifty at 20,000", "Nifty at 20,200"], A: [[-200, 0, 200], [0, 0, 0], [200, 200, 0]], b: [-200, 100, 700],
+      meaning: ["lots of futures to buy", "lots of the 20,000 call to buy", "lots of the 20,000 put to buy"], neg: "sell (write) that many lots" }
+  ], { steps: true });
+
+  // Plots drawn while their tab was hidden need a resize once the tab is shown.
+  document.querySelectorAll(".tabs button[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      setTimeout(function () { document.querySelectorAll(".plot3d-box").forEach(function (el) { Plotly.Plots.resize(el); }); }, 0);
+    });
+  });
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=3"></script>
+</body>
+</html>
