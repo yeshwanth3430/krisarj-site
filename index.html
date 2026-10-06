@@ -20,16 +20,31 @@
 <main class="page tabbed">
   <nav class="tabs" role="tablist" aria-label="Home sections">
     <span class="tabs-title">Quant from First Principles</span>
-    <button role="tab" data-tab="subjects" aria-selected="true">Subjects</button>
-    <button role="tab" data-tab="roadmap" aria-selected="false">Roadmap</button>
-    <button role="tab" data-tab="about" aria-selected="false">About</button>
+    <button role="tab" data-tab="roadmap" aria-selected="true">Roadmap</button>
+    <button role="tab" data-tab="subjects" aria-selected="false">Subjects</button>
   </nav>
   <div class="tab-body">
   <p class="meta">Learning series</p>
   <h1>Quant from First Principles</h1>
   <p class="subtitle">The mathematics of quantitative finance, one subject at a time, explained from zero with interactive Nifty options labs.</p>
 
-  <section class="tab-panel" data-panel="subjects">
+  <section class="tab-panel" data-panel="roadmap">
+  <nav class="contents"><span class="label">Roadmap</span>
+    <ol>
+      <li><a href="#rm-map">The big picture</a></li>
+      <li><a href="#rm-la">Linear Algebra</a></li>
+      <li><a href="#rm-svc">Single Variable Calculus</a></li>
+      <li><a href="#rm-mvc">Multivariable Calculus</a></li>
+      <li><a href="#rm-pr">Probability</a></li>
+      <li><a href="#rm-de">Differential Equations</a></li>
+      <li><a href="#rm-fin">Maths for Finance</a></li>
+    </ol>
+  </nav>
+  <div id="roadmap-root"></div>
+  <noscript><p>The roadmap needs JavaScript. See the <a href="linear-algebra/index.html">Linear Algebra topics</a>.</p></noscript>
+  </section>
+
+  <section class="tab-panel" data-panel="subjects" hidden>
   <nav class="contents"><span class="label">Subjects</span>
     <ol>
       <li><a href="linear-algebra/index.html">Linear Algebra</a></li>
@@ -80,33 +95,7 @@
   </div>
   </section>
 
-  <section class="tab-panel" data-panel="roadmap" hidden>
-  <nav class="contents"><span class="label">Roadmap</span>
-    <ol>
-      <li><a href="#rm-map">The big picture</a></li>
-      <li><a href="#rm-la">Linear Algebra</a></li>
-      <li><a href="#rm-svc">Single Variable Calculus</a></li>
-      <li><a href="#rm-mvc">Multivariable Calculus</a></li>
-      <li><a href="#rm-pr">Probability</a></li>
-      <li><a href="#rm-de">Differential Equations</a></li>
-      <li><a href="#rm-fin">Maths for Finance</a></li>
-    </ol>
-  </nav>
-  <div id="roadmap-root"></div>
-  <noscript><p>The roadmap needs JavaScript. See the <a href="linear-algebra/index.html">Linear Algebra topics</a>.</p></noscript>
-  </section>
 
-  <section class="tab-panel" data-panel="about" hidden>
-  <h2 style="margin-top:8px">About</h2>
-  <p>Most quant material starts at Black–Scholes. This series starts underneath it: the maths every model is built from, one idea at a time, tied to the Indian options market (Nifty CE/PE, strikes, lots).</p>
-  <p>Each lesson has two tabs: <b>Notes</b> (the idea explained from zero, every word defined) and <b>Examples</b> (an interactive lab where you type your own Nifty inputs and see every step, then worked examples and practice problems with hidden answers).</p>
-  <div class="box finance"><span class="label">Where the material comes from</span>
-    <p>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra, taught by Prof. Gilbert Strang (free at ocw.mit.edu, licensed CC BY-NC-SA 4.0). The notes here are written in their own words, add market examples and labs, and are shared under the same licence. This site is not affiliated with or endorsed by MIT.</p>
-  </div>
-  <div class="box pitfall"><span class="label">Please note</span>
-    <p>Everything here is for learning, not a recommendation to buy or sell anything. Market numbers are illustrative; prices, premiums and lot sizes change over time.</p>
-  </div>
-  </section>
   </div>
 </main>
 <footer class="site-foot"><div class="in">
