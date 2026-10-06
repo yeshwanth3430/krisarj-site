@@ -3,10 +3,12 @@
 The maths behind the markets, explained from zero, with interactive Nifty options labs and a personal progress tracker.
 
 ## Layout
+One main folder; everything visitors see is in `public/`, one folder per subject.
+
 - `public/`: the website (published as-is)
   - `index.html`: home (Roadmap + Subjects tabs)
   - `tracker.html`: "My tracker" page
-  - `linear-algebra/`: topic pages and lessons (`<body data-lesson="la-01-1">` marks a tracked lesson)
+  - `linear-algebra/`: subject folder: topic pages and lessons (future subjects get their own folder, e.g. `probability/`) (`<body data-lesson="la-01-1">` marks a tracked lesson)
   - `assets/`: notebook.css, site.css, notebook.js, roadmap.js, tracker.js, labs
 - `functions/api/progress.js`: GET/PUT `/api/progress` (Cloudflare Pages Function)
 - `schema.sql`: D1 table (`progress`: id, data JSON, created_at, updated_at)
