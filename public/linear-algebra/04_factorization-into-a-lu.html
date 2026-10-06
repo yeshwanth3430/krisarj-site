@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-<link rel="stylesheet" href="../assets/notebook.css?v=8">
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
 <link rel="stylesheet" href="../assets/site.css?v=5">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <script src="../assets/notebook.js?v=2"></script>
@@ -70,6 +70,7 @@
       <li><a href="#t8">Singular matrices and LU</a><span>A singular matrix can still have $A = LU$: the zero pivot sits at the bottom of $U$.</span></li>
       <li class="no-print"><a href="#t9">Summary</a><span>The key ideas and words on one screen.</span></li>
     </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-prodinv">Inverse of a product</a> <a href="#m-lu">LU decomposition (Doolittle)</a> <a href="#m-gj">Gauss–Jordan (preview)</a> <a href="#m-ldu">LDU decomposition</a> <a href="#m-fwd">Forward & back substitution</a> <a href="#m-cost">Operation count</a> <a href="#m-plu">PA = LU</a></p>
 
     <!-- ====================================================== -->
     <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
@@ -94,6 +95,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t1">1. Inverse of a product</h3>
+    <div class="box method" id="m-prodinv"><span class="label">Rule · Inverse and transpose of a product</span>
+      <p>$(AB)^{-1} = B^{-1}A^{-1}$ and $(AB)^T = B^TA^T$: reverse the order. Also $(A^{-1})^T = (A^T)^{-1}$.</p>
+    </div>
     <p>Strang starts with one basic fact, because $L$ will turn out to be a product of inverses.</p>
     <div class="box theorem"><span class="label">Inverse of a product</span>
       <p>If $A$ and $B$ are invertible, then $(AB)^{-1} = B^{-1}A^{-1}$: the same inverses, <b>in reverse order</b>.</p>
@@ -112,6 +116,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t2">2. 2 × 2: from EA = U to A = LU</h3>
+    <div class="box method" id="m-lu"><span class="label">Method · LU decomposition (LU factorization)</span>
+      <p>Write $A = LU$: $L$ lower triangular with 1s on its diagonal and the elimination multipliers below; $U$ upper triangular with the pivots. It is <a href="02_elimination-with-matrices.html#m-gauss">Gaussian elimination</a>, recorded. This form, with the 1s in $L$, is also called the <b>Doolittle</b> factorization (the <b>Crout</b> form puts the 1s in $U$ instead).</p>
+    </div>
     <p>The two-fund portfolio took one elimination step ($\ell_{21} = 12$):</p>
     $$ \underbrace{\begin{bmatrix} 1 & 0 \\ -12 & 1 \end{bmatrix}}_{E_{21}}\underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 1 \\ 0 & -5 \end{bmatrix}}_{U}. $$
     <p>That has the elimination matrix on the left of $A$. Strang wants $A$ alone on one side. Multiply both sides by $E_{21}^{-1}$, which <b>adds back</b> 12 × row 1 (Lesson 2):</p>
@@ -149,14 +156,24 @@
       <p>Multipliers: $\ell_{21} = 2$ gives row 2 $= (0, -2, 0)$; $\ell_{31} = 2$ gives row 3 $= (0, -6, 1)$; $\ell_{32} = -6/-2 = 3$ gives row 3 $= (0, 0, 1)$. So $U = \left[\begin{smallmatrix} 1 & 3 & 0 \\ 0 & -2 & 0 \\ 0 & 0 & 1 \end{smallmatrix}\right]$ and $L = \left[\begin{smallmatrix} 1 & 0 & 0 \\ 2 & 1 & 0 \\ 2 & 3 & 1 \end{smallmatrix}\right]$, the multipliers 2, 2, 3 in place.</p>
     </details>
 
+    <div class="box method" id="m-gj"><span class="label">Method · Gauss–Jordan elimination (preview)</span>
+      <p>Eliminate <b>above</b> each pivot as well as below, turning $[A \mid I]$ into $[I \mid A^{-1}]$. MIT's solution to problem 4.1 finds $E^{-1} = L$ this way. We don't need it here, because $L$ can be read straight off the multipliers. Full treatment in Lesson 3.</p>
+    </div>
+
     <!-- ====================================================== -->
     <h3 class="topic" id="t4">4. Pulling out the pivots: A = LDU</h3>
+    <div class="box method" id="m-ldu"><span class="label">Method · LDU decomposition</span>
+      <p>$A = LDU$: unit lower triangular $L$, diagonal $D$ holding the pivots, unit upper triangular $U$. The same information as $LU$, arranged symmetrically.</p>
+    </div>
     <p>$L$ has 1s on its diagonal but $U$ has the pivots. To balance them, divide each row of $U$ by its pivot and collect the pivots in a <dfn class="term" tabindex="0" data-def="A matrix with non-zero entries only on its diagonal.">diagonal matrix</dfn> $D$:</p>
     $$ \underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{bmatrix}}_{U} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & -5 & 0 \\ 0 & 0 & -0.4 \end{bmatrix}}_{D}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & -0.6 \\ 0 & 0 & 1 \end{bmatrix}}_{\text{new } U} $$
     <p>Row 2 of $U$ divided by $-5$ is $(0, 1, -0.6)$; row 3 divided by $-0.4$ is $(0, 0, 1)$. Now $A = LDU$, with 1s on the diagonals of both triangular factors and the pivots $1, -5, -0.4$ in the middle. Strang mostly stays with $A = LU$; $LDU$ is the same information arranged symmetrically.</p>
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t5">5. Solving with L and U</h3>
+    <div class="box method" id="m-fwd"><span class="label">Method · Forward and back substitution</span>
+      <p><b>Forward substitution</b> solves the lower triangular $Lc = b$ from the <b>top</b> row down. <b>Back substitution</b> then solves $Ux = c$ from the <b>bottom</b> row up. Together they solve $Ax = b$ in about $n^2$ steps once $A = LU$ is known.</p>
+    </div>
     <p>Once $A = LU$ is known, solving $Ax = b$ means solving $L(Ux) = b$. Call $Ux = c$ and do it in two easy triangular passes:</p>
     <ol class="step-list">
       <li><b>Forward:</b> solve $Lc = b$ from the <b>top</b> down. (This is exactly what elimination did to $b$.)</li>
@@ -187,6 +204,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t6">6. How expensive is elimination?</h3>
+    <div class="box method" id="m-cost"><span class="label">Rule · Operation count: $O(n^3)$ to factor, $O(n^2)$ to solve</span>
+      <p>Gaussian elimination / LU on an $n \times n$ matrix takes about $\tfrac13 n^3$ multiply-subtract steps; each right-hand side then costs about $n^2$. Read $O(n^3)$ as "grows like $n^3$".</p>
+    </div>
     <p>A practical question Strang asks: for an $n \times n$ matrix, how many operations does elimination take? Count one "multiply a row entry and subtract" as one operation.</p>
     <ul>
       <li>Clearing column 1 changes almost every entry below row 1: about $n^2$ operations.</li>
@@ -204,6 +224,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t7">7. Row exchanges: PA = LU</h3>
+    <div class="box method" id="m-plu"><span class="label">Method · PA = LU (LU with row exchanges)</span>
+      <p>Put the rows in a workable order first with a permutation $P$, then factor: $PA = LU$. Every invertible matrix has one. Software picks $P$ by <b>partial pivoting</b> (largest entry in each pivot position) for accuracy.</p>
+    </div>
     <p>So far, no row exchanges. What if a 0 lands in a pivot position? Lesson 2's <b>credit fund</b> (12% return, beta 0) did exactly that. The fix: do the needed row exchange <b>first</b>, then factor. For the credit-fund matrix, swap rows 2 and 3 with $P_{23}$:</p>
     $$ \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}}_{P_{23}}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 12 & 12 & 15 \\ 1 & 0 & 1.2 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 1 & 1 & 0 \\ 12 & 0 & 1 \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -1 & 0.2 \\ 0 & 0 & 3 \end{bmatrix}}_{U} $$
     <p>After the swap the rows are budget, exposure, return. The multipliers are $\ell_{21} = 1$ (exposure − budget), $\ell_{31} = 12$ (return − 12 × budget), and $\ell_{32} = 0$ (that row was already done). They sit in $L$ as before.</p>

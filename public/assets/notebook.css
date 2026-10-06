@@ -20,6 +20,7 @@
   --int-b:  #b7791f; --int-bg:  #fbf3e2;
   --fin-b:  #0f766e; --fin-bg:  #e6f5f3;
   --warn-b: #b42318; --warn-bg: #fcecea;
+  --mth-b:  #4338ca; --mth-bg:  #eef0fb;
 
   --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
   --sans:  "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -36,6 +37,7 @@
     --int-b: #e0a84a; --int-bg: #2c2517;
     --fin-b: #4cc2b5; --fin-bg: #152a28;
     --warn-b:#ef7b70; --warn-bg:#2f1a19;
+    --mth-b: #a5adf7; --mth-bg: #1f2240;
   }
 }
 :root[data-theme="dark"] {
@@ -47,6 +49,7 @@
   --int-b: #e0a84a; --int-bg: #2c2517;
   --fin-b: #4cc2b5; --fin-bg: #152a28;
   --warn-b:#ef7b70; --warn-bg:#2f1a19;
+  --mth-b: #a5adf7; --mth-bg: #1f2240;
 }
 
 * { box-sizing: border-box; }
@@ -126,6 +129,7 @@ th { background: var(--paper-2); font-family: var(--sans); font-size: 14px; }
 .box.intuition  { --b: var(--int-b); --bg: var(--int-bg); }
 .box.finance    { --b: var(--fin-b); --bg: var(--fin-bg); }
 .box.pitfall    { --b: var(--warn-b);--bg: var(--warn-bg); }
+.box.method     { --b: var(--mth-b); --bg: var(--mth-bg); scroll-margin-top: 70px; }
 
 /* proofs / worked solutions fold away */
 details.proof { margin: 12px 0 20px; border: 1px dashed var(--rule); border-radius: 8px; padding: 8px 14px; }
@@ -379,3 +383,9 @@ details.more { margin: 12px 0 20px; border: 1px dashed var(--rule); border-radiu
 details.more > summary { cursor: pointer; font: 600 14px/1.6 var(--sans); color: var(--accent); }
 details.more[open] > summary { margin-bottom: 8px; }
 @media print { details.more { border: none; padding: 0; } }
+
+/* "Methods in this lesson": chips under the Index, each linking to its Method box */
+.methods { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 16px 0 0; font: 500 13px/1.4 var(--sans); }
+.methods .label { font: 700 11px/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-right: 4px; }
+.methods a { padding: 4px 10px; border: 1px solid var(--mth-b); border-radius: 999px; color: var(--mth-b); background: var(--mth-bg); }
+.methods a:hover { text-decoration: none; filter: brightness(.95); }

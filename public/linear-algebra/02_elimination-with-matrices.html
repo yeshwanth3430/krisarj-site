@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-<link rel="stylesheet" href="../assets/notebook.css?v=8">
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
 <link rel="stylesheet" href="../assets/site.css?v=5">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <script src="../assets/notebook.js?v=2"></script>
@@ -70,6 +70,7 @@
       <li><a href="#t8">Undoing a step: inverses</a><span>Every step can be reversed, which is why elimination gives the right answer.</span></li>
       <li class="no-print"><a href="#t9">Summary</a><span>The key ideas and words on one screen.</span></li>
     </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-gauss">Gaussian elimination</a> <a href="#m-aug">Augmented matrix</a> <a href="#m-back">Back substitution</a> <a href="#m-pivot">Row exchange (pivoting)</a> <a href="#m-elim">Elimination matrices</a> <a href="#m-perm">Permutation matrix</a> <a href="#m-inv">Inverse of a step</a></p>
 
     <!-- ====================================================== -->
     <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
@@ -98,6 +99,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t1">1. The idea of elimination</h3>
+    <div class="box method" id="m-gauss"><span class="label">Method · Gaussian elimination (forward elimination)</span>
+      <p>Subtract multiples of each pivot row to create zeros below the pivot, column by column, until the matrix is upper triangular. Named after Carl Friedrich Gauss (1777–1855), though the method is far older: it appears in China around 2,000 years ago, in <i>The Nine Chapters on the Mathematical Art</i>. It is the algorithm inside every equation solver.</p>
+    </div>
     <p>Some systems are easy. If the last equation has only one unknown, you solve it at once, then work upwards:</p>
     $$ \begin{aligned} x + y + z &= 10 \\ -5y + 3z &= -9 \\ -0.4z &= -0.8 \end{aligned} \qquad\Rightarrow\qquad z = 2,\; y = 3,\; x = 5. $$
     <p>Its matrix is <dfn class="term" tabindex="0" data-def="A square matrix with only zeros below the main diagonal (the diagonal from top-left to bottom-right).">upper triangular</dfn>: zeros everywhere below the diagonal. <b>Elimination</b> turns any (good) system into one like this, without changing its solution.</p>
@@ -150,6 +154,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t3">3. 3 × 3, step by step</h3>
+    <div class="box method" id="m-aug"><span class="label">Method · Augmented matrix $[A \mid b]$</span>
+      <p>Write $b$ as an extra column next to $A$, so every row operation is applied to both sides of the equations at once.</p>
+    </div>
     <p>Write the coefficients and the right-hand side side by side. Tacking $b$ on as an extra column gives the <dfn class="term" tabindex="0" data-def="The matrix A with the right-hand side b tacked on as an extra column: [A | b]. Every row operation is done to both.">augmented matrix</dfn> $[A \mid b]$, so whatever we do to an equation's left side we also do to its right side.</p>
     $$ [A \mid b] = \left[\begin{array}{ccc|c} 1 & 1 & 1 & 10 \\ 12 & 7 & 15 & 111 \\ 1 & 0 & 1.2 & 7.4 \end{array}\right] \quad \begin{matrix} \text{budget} \\ \text{return} \\ \text{exposure} \end{matrix} $$
 
@@ -180,6 +187,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t4">4. Back substitution</h3>
+    <div class="box method" id="m-back"><span class="label">Method · Back substitution</span>
+      <p>Solve an upper triangular system $Ux = c$ from the <b>last</b> equation up. Each equation brings in exactly one new unknown.</p>
+    </div>
     <p>$Ux = c$ is triangular, so solve it <b>from the bottom up</b>. Each equation has only one new unknown:</p>
     <ol class="step-list">
       <li><b>Row 3:</b> $-0.4z = -0.8$, so $z = 2$.</li>
@@ -200,6 +210,9 @@
     <p><b>Pivots can never be 0</b>: we divide by them to find multipliers. So what if a 0 lands in a pivot position? Strang separates two cases.</p>
 
     <h4>Temporary failure: fixed by a row exchange</h4>
+    <div class="box method" id="m-pivot"><span class="label">Method · Row exchange (pivoting)</span>
+      <p>When a pivot position holds 0, swap that row with a lower row that has a non-zero entry in the same column. Strang swaps only when forced. Software usually also swaps to bring the <b>largest</b> entry into the pivot position (<b>partial pivoting</b>), which keeps rounding errors small.</p>
+    </div>
     <p>Replace the bond fund with a <b>credit fund</b> that also earns 12% but has no market exposure (beta 0). Its column is $(1, 12, 0)$. With target $(10, 126, 7.4)$:</p>
     $$ \left[\begin{array}{ccc|c} 1 & 1 & 1 & 10 \\ 12 & 12 & 15 & 126 \\ 1 & 0 & 1.2 & 7.4 \end{array}\right] \xrightarrow{\;R_2 - 12R_1,\;\; R_3 - R_1\;} \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \mathbf{0} & 3 & 6 \\ 0 & -1 & 0.2 & -2.6 \end{array}\right] $$
     <p>A $0$ in the second pivot position: Nifty and the credit fund earn the same, so removing $x$ from the return rule removed $y$ too. But there is a non-zero entry <b>below</b> it, so <b>exchange rows 2 and 3</b>:</p>
@@ -228,6 +241,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t6">6. Elimination as matrices</h3>
+    <div class="box method" id="m-elim"><span class="label">Method · Elimination matrices $E_{ij}$</span>
+      <p>Write each row operation as a left multiplication by an elementary matrix: the identity with $-\ell_{ij}$ in position $(i, j)$. All of elimination becomes $E_{32}E_{31}E_{21}A = U$.</p>
+    </div>
     <p>In <a href="#t3">topic 3</a> we did three row operations by hand. Strang's main point is that <b>each of them is a multiplication by a matrix</b>. Once that is true, the whole of elimination fits in one line, and that line is what the next lessons build on.</p>
 
     <h4>How a matrix can change rows</h4>
@@ -277,6 +293,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t7">7. Row exchanges: permutation matrices</h3>
+    <div class="box method" id="m-perm"><span class="label">Method · Permutation matrix $P$</span>
+      <p>The identity with its rows reordered. $PA$ reorders the rows of $A$; $AP$ reorders its columns.</p>
+    </div>
     <p>The row exchange in <a href="#t5">topic 5</a> (the credit fund) is also a matrix. After column 1 we had a $0$ in the second pivot position:</p>
     $$ M = \begin{bmatrix} 1 & 1 & 1 \\ 0 & \mathbf{0} & 3 \\ 0 & -1 & 0.2 \end{bmatrix} $$
     <p><b>To build the matrix that swaps rows 2 and 3, do that swap to the identity matrix:</b></p>
@@ -293,6 +312,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t8">8. Undoing a step: inverses</h3>
+    <div class="box method" id="m-inv"><span class="label">Method · Inverse of an elimination step</span>
+      <p>Flip the sign of the multiplier: $E_{ij}^{-1}$ adds back what $E_{ij}$ subtracted. For a row exchange, swap again. Inverses of whole matrices use the <b>Gauss–Jordan method</b>, covered in Lesson 3.</p>
+    </div>
     <p>$E_{21}$ subtracted 12 × budget from return. To undo it, <b>add 12 × budget back</b>. That is the identity with $+12$ where $E_{21}$ had $-12$:</p>
     $$ E_{21}^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}. $$
     <p>Check it on the portfolio: $E_{21}$ turned the return row $(12, 7, 15)$ into $(0, -5, 3)$. Adding 12 × budget gives $(0, -5, 3) + 12(1, 1, 1) = (12, 7, 15)$: the original return rule is back. So $E_{21}^{-1}(E_{21}A) = A$, and $E_{21}^{-1}E_{21} = I$.</p>

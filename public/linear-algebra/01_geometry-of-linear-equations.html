@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-<link rel="stylesheet" href="../assets/notebook.css?v=8">
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
 <link rel="stylesheet" href="../assets/site.css?v=5">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <script src="../assets/notebook.js?v=2"></script>
@@ -70,6 +70,7 @@
       <li><a href="#t8">When it goes wrong: singular</a><span>Funds that add nothing new: no answer, or endless answers. What changes with many funds.</span></li>
       <li class="no-print"><a href="#t9">Summary</a><span>The key ideas and words on one screen.</span></li>
     </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-graphical">Graphical method (row picture)</a> <a href="#m-column">Column picture</a> <a href="#m-matvec">Matrix–vector multiplication</a> <a href="#m-subst">Substitution</a></p>
 
     <!-- ====================================================== -->
     <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
@@ -222,6 +223,9 @@
     </div>
 
     <h4 id="t3mv">What $Ax$ means: matrix × vector, two ways</h4>
+    <div class="box method" id="m-matvec"><span class="label">Method · Matrix–vector multiplication</span>
+      <p><b>By columns:</b> $Ax$ is a linear combination of the columns of $A$, with the entries of $x$ as weights. <b>By rows:</b> each entry of $Ax$ is the <b>dot product</b> of one row of $A$ with $x$. Same answer either way.</p>
+    </div>
     <p>What does $Ax$ actually mean? Take our 2 × 2 matrix and the portfolio $x = (7, 3)$. There are two ways to multiply, and both give the same answer.</p>
 
     <p><b>Way 1: by columns (Strang's favourite).</b></p>
@@ -251,6 +255,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t4">4. The row picture</h3>
+    <div class="box method" id="m-graphical"><span class="label">Method · Graphical method (row picture)</span>
+      <p>Draw each equation as a line (or a plane in 3D) and read off the point where they all meet. Great for seeing 2 unknowns; impractical beyond 3.</p>
+    </div>
     <p><b>Idea:</b> take one equation (one row) at a time and draw <b>every</b> point $(x, y)$ that satisfies it. A linear equation in two unknowns gives a straight line. A solution must satisfy both rules, so it sits on both lines: <b>it is where the lines cross</b>.</p>
 
     <h4>Draw each line from two points</h4>
@@ -300,6 +307,9 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t5">5. The column picture ★</h3>
+    <div class="box method" id="m-column"><span class="label">Method · Column picture (linear combination of columns)</span>
+      <p>Write $Ax = b$ as $x\,(\text{column } 1) + y\,(\text{column } 2) + \dots = b$ and look for the weights that land on $b$. The view the whole course builds on.</p>
+    </div>
     <p>Now read the <b>same</b> system a column at a time. Pull out everything that multiplies $x$ and everything that multiplies $y$:</p>
     $$
     x \begin{bmatrix} 1 \\ 12 \end{bmatrix} + y \begin{bmatrix} 1 \\ 7 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix}
@@ -444,6 +454,9 @@
     <p>Now $A$ is $3 \times 3$. Each column is still one fund: (budget used, return earned, exposure added) per ₹1 lakh. The bond fund's column has a $0$ at the bottom because it adds no market exposure.</p>
 
     <h4>Solve it step by step</h4>
+    <div class="box method" id="m-subst"><span class="label">Method · Substitution</span>
+      <p>Solve one equation for one unknown, put that expression into the other equations, and repeat until one unknown is left. Fine by hand for small systems; <a href="02_elimination-with-matrices.html#m-gauss">Gaussian elimination</a> (Lesson 2) is the systematic version every computer uses.</p>
+    </div>
     <p>A systematic method, elimination, is <a href="02_elimination-with-matrices.html">Lesson 2</a>. Here, substitution is enough: each step removes one unknown.</p>
     <ol class="step-list">
       <li><b>Equation (3) has no $y$.</b> Write $x$ in terms of $z$: $\;x = 7.4 - 1.2z$.</li>
