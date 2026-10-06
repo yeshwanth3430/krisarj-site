@@ -17,8 +17,7 @@
   ];
   // key: subject-topic-lesson ; url relative to the site root
   var LESSONS = [
-    { key: "la-01-1", subject: "la", topic: 1, topicName: "Vectors & linear equations", title: "The Geometry of Linear Equations", url: "linear-algebra/01_geometry-of-linear-equations.html" },
-    { key: "la-01-2", subject: "la", topic: 1, topicName: "Vectors & linear equations", title: "An Overview of Key Ideas", url: "linear-algebra/02_overview-of-key-ideas.html" }
+    { key: "la-01-1", subject: "la", topic: 1, topicName: "Vectors & linear equations", title: "The Geometry of Linear Equations", url: "linear-algebra/01_geometry-of-linear-equations.html" }
   ];
   var DONE_AFTER_MS = 2 * 60 * 1000;   // auto-complete: reached the end of the notes and spent 2+ minutes
 
