@@ -373,3 +373,9 @@ details.check[open] > summary { margin-bottom: 6px; }
 .sl-table th { white-space: nowrap; }
 .sl-plots .plot3d-box { height: 400px; }
 .sl-out { margin: 4px 0 8px; }
+
+/* optional extra detail, folded away */
+details.more { margin: 12px 0 20px; border: 1px dashed var(--rule); border-radius: 8px; padding: 8px 14px; }
+details.more > summary { cursor: pointer; font: 600 14px/1.6 var(--sans); color: var(--accent); }
+details.more[open] > summary { margin-bottom: 8px; }
+@media print { details.more { border: none; padding: 0; } }

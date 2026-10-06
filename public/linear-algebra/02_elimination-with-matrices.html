@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-<link rel="stylesheet" href="../assets/notebook.css?v=7">
+<link rel="stylesheet" href="../assets/notebook.css?v=8">
 <link rel="stylesheet" href="../assets/site.css?v=5">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <script src="../assets/notebook.js?v=2"></script>
@@ -228,33 +228,33 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t6">6. Elimination as matrices</h3>
-    <p>Strang's main point: every step of elimination is a <b>matrix multiplication</b>. To see why, we need the "row" twin of Lesson 1's key fact.</p>
-    <div class="box theorem"><span class="label">Columns and rows</span>
-      <p><b>Matrix × column</b> = a combination of the <b>columns</b> of the matrix (<a href="01_geometry-of-linear-equations.html#t3mv">Lesson 1</a>).</p>
-      <p><b>Row × matrix</b> = a combination of the <b>rows</b> of the matrix: $\begin{bmatrix} a & b & c \end{bmatrix} A = a\,(\text{row } 1) + b\,(\text{row } 2) + c\,(\text{row } 3)$.</p>
+    <p>Strang's main point: every elimination step is a <b>multiplication by a matrix</b>. The step "row 2 − 12 × row 1" is done by</p>
+    $$ E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \qquad E_{21}A = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 1 & 0 & 1.2 \end{bmatrix}. $$
+    <p>$E_{21}$ is the <dfn class="term" tabindex="0" data-def="The matrix with 1s on the diagonal and 0s elsewhere. It changes nothing: IA = A. The matrix version of the number 1.">identity matrix</dfn> $I$ (which changes nothing) with $-12$ in row 2, column 1. Rows 1 and 3 are copied unchanged; row 2 becomes $-12 \times$ row 1 $+$ row 2. In general, $E_{ij}$ is the identity with $-\ell_{ij}$ in position $(i, j)$.</p>
+    <p>Do the three steps (2, 1), (3, 1), (3, 2) in order and you reach $U$:</p>
+    $$ E_{32}\,E_{31}\,E_{21}\,A = U. $$
+    <div class="box theorem"><span class="label">One matrix does all of elimination</span>
+      <p>You may move the parentheses in a matrix product (it is <b>associative</b>), so $E = E_{32}E_{31}E_{21}$ is a single matrix with $EA = U$.</p>
     </div>
-    <p>So the row $\begin{bmatrix} -12 & 1 & 0 \end{bmatrix}$ times $A$ gives $-12\,(\text{row } 1) + 1\,(\text{row } 2) = (0, -5, 3)$: exactly the new row 2 from step (2, 1).</p>
-
-    <h4>Elimination matrices</h4>
-    <p>Stack three such rows and you get the matrix that does a whole step. Start from the <dfn class="term" tabindex="0" data-def="The matrix with 1s on the diagonal and 0s elsewhere. It changes nothing: IA = A. The matrix version of the number 1.">identity matrix</dfn> $I$ (which leaves every row alone) and put $-\ell_{ij}$ in position $(i, j)$:</p>
-    $$
-    E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad
-    E_{31} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -1 & 0 & 1 \end{bmatrix} \quad
-    E_{32} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -0.2 & 1 \end{bmatrix}
-    $$
-    <p>$E_{21}$ subtracts 12 × row 1 from row 2 and leaves rows 1 and 3 unchanged. Check one entry the way Strang does: row 2 of $E_{21}$ times column 3 of $A$ is $-12(1) + 1(15) + 0(1.2) = 3$ ✓, the new entry in row 2, column 3.</p>
-    $$ E_{32}\,\big(E_{31}\,(E_{21}A)\big) = U. $$
-
-    <h4>Moving the parentheses</h4>
-    <p>Matrix multiplication is <b>associative</b>: you may regroup a product without changing it. So the three steps combine into <b>one matrix that does all of elimination</b>:</p>
-    $$ (E_{32}E_{31}E_{21})\,A = U, \qquad E = E_{32}E_{31}E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 1.4 & -0.2 & 1 \end{bmatrix}. $$
-    <p>Check the bottom row: $1.4(\text{row } 1) - 0.2(\text{row } 2) + 1(\text{row } 3) = (1.4 - 2.4 + 1,\ 1.4 - 1.4 + 0,\ 1.4 - 3 + 1.2) = (0, 0, -0.4)$ ✓, the last row of $U$.</p>
     <div class="box pitfall"><span class="label">Watch out: order matters</span>
-      <p>You may move the parentheses, but you may <b>not</b> change the order: in general $AB \ne BA$. For example $E_{21}E_{32}$ has a $0$ where $E_{32}E_{21}$ has a non-zero entry. Notice too that $E$ contains a messy $1.4$ even though the multipliers were the clean numbers $12, 1, 0.2$. Strang's fix, going back from $U$ to $A$ instead, is the subject of Lesson 4 ($A = LU$).</p>
+      <p>You may regroup, but you may <b>not</b> reorder: in general $AB \ne BA$. The matrices are multiplied in the order the steps were done, with the first step nearest to $A$.</p>
     </div>
 
-    <details class="check"><summary>Check yourself: what does the row $\begin{bmatrix} 1 & 2 & 7 \end{bmatrix}$ times a 3 × 3 matrix produce?</summary>
-      <p>A row: $1 \times$ row 1 $+ 2 \times$ row 2 $+ 7 \times$ row 3 of that matrix. (Strang's example in the lecture.)</p>
+    <details class="more"><summary>Show the details: row × matrix, all three $E$'s, and $E$ itself</summary>
+      <p><b>Why a matrix can do a row operation.</b> Lesson 1's key fact was that matrix × column combines the <b>columns</b> (<a href="01_geometry-of-linear-equations.html#t3mv">Lesson 1</a>). The twin fact: <b>row × matrix combines the rows</b>, $\begin{bmatrix} a & b & c \end{bmatrix} A = a\,(\text{row } 1) + b\,(\text{row } 2) + c\,(\text{row } 3)$. So row 2 of $E_{21}$, which is $\begin{bmatrix} -12 & 1 & 0 \end{bmatrix}$, produces $-12\,(\text{row } 1) + (\text{row } 2) = (0, -5, 3)$: exactly the new row 2.</p>
+      <p><b>All three steps.</b></p>
+      $$
+      E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad
+      E_{31} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -1 & 0 & 1 \end{bmatrix} \quad
+      E_{32} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -0.2 & 1 \end{bmatrix}
+      $$
+      <p><b>Checking one entry</b> the way Strang does: row 2 of $E_{21}$ times column 3 of $A$ is $-12(1) + 1(15) + 0(1.2) = 3$ ✓, the new entry in row 2, column 3.</p>
+      <p><b>The single matrix.</b></p>
+      $$ E = E_{32}E_{31}E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 1.4 & -0.2 & 1 \end{bmatrix}. $$
+      <p>Check its bottom row: $1.4(\text{row } 1) - 0.2(\text{row } 2) + 1(\text{row } 3) = (0, 0, -0.4)$ ✓, the last row of $U$.</p>
+      <p><b>Order really matters:</b> $E_{21}E_{32}$ has a $0$ in row 3, column 1, where $E_{32}E_{21}$ has $2.4$.</p>
+      <p><b>A teaser.</b> $E$ contains a messy $1.4$ even though the multipliers were the clean numbers $12, 1, 0.2$. Going the other way, from $U$ back to $A$, keeps them clean. That is <b>Lesson 4, $A = LU$</b>.</p>
+      <p><b>Check yourself:</b> what does the row $\begin{bmatrix} 1 & 2 & 7 \end{bmatrix}$ times a 3 × 3 matrix produce? <i>A row: $1 \times$ row 1 $+ 2 \times$ row 2 $+ 7 \times$ row 3 of that matrix (Strang's example).</i></p>
     </details>
 
     <!-- ====================================================== -->
