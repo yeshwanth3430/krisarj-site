@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/notebook.css?v=2">
-<link rel="stylesheet" href="assets/site.css?v=3">
+<link rel="stylesheet" href="assets/site.css?v=4">
 <script src="assets/notebook.js?v=2"></script>
 </head>
 <body>
@@ -83,86 +83,17 @@
   <section class="tab-panel" data-panel="roadmap" hidden>
   <nav class="contents"><span class="label">Roadmap</span>
     <ol>
-      <li><a href="#r0">How the path works</a></li>
-      <li><a href="#r1">Linear Algebra</a></li>
-      <li><a href="#r2">Single Variable Calculus</a></li>
-      <li><a href="#r3">Multivariable Calculus</a></li>
-      <li><a href="#r4">Probability</a></li>
-      <li><a href="#r5">Differential Equations</a></li>
-      <li><a href="#r6">Maths for Finance</a></li>
-      <li><a href="#r7">Where it all leads</a></li>
+      <li><a href="#rm-map">The big picture</a></li>
+      <li><a href="#rm-la">Linear Algebra</a></li>
+      <li><a href="#rm-svc">Single Variable Calculus</a></li>
+      <li><a href="#rm-mvc">Multivariable Calculus</a></li>
+      <li><a href="#rm-pr">Probability</a></li>
+      <li><a href="#rm-de">Differential Equations</a></li>
+      <li><a href="#rm-fin">Maths for Finance</a></li>
     </ol>
   </nav>
-
-  <h2 id="r0" style="margin-top:8px">How the path works</h2>
-  <p>Six subjects, in this order. Each one uses the ones before it, so nothing is assumed that has not been built first. Topics go live one at a time, and every topic has notes from zero plus an interactive lab.</p>
-  <ol class="toc rm-path">
-    <li><span class="n">01</span><span class="t"><a href="#r1">Linear Algebra</a> <span class="rm-why">· portfolios as vectors, hedges as equations</span></span><span class="s">In progress</span></li>
-    <li class="todo"><span class="n">02</span><span class="t">Single Variable Calculus <span class="rm-why">· how prices change</span></span><span class="s">Later</span></li>
-    <li class="todo"><span class="n">03</span><span class="t">Multivariable Calculus <span class="rm-why">· many inputs at once, optimisation</span></span><span class="s">Later</span></li>
-    <li class="todo"><span class="n">04</span><span class="t">Probability <span class="rm-why">· uncertainty and expected payoffs</span></span><span class="s">Later</span></li>
-    <li class="todo"><span class="n">05</span><span class="t">Differential Equations <span class="rm-why">· change over time, the road to PDEs</span></span><span class="s">Later</span></li>
-    <li class="todo"><span class="n">06</span><span class="t">Maths for Finance <span class="rm-why">· Itô, Black–Scholes, portfolios</span></span><span class="s">Later</span></li>
-  </ol>
-
-  <h2 id="r1">Stage 1 · Linear Algebra <span class="rm-chip rm-now">In progress</span></h2>
-  <p><b>What you learn:</b> vectors, matrices, elimination, vector spaces, orthogonality, determinants, eigenvalues and the SVD, in 15 topics.</p>
-  <div class="box finance"><span class="label">Why it matters in markets</span><p>A portfolio is a vector of positions and a set of products is a matrix of payoffs. Building a payoff, finding the best hedge, measuring beta, splitting risk into factors: all of it is linear algebra.</p></div>
-  <ol class="toc">
-    <li><span class="n">01</span><span class="t"><a href="linear-algebra/topic-01.html">Vectors &amp; linear equations</a> <span class="rm-why">· mixing products into a payoff</span></span><span class="s">Live</span></li>
-    <li class="todo"><span class="n">02</span><span class="t">Elimination, A = LU &amp; permutations <span class="rm-why">· solving for the lots</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">03</span><span class="t">Inverses &amp; transposes <span class="rm-why">· one recipe for every payoff</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">04</span><span class="t">Vector spaces, column space &amp; nullspace <span class="rm-why">· what you can build, what is free</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">05</span><span class="t">Independence, rank &amp; the four subspaces <span class="rm-why">· is the market complete?</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">06</span><span class="t">Graphs &amp; networks <span class="rm-why">· price loops and arbitrage</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">07</span><span class="t">Orthogonality &amp; projections <span class="rm-why">· the best possible hedge</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">08</span><span class="t">Least squares &amp; Gram–Schmidt <span class="rm-why">· beta and clean factors</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">09</span><span class="t">Determinants &amp; Cramer's rule <span class="rm-why">· redundant products, exact lots</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">10</span><span class="t">Eigenvalues, diagonalization &amp; powers <span class="rm-why">· where risk sits, compounding</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">11</span><span class="t">ODEs, Markov chains &amp; Fourier <span class="rm-why">· mean reversion, regimes, seasonality</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">12</span><span class="t">Positive definite matrices &amp; minima <span class="rm-why">· valid covariance, optimal portfolios</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">13</span><span class="t">Complex matrices, FFT &amp; Jordan form <span class="rm-why">· cycles in prices</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">14</span><span class="t">SVD &amp; linear transformations <span class="rm-why">· factor models</span></span><span class="s">Soon</span></li>
-    <li class="todo"><span class="n">15</span><span class="t">Change of basis &amp; pseudoinverse <span class="rm-why">· hedging with spare products</span></span><span class="s">Soon</span></li>
-  </ol>
-  <h2 id="r2">Stage 2 · Single Variable Calculus <span class="rm-chip">Later</span></h2>
-  <p><b>What you learn:</b> Limits, derivatives, integrals, series and Taylor expansions.</p>
-  <div class="box finance"><span class="label">Why it matters in markets</span><p>Every change in a price is a derivative: an option's delta is how fast its premium moves when Nifty moves, and gamma is how fast delta itself moves. Taylor expansions are how traders approximate P&amp;L for a small move.</p></div>
-  <p><b>After this stage you can:</b></p>
-  <ul><li>read delta and gamma as derivatives</li><li>approximate an option's P&amp;L for a 50-point Nifty move</li><li>understand continuous compounding and discounting</li></ul>
-  <h2 id="r3">Stage 3 · Multivariable Calculus <span class="rm-chip">Later</span></h2>
-  <p><b>What you learn:</b> Partial derivatives, gradients, Lagrange multipliers, multiple integrals, vector calculus.</p>
-  <div class="box finance"><span class="label">Why it matters in markets</span><p>A premium depends on many things at once: spot, volatility, time and rates. Partial derivatives give each Greek separately; Lagrange multipliers solve 'best portfolio under a budget' problems.</p></div>
-  <p><b>After this stage you can:</b></p>
-  <ul><li>compute every Greek as a partial derivative</li><li>optimise a portfolio with constraints</li><li>see risk as a surface, not a single number</li></ul>
-  <h2 id="r4">Stage 4 · Probability <span class="rm-chip">Later</span></h2>
-  <p><b>What you learn:</b> Random variables, distributions, expectation, conditioning, limit theorems.</p>
-  <div class="box finance"><span class="label">Why it matters in markets</span><p>Prices are uncertain. Probability turns that uncertainty into expected payoffs, the chance an option expires in the money, value at risk, and the bell curve behind most pricing models.</p></div>
-  <p><b>After this stage you can:</b></p>
-  <ul><li>price a payoff as an expected value</li><li>estimate the chance a strike is crossed by expiry</li><li>understand why returns are modelled as normal (and where that fails)</li></ul>
-  <h2 id="r5">Stage 5 · Differential Equations <span class="rm-chip">Later</span></h2>
-  <p><b>What you learn:</b> First and second order ODEs, systems, Laplace transforms, the road to PDEs.</p>
-  <div class="box finance"><span class="label">Why it matters in markets</span><p>How a quantity changes over time: mean-reverting spreads, interest-rate models, and finally the partial differential equation that an option price must satisfy.</p></div>
-  <p><b>After this stage you can:</b></p>
-  <ul><li>solve a mean-reversion model and read its half-life</li><li>understand time decay as a differential equation</li><li>be ready for the Black–Scholes PDE</li></ul>
-  <h2 id="r6">Stage 6 · Mathematics with Applications in Finance <span class="rm-chip">Later</span></h2>
-  <p><b>What you learn:</b> Stochastic processes, Itô calculus, Black–Scholes, portfolio theory, time series.</p>
-  <div class="box finance"><span class="label">Why it matters in markets</span><p>Everything comes together: random price paths, the rules of calculus for them, the Black–Scholes price and Greeks, portfolio optimisation and forecasting from data.</p></div>
-  <p><b>After this stage you can:</b></p>
-  <ul><li>derive and use Black–Scholes for Nifty options</li><li>build and rebalance an optimal portfolio</li><li>model and test a time series of prices</li></ul>
-
-  <h2 id="r7">Where it all leads</h2>
-  <p>The big results of quant finance, and the stages each one needs:</p>
-  <table>
-    <tr><th>Goal</th><th>Built from</th></tr>
-    <tr><td>Replicate and hedge an option payoff</td><td>Stage 1 (linear algebra)</td></tr>
-    <tr><td>Beta, factor models, risk decomposition</td><td>Stage 1 + Stage 4 (probability)</td></tr>
-    <tr><td>The Greeks: delta, gamma, vega, theta</td><td>Stages 2 + 3 (calculus)</td></tr>
-    <tr><td>Optimal portfolio under a budget</td><td>Stages 1 + 3 + 4</td></tr>
-    <tr><td>Black–Scholes price for Nifty options</td><td>Stages 3 + 4 + 5 + 6</td></tr>
-    <tr><td>Forecasting and testing on price data</td><td>Stages 1 + 4 + 6</td></tr>
-  </table>
-  <div class="box pitfall"><span class="label">Please note</span><p>The path and examples are for learning only. Nothing here is a recommendation to trade.</p></div>
+  <div id="roadmap-root"></div>
+  <noscript><p>The roadmap needs JavaScript. See the <a href="linear-algebra/index.html">Linear Algebra topics</a>.</p></noscript>
   </section>
 
   <section class="tab-panel" data-panel="about" hidden>
@@ -183,5 +114,6 @@
   <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
   <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
 </div></footer>
+<script defer src="assets/roadmap.js?v=2"></script>
 </body>
 </html>
