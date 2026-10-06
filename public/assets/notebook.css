@@ -159,6 +159,10 @@ details.proof[open] > summary { margin-bottom: 8px; }
 .toc li .t { flex: 1; }
 .toc li .s { font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
 .toc li.todo .t { color: var(--ink-soft); }
+.toc .lessons { list-style: none; padding: 0; margin: 6px 0 0; }
+.toc .lessons li { display: flex; gap: 10px; padding: 3px 0; border: 0; font-size: 14px; color: var(--ink-soft); }
+.toc .lessons li:not(.todo) { color: var(--ink); }
+.toc .lessons .ln { font: 500 12px/1.6 var(--mono); color: var(--ink-soft); min-width: 28px; }
 .empty { color: var(--ink-soft); font: italic 16px/1.6 var(--serif); padding: 16px 0; }
 
 /* prev / next at the bottom of note pages */
