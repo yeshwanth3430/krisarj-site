@@ -203,8 +203,15 @@
     <p>Replace the bond fund with a <b>credit fund</b> that also earns 12% but has no market exposure (beta 0). Its column is $(1, 12, 0)$. With target $(10, 126, 7.4)$:</p>
     $$ \left[\begin{array}{ccc|c} 1 & 1 & 1 & 10 \\ 12 & 12 & 15 & 126 \\ 1 & 0 & 1.2 & 7.4 \end{array}\right] \xrightarrow{\;R_2 - 12R_1,\;\; R_3 - R_1\;} \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \mathbf{0} & 3 & 6 \\ 0 & -1 & 0.2 & -2.6 \end{array}\right] $$
     <p>A $0$ in the second pivot position: Nifty and the credit fund earn the same, so removing $x$ from the return rule removed $y$ too. But there is a non-zero entry <b>below</b> it, so <b>exchange rows 2 and 3</b>:</p>
-    $$ \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \boxed{-1} & 0.2 & -2.6 \\ 0 & 0 & \boxed{3} & 6 \end{array}\right] \quad\Rightarrow\quad z = 2,\; y = 3,\; x = 5. $$
-    <p>Three pivots after the exchange, so the matrix is fine (invertible). Swapping the order of two equations never changes the solution.</p>
+    $$ \left[\begin{array}{ccc|c} \boxed{1} & 1 & 1 & 10 \\ 0 & \boxed{-1} & 0.2 & -2.6 \\ 0 & 0 & \boxed{3} & 6 \end{array}\right] $$
+    <p>Now it is upper triangular, so back-substitute from the bottom row up:</p>
+    <ol class="step-list">
+      <li><b>Row 3:</b> $3z = 6$, so $z = 2$.</li>
+      <li><b>Row 2:</b> $-y + 0.2z = -2.6$. Put in $z = 2$: $-y + 0.4 = -2.6$, so $-y = -3$ and $y = 3$.</li>
+      <li><b>Row 1:</b> $x + y + z = 10$. Put in $y = 3$, $z = 2$: $x + 5 = 10$, so $x = 5$.</li>
+    </ol>
+    <p><span class="answer">₹5 lakh Nifty, ₹3 lakh credit fund, ₹2 lakh midcap.</span> Check in the original rules: budget $5 + 3 + 2 = 10$ ✓; return $12(5) + 12(3) + 15(2) = 60 + 36 + 30 = 126$ ✓; exposure $5 + 0 + 1.2(2) = 7.4$ ✓.</p>
+    <p>Three pivots ($1, -1, 3$) after the exchange, so the matrix is fine (invertible). Swapping the order of two equations never changes the solution.</p>
 
     <h4>Permanent failure: the matrix is singular</h4>
     <p>Now replace the midcap fund with the <b>balanced fund</b> from <a href="01_geometry-of-linear-equations.html#t8">Lesson 1</a> (half Nifty, half bonds), column $(1, 9.5, 0.5)$:</p>
@@ -355,7 +362,8 @@
     <h4>2 × 2: futures and the 20,000 call</h4>
     $$ \left[\begin{array}{cc|c} -200 & 0 & -200 \\ 200 & 200 & 600 \end{array}\right] \quad \begin{matrix} \text{Nifty at 19,800} \\ \text{Nifty at 20,200} \end{matrix} $$
     <p>Pivot $-200$. Multiplier $\ell_{21} = 200 / (-200) = -1$. Subtracting $-1$ times row 1 means <b>adding</b> row 1:</p>
-    $$ \xrightarrow{\;R_2 - (-1)R_1\;} \left[\begin{array}{cc|c} \boxed{-200} & 0 & -200 \\ 0 & \boxed{200} & 400 \end{array}\right] \quad\Rightarrow\quad y = 2,\; x = 1. $$
+    $$ \xrightarrow{\;R_2 - (-1)R_1\;} \left[\begin{array}{cc|c} \boxed{-200} & 0 & -200 \\ 0 & \boxed{200} & 400 \end{array}\right] $$
+    <p>Back substitution: row 2 gives $200y = 400$, so $y = 2$. Row 1 gives $-200x + 0(2) = -200$, so $x = 1$.</p>
     <p><span class="answer">1 lot of futures, 2 lots of the call.</span> A negative multiplier is fine; only a <b>zero pivot</b> is a problem.</p>
 
     <h4>3 × 3: futures, 19,900 call, 20,100 call</h4>
@@ -365,7 +373,8 @@
       <li><b>Step (3, 1):</b> $\ell_{31} = 200/(-200) = -1$, so add row 1 to row 3: $(0, 300, 100, 500)$.</li>
       <li><b>Step (3, 2):</b> $\ell_{32} = 300/100 = 3$, so row 3 − 3 × row 2: $(0, 0, 100, 200)$.</li>
     </ul>
-    $$ [U \mid c] = \left[\begin{array}{ccc|c} \boxed{-200} & 0 & 0 & -200 \\ 0 & \boxed{100} & 0 & 100 \\ 0 & 0 & \boxed{100} & 200 \end{array}\right] \quad\Rightarrow\quad z = 2,\; y = 1,\; x = 1. $$
+    $$ [U \mid c] = \left[\begin{array}{ccc|c} \boxed{-200} & 0 & 0 & -200 \\ 0 & \boxed{100} & 0 & 100 \\ 0 & 0 & \boxed{100} & 200 \end{array}\right] $$
+    <p>Back substitution, bottom row first: $100z = 200$ gives $z = 2$; $100y + 0(2) = 100$ gives $y = 1$; $-200x + 0 + 0 = -200$ gives $x = 1$. Check at 20,200: $200(1) + 300(1) + 100(2) = 700$ ✓.</p>
     <p><span class="answer">1 lot of futures, 1 lot of the 19,900 call, 2 lots of the 20,100 call.</span> As matrices: $E_{32}E_{31}A = U$ with</p>
     $$ E_{31} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 1 & 0 & 1 \end{bmatrix}, \qquad E_{32} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -3 & 1 \end{bmatrix}. $$
     <p class="note-soft">$E_{31}$ has $+1$, not $-1$: the entry is always $-\ell_{ij}$, and here $\ell_{31} = -1$.</p>
