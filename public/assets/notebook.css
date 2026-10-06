@@ -367,3 +367,9 @@ details.check[open] > summary { margin-bottom: 6px; }
   a { color: inherit; }
   body { font-size: 15px; }
 }
+
+/* system lab (Examples tab) */
+.sl-table input[type=number] { width: 6.5em; }
+.sl-table th { white-space: nowrap; }
+.sl-plots .plot3d-box { height: 400px; }
+.sl-out { margin: 4px 0 8px; }
