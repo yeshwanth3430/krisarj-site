@@ -177,7 +177,6 @@ details.proof[open] > summary { margin-bottom: 8px; }
   details.proof { border: none; }
 }
 
-/* exam / review rows in a lecture list */
 
 /* ---------- figures (inline SVG diagrams) ---------- */
 .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 20px 0; }
