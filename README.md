@@ -10,6 +10,7 @@ One main folder; everything visitors see is in `public/`, one folder per subject
   - `tracker.html`: "My tracker" page
   - `linear-algebra/`: subject folder: topic pages and lessons (future subjects get their own folder, e.g. `probability/`) (`<body data-lesson="la-01-1">` marks a tracked lesson)
   - `assets/`: notebook.css, site.css, notebook.js, roadmap.js, tracker.js, labs
+- `public/downloads/`: per-lesson PDFs (slides carousel + notes report), built by `tools/downloads/`
 - `functions/api/progress.js`: GET/PUT `/api/progress` (Cloudflare Pages Function)
 - `schema.sql`: D1 table (`progress`: id, data JSON, created_at, updated_at)
 - `wrangler.toml`: Pages project + D1 binding `DB` (database `krisarj-learn`)
@@ -18,6 +19,13 @@ One main folder; everything visitors see is in `public/`, one folder per subject
 ```
 npx wrangler pages deploy --project-name krisarj-site --branch main --commit-dirty=true
 ```
+
+## Lesson downloads (slides + notes PDF)
+After changing a lesson's notes or its `-slides.html` page, rebuild the PDFs, then deploy:
+```
+cd tools/downloads && npm install && npm run build
+```
+Add new lessons to `LESSONS` in `tools/downloads/build.js`. The build fails if any slide's content runs into its footer.
 
 ## Adding a lesson to the tracker
 1. Add `data-lesson="<subject>-<topic>-<lesson>"` to the lesson page's `<body>` and include `assets/tracker.js`.

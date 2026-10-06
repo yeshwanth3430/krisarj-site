@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geometry of Linear Equations · Slides</title>
+<meta name="description" content="Linear Algebra Lesson 1 as a slide carousel: the row picture, the column picture and Ax = b on a portfolio-mix example.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=6">
+<style>
+  /* One slide = one 1080 × 1350 page (LinkedIn's portrait carousel size). Always light. */
+  @page { size: 1080px 1350px; margin: 0; }
+  html, body { margin: 0; background: #e9e5dc; }
+  body { font: 34px/1.5 var(--serif); color: var(--ink); }
+  .slide {
+    position: relative; overflow: hidden; box-sizing: border-box;
+    width: 1080px; height: 1350px; margin: 0 auto 24px; padding: 96px 84px 130px;
+    background: var(--paper); display: flex; flex-direction: column;
+    font-size: 38px; line-height: 1.45;   /* set here, so print styles for the notes don't shrink it */
+    break-after: page; page-break-after: always;
+  }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .kicker { font: 600 22px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .slide h1 { font: 700 82px/1.06 var(--sans); letter-spacing: -.02em; margin: 22px 0 30px; }
+  .slide h2 { font: 700 60px/1.12 var(--sans); letter-spacing: -.015em; margin: 14px 0 34px; padding: 0; border: 0; }
+  .slide p { margin: 0 0 26px; }
+  .slide ul, .slide ol { margin: 0 0 26px; padding-left: 40px; }
+  .slide li { margin: 0 0 14px; }
+  .lead { font-size: 44px; line-height: 1.38; }
+  .soft { color: var(--ink-soft); }
+  .slide table { display: table; width: 100%; font-size: 32px; margin: 10px 0 28px; }
+  .slide th { font-size: 24px; }
+  .slide th, .slide td { padding: 12px 16px; }
+  .slide .box { font-size: 34px; margin: 10px 0 26px; padding: 18px 24px; }
+  .slide .box > .label { font-size: 18px; }
+  .slide figure.fig { width: 100%; max-width: 660px; align-self: center; margin: 6px 0 0; padding: 18px; }
+  .slide .figs { width: 100%; }
+  .slide .figs figure.fig { max-width: none; }
+  .slide figure.fig figcaption { font-size: 26px; }
+  .slide .fig .tick { font-size: 12px; }
+  .slide .figs { gap: 22px; }
+  .slide img.plot { display: block; align-self: center; max-width: 100%; max-height: 440px; width: auto; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .slide .katex { font-size: 1.04em; }
+  .answer { font-size: 1em; }
+  .foot {
+    position: absolute; left: 84px; right: 84px; bottom: 48px;
+    display: flex; justify-content: space-between; gap: 20px;
+    padding-top: 18px; border-top: 2px solid var(--rule);
+    font: 500 21px/1 var(--sans); color: var(--ink-soft);
+  }
+  .cover { justify-content: center; }
+  .cover h1 { font-size: 104px; }
+  .cover .lead { font-size: 44px; }
+  .chip { display: inline-block; font: 600 24px/1 var(--sans); color: var(--accent); border: 2px solid var(--accent); border-radius: 999px; padding: 12px 20px; margin: 0 10px 12px 0; }
+  .center { text-align: center; }
+  .grow { flex: 1; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  @media screen and (max-width: 1100px) { .slide { zoom: .5; } }
+</style>
+</head>
+<body>
+
+<!-- 1. Cover -->
+<section class="slide cover">
+  <div class="kicker">Linear Algebra · Lesson 1</div>
+  <h1>The Geometry of Linear Equations</h1>
+  <p class="lead">One question, three ways to see it: the <b>row picture</b>, the <b>column picture</b> and the <b>matrix form</b> $Ax = b$.</p>
+  <p class="lead soft">Explained from zero on a real money question: splitting ₹10 lakh between two funds.</p>
+  <div><span class="chip">2 × 2 and 3 × 3</span><span class="chip">Portfolio mix</span><span class="chip">MIT 18.06, Lecture 1</span></div>
+</section>
+
+<!-- 2. The question -->
+<section class="slide">
+  <div class="kicker">The question</div>
+  <h2>You have ₹10 lakh and two funds</h2>
+  <table>
+    <tr><th>Fund</th><th>Return per year</th><th>On ₹1 lakh</th></tr>
+    <tr><td><b>Nifty 50 index fund</b></td><td>12%</td><td>₹12 thousand</td></tr>
+    <tr><td><b>Government bond fund</b></td><td>7%</td><td>₹7 thousand</td></tr>
+  </table>
+  <p class="lead">You want to invest <b>all</b> ₹10 lakh and earn <b>₹1,05,000 a year</b>.</p>
+  <div class="box finance"><span class="label">The question</span><p>How much goes into each fund?</p></div>
+  <p class="soft">Returns are illustrative round numbers, not forecasts.</p>
+</section>
+
+<!-- 3. Equations -->
+<section class="slide">
+  <div class="kicker">Step 1</div>
+  <h2>Turn it into equations</h2>
+  <p>Let $x$ = ₹ lakh in Nifty and $y$ = ₹ lakh in bonds. Each requirement is one equation:</p>
+  $$ \begin{aligned} x + y &= 10 &&\text{budget (₹ lakh)}\\ 12x + 7y &= 105 &&\text{return (₹ thousand)} \end{aligned} $$
+  <p>Two equations that must both hold are a <b>system</b>. Each unknown is only multiplied by a number and added, so the equations are <b>linear</b>.</p>
+  <div class="box intuition"><span class="label">The fundamental problem of linear algebra</span><p>Solve $n$ linear equations in $n$ unknowns.</p></div>
+</section>
+
+<!-- 4. Three views -->
+<section class="slide">
+  <div class="kicker">The big idea</div>
+  <h2>Three ways to read the same equations</h2>
+  <table>
+    <tr><th>View</th><th>You look at</th><th>The question becomes</th></tr>
+    <tr><td><b>Row picture</b></td><td>one equation at a time</td><td>Where do the lines <b>meet</b>?</td></tr>
+    <tr><td><b>Column picture ★</b></td><td>one fund at a time</td><td>Which <b>mix</b> of fund arrows hits the target?</td></tr>
+    <tr><td><b>Matrix form</b></td><td>everything at once</td><td>Find $x$ with $Ax = b$.</td></tr>
+  </table>
+  <p class="lead">The ★ marks the view the whole course is built on.</p>
+</section>
+
+<!-- 5. Vectors -->
+<section class="slide">
+  <div class="kicker">Step 2</div>
+  <h2>Each fund is a vector</h2>
+  <p>₹1 lakh of a fund uses ₹1 lakh of budget and earns its return. Stack the two numbers in a column:</p>
+  $$ \text{Nifty} = \begin{bmatrix} 1 \\ 12 \end{bmatrix} \qquad \text{Bond} = \begin{bmatrix} 1 \\ 7 \end{bmatrix} $$
+  <ul>
+    <li><b>Scale:</b> $7\,(1, 12) = (7, 84)$: ₹7 lakh of Nifty.</li>
+    <li><b>Add:</b> $(1, 12) + (1, 7) = (2, 19)$: ₹1 lakh in each.</li>
+  </ul>
+  <div class="box definition"><span class="label">Linear combination</span><p>Scale vectors and add them: $x\,c + y\,d$. Here, a linear combination of the funds is simply <b>a portfolio</b>.</p></div>
+</section>
+
+<!-- 6. Matrix form -->
+<section class="slide">
+  <div class="kicker">Step 3</div>
+  <h2>Matrix form: $Ax = b$</h2>
+  $$ \underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}}_{A} \underbrace{\begin{bmatrix} x \\ y \end{bmatrix}}_{x} = \underbrace{\begin{bmatrix} 10 \\ 105 \end{bmatrix}}_{b} $$
+  <p><b>Rows</b> of $A$ = the rules (budget, return). <b>Columns</b> of $A$ = the funds.</p>
+  <p><b>By columns:</b> $A\begin{bmatrix}7\\3\end{bmatrix} = 7\begin{bmatrix}1\\12\end{bmatrix} + 3\begin{bmatrix}1\\7\end{bmatrix} = \begin{bmatrix}10\\105\end{bmatrix}$</p>
+  <p><b>By rows:</b> $\;1\cdot7 + 1\cdot3 = 10,\quad 12\cdot7 + 7\cdot3 = 105$</p>
+  <div class="box theorem"><span class="label">Key fact</span><p>$Ax$ is a combination of the columns of $A$.</p></div>
+</section>
+
+<!-- 7. Row picture -->
+<section class="slide">
+  <div class="kicker">View 1</div>
+  <h2>Row picture: lines that cross</h2>
+  <figure class="fig">
+    <svg viewBox="0 0 360 300" role="img" aria-label="Row picture: budget line and return line cross at (7, 3)">
+      <line class="grid" x1="96" y1="20" x2="96" y2="260"/><line class="grid" x1="152" y1="20" x2="152" y2="260"/><line class="grid" x1="208" y1="20" x2="208" y2="260"/><line class="grid" x1="264" y1="20" x2="264" y2="260"/><line class="grid" x1="320" y1="20" x2="320" y2="260"/>
+      <line class="grid" x1="40" y1="185" x2="350" y2="185"/><line class="grid" x1="40" y1="110" x2="350" y2="110"/><line class="grid" x1="40" y1="35" x2="350" y2="35"/>
+      <line class="axis" x1="40" y1="260" x2="350" y2="260"/><line class="axis" x1="40" y1="260" x2="40" y2="20"/>
+      <text class="tick" x="92" y="276">2</text><text class="tick" x="148" y="276">4</text><text class="tick" x="204" y="276">6</text><text class="tick" x="260" y="276">8</text><text class="tick" x="312" y="276">10</text>
+      <text class="tick" x="26" y="189">5</text><text class="tick" x="20" y="114">10</text><text class="tick" x="20" y="39">15</text>
+      <text class="tick" x="350" y="296" text-anchor="end">x: Nifty (₹ lakh)</text><text class="tick" x="46" y="16">y: bonds (₹ lakh)</text>
+      <line class="l1" x1="40" y1="110" x2="320" y2="260"/>
+      <line class="l2" x1="40" y1="35" x2="285" y2="260"/>
+      <circle class="hit" cx="236" cy="215" r="6"/>
+      <text class="lbl ci" x="244" y="208">(7, 3)</text>
+      <text class="lbl c1" x="70" y="119" transform="rotate(28.2 70 119)">budget: x + y = 10</text>
+      <text class="lbl c2" x="56" y="43" transform="rotate(42.6 56 43)">return: 12x + 7y = 105</text>
+    </svg>
+  </figure>
+  <p style="margin-top:26px">Each rule is a line. The answer is where they cross: <span class="answer">₹7 lakh Nifty, ₹3 lakh bonds.</span></p>
+  <p class="soft">Check: $7 + 3 = 10$ ✓ and $84 + 21 = 105$ ✓</p>
+</section>
+
+<!-- 8. Column picture -->
+<section class="slide">
+  <div class="kicker">View 2 ★</div>
+  <h2>Column picture: mix the arrows</h2>
+  $$ x\begin{bmatrix} 1 \\ 12 \end{bmatrix} + y\begin{bmatrix} 1 \\ 7 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix} $$
+  <figure class="fig">
+    <svg viewBox="0 0 370 300" role="img" aria-label="Column picture: 7 Nifty arrows plus 3 bond arrows reach (10, 105)">
+      <defs>
+        <marker id="sa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="c1" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="sb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="c2" d="M0,0 L10,5 L0,10 z"/></marker>
+        <marker id="sc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="c3" d="M0,0 L10,5 L0,10 z"/></marker>
+      </defs>
+      <line class="grid" x1="96" y1="30" x2="96" y2="270"/><line class="grid" x1="152" y1="30" x2="152" y2="270"/><line class="grid" x1="208" y1="30" x2="208" y2="270"/><line class="grid" x1="264" y1="30" x2="264" y2="270"/><line class="grid" x1="320" y1="30" x2="320" y2="270"/>
+      <line class="grid" x1="40" y1="210" x2="350" y2="210"/><line class="grid" x1="40" y1="150" x2="350" y2="150"/><line class="grid" x1="40" y1="90" x2="350" y2="90"/><line class="grid" x1="40" y1="30" x2="350" y2="30"/>
+      <line class="axis" x1="40" y1="270" x2="350" y2="270"/><line class="axis" x1="40" y1="270" x2="40" y2="24"/>
+      <text class="tick" x="92" y="286">2</text><text class="tick" x="148" y="286">4</text><text class="tick" x="204" y="286">6</text><text class="tick" x="260" y="286">8</text><text class="tick" x="312" y="286">10</text>
+      <text class="tick" x="20" y="214">30</text><text class="tick" x="20" y="154">60</text><text class="tick" x="20" y="94">90</text><text class="tick" x="14" y="34">120</text>
+      <text class="tick" x="250" y="262">budget (₹ lakh)</text><text class="tick" x="46" y="20">return (₹ thousand)</text>
+      <line class="l3 dash" x1="40" y1="270" x2="320" y2="60" marker-end="url(#sc)"/>
+      <line class="l1" x1="40" y1="270" x2="236" y2="102" marker-end="url(#sa)"/>
+      <line class="l2" x1="236" y1="102" x2="320" y2="60" marker-end="url(#sb)"/>
+      <text class="lbl c1" x="166" y="152" text-anchor="end">7 × Nifty = (7, 84)</text>
+      <text class="lbl c2" x="228" y="52" text-anchor="end">+ 3 × bond = (3, 21)</text>
+      <text class="lbl c3" x="180" y="226">b = (10, 105)</text>
+    </svg>
+  </figure>
+  <p style="margin-top:26px">Same answer, seen as a <b>mix of fund arrows</b> landing exactly on the target $b$.</p>
+</section>
+
+<!-- 9. Reach -->
+<section class="slide">
+  <div class="kicker">The bigger question</div>
+  <h2>Which targets can we reach?</h2>
+  <p>The <b>span</b> of some vectors = every point you can reach by mixing them.</p>
+  <table>
+    <tr><th>Funds you may use</th><th>Span</th><th>Meaning</th></tr>
+    <tr><td>Nifty only</td><td>a line</td><td>always exactly 12%</td></tr>
+    <tr><td>Bonds only</td><td>another line</td><td>always exactly 7%</td></tr>
+    <tr><td>Nifty + bonds</td><td>the whole plane</td><td>any budget, any return</td></tr>
+  </table>
+  <div class="box definition"><span class="label">Column space $C(A)$</span><p>The span of the columns of $A$: every target your funds can produce.</p></div>
+  <div class="box theorem"><span class="label">Why it matters</span><p>$Ax = b$ has a solution <b>exactly when $b$ is in $C(A)$</b>.</p></div>
+</section>
+
+<!-- 10. 3x3 row picture -->
+<section class="slide">
+  <div class="kicker">Three funds: 3 × 3</div>
+  <h2>Add a midcap fund and a third rule</h2>
+  $$ \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} \begin{bmatrix} x \\ y \\ z \end{bmatrix} = \begin{bmatrix} 10 \\ 111 \\ 7.4 \end{bmatrix} \quad \begin{matrix} \text{budget} \\ \text{return} \\ \text{market exposure} \end{matrix} $$
+  <img class="plot" src="img/l1-3x3-row.png" alt="Three planes meeting at (5, 3, 2)">
+  <p style="margin-top:24px"><b>Row picture:</b> three planes meet at one point: <span class="answer">₹5 lakh Nifty, ₹3 lakh bonds, ₹2 lakh midcap.</span></p>
+</section>
+
+<!-- 11. 3x3 column picture -->
+<section class="slide">
+  <div class="kicker">Three funds: 3 × 3</div>
+  <h2>Column picture in 3D</h2>
+  $$ 5\begin{bmatrix} 1 \\ 12 \\ 1 \end{bmatrix} + 3\begin{bmatrix} 1 \\ 7 \\ 0 \end{bmatrix} + 2\begin{bmatrix} 1 \\ 15 \\ 1.2 \end{bmatrix} = \begin{bmatrix} 10 \\ 111 \\ 7.4 \end{bmatrix} $$
+  <img class="plot" src="img/l1-3x3-col.png" alt="Fund arrows walking to the target in 3D">
+  <p style="margin-top:24px">Change the target and the row picture gets three <b>new</b> planes. The column picture keeps the <b>same</b> three arrows, just mixed differently.</p>
+</section>
+
+<!-- 12. Singular -->
+<section class="slide">
+  <div class="kicker">When it goes wrong</div>
+  <h2>Singular matrices</h2>
+  <p><b>Two Nifty funds</b> (both 12%) point the same way:</p>
+  <div class="figs">
+    <figure class="fig">
+      <svg viewBox="0 0 360 300" role="img" aria-label="Two parallel lines">
+        <line class="axis" x1="40" y1="260" x2="350" y2="260"/><line class="axis" x1="40" y1="260" x2="40" y2="20"/>
+        <line class="l1" x1="40" y1="110" x2="320" y2="260"/>
+        <line class="l2" x1="40" y1="128.75" x2="285" y2="260"/>
+        <text class="lbl c1" x="150" y="162" transform="rotate(28.2 150 162)">x + y = 10</text>
+        <text class="lbl c2" x="70" y="162" transform="rotate(28.2 70 162)">12x + 12y = 105</text>
+      </svg>
+      <figcaption>Parallel lines: no solution.</figcaption>
+    </figure>
+    <figure class="fig">
+      <svg viewBox="0 0 370 300" role="img" aria-label="One direction only, target off the line">
+        <defs><marker id="sd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="c1" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+        <line class="axis" x1="40" y1="270" x2="350" y2="270"/><line class="axis" x1="40" y1="270" x2="40" y2="24"/>
+        <line class="l1" x1="40" y1="270" x2="320" y2="30" stroke-opacity=".25" stroke-width="10"/>
+        <line class="l1" x1="40" y1="270" x2="68" y2="246" marker-end="url(#sd)"/>
+        <circle class="hit" cx="320" cy="60" r="6"/><text class="lbl c3" x="230" y="76">(10, 105) ✗</text>
+      </svg>
+      <figcaption>Every mix earns 12%: the target is off the line.</figcaption>
+    </figure>
+  </div>
+  <div class="box definition" style="margin-top:26px"><span class="label">Singular vs invertible</span><p><b>Invertible:</b> the columns fill the space: one solution for every $b$. <b>Singular:</b> a fund adds no new direction (a twin fund, or a 50/50 balanced fund): no solution or infinitely many.</p></div>
+</section>
+
+<!-- 13. Takeaways -->
+<section class="slide">
+  <div class="kicker">Recap</div>
+  <h2>Key takeaways</h2>
+  <ol class="lead" style="font-size:36px">
+    <li>A linear system is $Ax = b$: rows are rules, columns are funds.</li>
+    <li><b>Row picture:</b> lines (or planes) meet at the solution.</li>
+    <li><b>Column picture ★:</b> $b$ is a mix of the columns; the solution gives the amounts.</li>
+    <li>$Ax$ is a combination of the columns of $A$.</li>
+    <li>Every target is reachable exactly when the columns fill the space ($A$ invertible).</li>
+    <li>A fund built from others adds no direction: $A$ is singular.</li>
+  </ol>
+</section>
+
+<!-- 14. Closing -->
+<section class="slide cover">
+  <div class="kicker">Quant from First Principles</div>
+  <h1 style="font-size:76px">The full interactive lesson is free</h1>
+  <p class="lead">Fund mixer, 3D plots you can rotate, worked examples and practice:</p>
+  <p class="lead"><b>learn.krisarj.com</b></p>
+  <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
+</section>
+
+<script>
+// Footer with page numbers on every slide.
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  slides.forEach(function (s, i) {
+    var f = document.createElement("div");
+    f.className = "foot";
+    f.innerHTML = "<span>Quant from First Principles · learn.krisarj.com</span><span>" + (i + 1) + " / " + slides.length + "</span>";
+    s.appendChild(f);
+  });
+})();
+window.addEventListener("load", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {
+    delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>

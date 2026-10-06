@@ -345,3 +345,25 @@ dfn.term:hover::after, dfn.term:focus::after {
 details.check { margin: 16px 0 24px; padding: 8px 14px; background: var(--paper-2); border: 1px solid var(--rule); border-left: 4px solid var(--ex-b); border-radius: 0 8px 8px 0; }
 details.check > summary { cursor: pointer; font: 600 14px/1.6 var(--sans); color: var(--ex-b); }
 details.check[open] > summary { margin-bottom: 6px; }
+.notes h4 { scroll-margin-top: 70px; }
+
+/* download / share links on a lesson page */
+.downloads { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: -12px 0 28px; font: 500 14px/1.4 var(--sans); }
+.downloads .label { font: 700 11px/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-right: 4px; }
+.downloads a.dl { padding: 7px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper-2); color: var(--ink); }
+.downloads a.dl:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+.downloads a.share { color: var(--accent); }
+
+/* printed lesson (the PDF notes report): notes only, everything unfolded */
+@media print {
+  .no-print, .tabs, .contents, .site-foot, .qf-done, .tab-panel[data-panel="examples"] { display: none !important; }
+  .page.tabbed { padding: 0; }
+  .notes { border-left: 0; padding-left: 0; }
+  .tab-panel[data-panel="notes"] { display: block !important; }
+  h2, h3, h4 { break-after: avoid; }
+  figure.fig, .box, details.check, table { break-inside: avoid; }
+  details.check { border-left-width: 4px; }
+  dfn.term { border-bottom: 0; }
+  a { color: inherit; }
+  body { font-size: 15px; }
+}

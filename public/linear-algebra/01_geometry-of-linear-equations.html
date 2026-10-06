@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-<link rel="stylesheet" href="../assets/notebook.css?v=5">
+<link rel="stylesheet" href="../assets/notebook.css?v=6">
 <link rel="stylesheet" href="../assets/site.css?v=5">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <script src="../assets/notebook.js?v=2"></script>
@@ -30,6 +30,12 @@
   <p class="meta">Linear Algebra · Topic 1 · Lesson 1 (MIT 18.06, Lecture 1)</p>
   <h1>The Geometry of Linear Equations</h1>
   <p class="subtitle">One system $Ax = b$, three ways to see it: the row picture, the column picture, and the matrix form.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-01-geometry-of-linear-equations-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-01-geometry-of-linear-equations-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F01_geometry-of-linear-equations" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
 
   <section class="tab-panel" data-panel="notes">
   <div class="notes">
@@ -46,9 +52,6 @@
         <li><a href="#t6">Which targets can we reach?</a></li>
         <li><a href="#t7">Three funds: 3 × 3</a></li>
         <li><a href="#t8">When it goes wrong: singular</a></li>
-        <li><a href="#t9">Many funds: $n$ dimensions</a></li>
-        <li><a href="#t10">Matrix × vector, two ways</a></li>
-        <li><a href="#t11">Summary</a></li>
       </ol>
     </nav>
 
@@ -58,21 +61,18 @@
     <ol class="index-list">
       <li><a href="#t1">The problem: $Ax = b$</a><span>Turn a money question into equations. Three ways to read the same equations.</span></li>
       <li><a href="#t2">Vectors and combinations</a><span>A fund as a list of numbers (an arrow). Scaling, adding, and mixing arrows.</span></li>
-      <li><a href="#t3">Matrix form</a><span>Write the whole system as one line: matrix $A$ times unknowns $x$ equals target $b$.</span></li>
+      <li><a href="#t3">Matrix form</a><span>Write the whole system as one line, $Ax = b$, and see what $Ax$ means: multiply by columns or by rows.</span></li>
       <li><a href="#t4">The row picture</a><span>Each rule is a line; the answer is where the lines cross.</span></li>
       <li><a href="#t5">The column picture ★</a><span>Each fund is an arrow; the answer is the mix of arrows that lands on the target.</span></li>
       <li><a href="#t6">Which targets can we reach?</a><span>All mixes of the columns. When do they cover every possible target?</span></li>
       <li><a href="#t7">Three funds: 3 × 3</a><span>Add a third fund and a third rule. Planes in the row picture, 3D arrows in the column picture.</span></li>
-      <li><a href="#t8">When it goes wrong: singular</a><span>Funds that add nothing new. No answer, or endless answers.</span></li>
-      <li><a href="#t9">Many funds: $n$ dimensions</a><span>Nine funds, nine rules: the column picture still works when you can't draw it.</span></li>
-      <li><a href="#t10">Matrix × vector, two ways</a><span>Multiply by columns (a mix of funds) or by rows (one rule at a time).</span></li>
-      <li><a href="#t11">Summary</a><span>The key ideas and words on one screen.</span></li>
+      <li><a href="#t8">When it goes wrong: singular</a><span>Funds that add nothing new: no answer, or endless answers. What changes with many funds.</span></li>
     </ol>
 
     <!-- ====================================================== -->
     <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
     <p><b>None. This is the first lesson.</b> You only need school arithmetic: adding, multiplying, negative numbers, and plotting a point $(x, y)$ on graph paper. Every new word is explained the first time it appears; hover over (or tap) a <dfn class="term" tabindex="0" data-def="A word with a dotted underline: hover or tap it to see what it means.">dotted word</dfn> to see its meaning.</p>
-    <p class="note-soft">Later lessons will link back here, for example to <a href="#t5">the column picture</a> or <a href="#t10">matrix × vector</a>, so you can jump to exactly the idea you need and return.</p>
+    <p class="note-soft">Later lessons will link back here, for example to <a href="#t5">the column picture</a> or <a href="#t3mv">matrix × vector</a>, so you can jump to exactly the idea you need and return.</p>
 
     <!-- ====================================================== -->
     <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
@@ -219,6 +219,34 @@
       <p>The letter $x$ does two jobs: the single unknown $x$ (Nifty amount) and the whole vector of unknowns $x = (x, y)$. Strang writes the vector in bold. From the context it is always clear which one is meant.</p>
     </div>
 
+    <h4 id="t3mv">What $Ax$ means: matrix × vector, two ways</h4>
+    <p>What does $Ax$ actually mean? Take our 2 × 2 matrix and the portfolio $x = (7, 3)$. There are two ways to multiply, and both give the same answer.</p>
+
+    <p><b>Way 1: by columns (Strang's favourite).</b></p>
+    $$ \begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}\begin{bmatrix} 7 \\ 3 \end{bmatrix} = 7\begin{bmatrix} 1 \\ 12 \end{bmatrix} + 3\begin{bmatrix} 1 \\ 7 \end{bmatrix} = \begin{bmatrix} 7 + 3 \\ 84 + 21 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix}. $$
+    <p>Read it as "7 lakh of fund 1 plus 3 lakh of fund 2". This is the idea behind the column picture (<a href="#t5">topic 5</a>).</p>
+
+    <p><b>Way 2: by rows (dot products).</b> Multiply each row of $A$ by $x$, entry by entry, and add. This is a <dfn class="term" tabindex="0" data-def="Multiply matching entries of two lists, then add: (1, 12)·(7, 3) = 7 + 36 = 43.">dot product</dfn>:</p>
+    $$ \begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}\begin{bmatrix} 7 \\ 3 \end{bmatrix} = \begin{bmatrix} 1\cdot 7 + 1\cdot 3 \\ 12\cdot 7 + 7\cdot 3 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix}. $$
+    <p>Each row answers one rule: row 1 · $x$ = budget used, row 2 · $x$ = return earned. This is the idea behind the row picture (<a href="#t4">topic 4</a>).</p>
+
+    <div class="box theorem"><span class="label">Key fact</span>
+      <p><b>$Ax$ is a combination of the columns of $A$</b>, with the entries of $x$ as the weights. So "$Ax = b$ has a solution" means exactly "$b$ is a combination of the columns".</p>
+    </div>
+
+    <div class="box definition"><span class="label">Size rule</span>
+      <p>An $m \times n$ matrix times a vector with $n$ entries gives a vector with $m$ entries. The number of <b>columns</b> of $A$ must equal the number of entries of $x$: one weight per column (one amount per fund).</p>
+      <p>More generally $(m \times n)\,(n \times p) = (m \times p)$: the inner sizes must match, the outer sizes give the answer's shape.</p>
+    </div>
+
+    <details class="check"><summary>Check yourself: compute $\begin{bmatrix} 2 & 5 \\ 1 & 3 \end{bmatrix}\begin{bmatrix} 1 \\ 2 \end{bmatrix}$ both ways (Strang's example).</summary>
+      <p>By columns: $1(2, 1) + 2(5, 3) = (2 + 10,\ 1 + 6) = (12, 7)$. By rows: $2\cdot1 + 5\cdot2 = 12$ and $1\cdot1 + 3\cdot2 = 7$. Same answer, $(12, 7)$.</p>
+    </details>
+    <details class="check"><summary>Check yourself: true or false? A 3 × 2 matrix times a 2 × 3 matrix is a 3 × 3 matrix.</summary>
+      <p><b>True.</b> The inner sizes (2 and 2) match, and the outer sizes give $3 \times 3$.</p>
+    </details>
+
+
     <!-- ====================================================== -->
     <h3 class="topic" id="t4">4. The row picture</h3>
     <p><b>Idea:</b> take one equation (one row) at a time and draw <b>every</b> point $(x, y)$ that satisfies it. A linear equation in two unknowns gives a straight line. A solution must satisfy both rules, so it sits on both lines: <b>it is where the lines cross</b>.</p>
@@ -304,6 +332,7 @@
     </figure>
     <p>Component by component: budget $7 + 3 = 10$, return $84 + 21 = 105$. Same answer as the row picture, seen a completely different way.</p>
 
+    <div class="no-print">
     <h4>Try it: mix the two funds</h4>
     <p>Move the sliders. The blue arrow is your Nifty amount, the green arrow your bond amount, and the dot is where your portfolio lands. Can you hit the target ring?</p>
     <div class="mixer" id="mix2">
@@ -330,6 +359,7 @@
       </svg>
       <figcaption>Each slider step adds or removes half a lakh of that fund's arrow.</figcaption>
     </figure>
+    </div>
 
     <details class="check"><summary>Check yourself: in the column picture, what does the point $(10, 70)$ mean, and which portfolio reaches it?</summary>
       <p>₹10 lakh used and ₹70 thousand earned, a 7% return. Only bonds earn 7%, so $x = 0$, $y = 10$: $0\cdot(1, 12) + 10\cdot(1, 7) = (10, 70)$.</p>
@@ -369,7 +399,7 @@
 
     <div class="box theorem"><span class="label">Why the column space matters</span>
       <p>$Ax = b$ has a solution <b>exactly when $b$ is in the column space of $A$</b>.</p>
-      <p>The reason is one sentence: $Ax$ is always a combination of the columns of $A$ (see <a href="#t10">topic 10</a>), so asking "is there an $x$ with $Ax = b$?" is the same as asking "is $b$ one of those combinations?".</p>
+      <p>The reason is one sentence: $Ax$ is always a combination of the columns of $A$ (see <a href="#t3mv">topic 3</a>), so asking "is there an $x$ with $Ax = b$?" is the same as asking "is $b$ one of those combinations?".</p>
       <ul>
         <li><b>Nifty + bonds:</b> $C(A)$ is the whole plane, so every target, including $(10, 105)$, has a solution.</li>
         <li><b>Two Nifty funds</b> (<a href="#t8">topic 8</a>): $C(A)$ is only the line return $= 12 \times$ budget. The target $(10, 120)$ is on it (solvable); $(10, 105)$ is not (no solution).</li>
@@ -510,79 +540,13 @@
       <p>Three funds do not guarantee three independent directions. A fund built from the others adds no new direction, however different its name or factsheet looks.</p>
     </div>
 
+    <div class="box intuition"><span class="label">With many funds</span>
+      <p>Nothing changes with 9 funds and 9 rules: each column is a vector in $\mathbb{R}^9$ and the question is still "which mix of the columns reaches $b$?". You can't draw it, but the column picture still works. Funds picked at random almost always fill the whole space (invertible). Two copies of the same Nifty 50 index from different companies don't: the columns then fill only an 8-dimensional "plane" inside 9-dimensional space, and most targets are out of reach.</p>
+    </div>
+
     <details class="check"><summary>Check yourself: is the target $(10, 111, 7.4)$ reachable with Nifty, bond and balanced funds?</summary>
       <p>Every reachable target $(B, R, E)$ satisfies $-7B + R - 5E = 0$ (the equation of the plane; each column passes, e.g. Nifty: $-7 + 12 - 5 = 0$). For $(10, 111, 7.4)$: $-70 + 111 - 37 = 4 \ne 0$. So <b>no</b>: it is off the plane.</p>
     </details>
-
-    <!-- ====================================================== -->
-    <h3 class="topic" id="t9">9. Many funds: $n$ dimensions</h3>
-    <p>A real portfolio might use <b>9 funds</b> and <b>9 rules</b>: budget, return, market exposure, and caps on banks, IT, pharma, and so on. Then each fund's column has 9 components, a vector in $\mathbb{R}^9$, and we look for the mix of 9 arrows that lands on the 9-number target $b$.</p>
-    <ul>
-      <li><b>Row picture:</b> 9 "planes" in 9 dimensions (called <dfn class="term" tabindex="0" data-def="The flat shape one linear equation makes in 4 or more dimensions: a plane you can't draw.">hyperplanes</dfn>). Nobody can picture that.</li>
-      <li><b>Column picture:</b> still the same sentence, "mix 9 arrows to reach $b$". You can't draw it either, but you can <i>think</i> it. Strang: "even though you can't really visualize it, you sort of think you can after a while."</li>
-    </ul>
-    <div class="box intuition"><span class="label">Intuition</span>
-      <p>Pick 9 funds at random and the matrix is almost surely <b>invertible</b>: the 9 columns fill all of $\mathbb{R}^9$. But if two of them are the same Nifty 50 index from two different companies, the ninth column adds nothing new. The combinations then fill only an <b>8-dimensional "plane" inside 9-dimensional space</b>, and most targets are out of reach.</p>
-    </div>
-
-    <!-- ====================================================== -->
-    <h3 class="topic" id="t10">10. Matrix × vector, two ways</h3>
-    <p>What does $Ax$ actually mean? Take our 2 × 2 matrix and the portfolio $x = (7, 3)$. There are two ways to multiply, and both give the same answer.</p>
-
-    <h4>Way 1: by columns (Strang's favourite)</h4>
-    $$ \begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}\begin{bmatrix} 7 \\ 3 \end{bmatrix} = 7\begin{bmatrix} 1 \\ 12 \end{bmatrix} + 3\begin{bmatrix} 1 \\ 7 \end{bmatrix} = \begin{bmatrix} 7 + 3 \\ 84 + 21 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix}. $$
-    <p>Read it as "7 lakh of fund 1 plus 3 lakh of fund 2". This is the column picture written as a multiplication.</p>
-
-    <h4>Way 2: by rows (dot products)</h4>
-    <p>Multiply each row of $A$ by $x$, entry by entry, and add. This is a <dfn class="term" tabindex="0" data-def="Multiply matching entries of two lists, then add: (1, 12)·(7, 3) = 7 + 36 = 43.">dot product</dfn>:</p>
-    $$ \begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}\begin{bmatrix} 7 \\ 3 \end{bmatrix} = \begin{bmatrix} 1\cdot 7 + 1\cdot 3 \\ 12\cdot 7 + 7\cdot 3 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix}. $$
-    <p>Each row answers one rule: row 1 · $x$ = budget used, row 2 · $x$ = return earned. This is the row picture written as a multiplication.</p>
-
-    <div class="box theorem"><span class="label">Key fact</span>
-      <p><b>$Ax$ is a combination of the columns of $A$</b>, with the entries of $x$ as the weights. So "$Ax = b$ has a solution" means exactly "$b$ is a combination of the columns".</p>
-    </div>
-
-    <div class="box definition"><span class="label">Size rule</span>
-      <p>An $m \times n$ matrix times a vector with $n$ entries gives a vector with $m$ entries. The number of <b>columns</b> of $A$ must equal the number of entries of $x$: one weight per column (one amount per fund).</p>
-      <p>More generally $(m \times n)\,(n \times p) = (m \times p)$: the inner sizes must match, the outer sizes give the answer's shape.</p>
-    </div>
-
-    <details class="check"><summary>Check yourself: compute $\begin{bmatrix} 2 & 5 \\ 1 & 3 \end{bmatrix}\begin{bmatrix} 1 \\ 2 \end{bmatrix}$ both ways (Strang's example).</summary>
-      <p>By columns: $1(2, 1) + 2(5, 3) = (2 + 10,\ 1 + 6) = (12, 7)$. By rows: $2\cdot1 + 5\cdot2 = 12$ and $1\cdot1 + 3\cdot2 = 7$. Same answer, $(12, 7)$.</p>
-    </details>
-    <details class="check"><summary>Check yourself: true or false? A 3 × 2 matrix times a 2 × 3 matrix is a 3 × 3 matrix.</summary>
-      <p><b>True.</b> The inner sizes (2 and 2) match, and the outer sizes give $3 \times 3$.</p>
-    </details>
-
-    <!-- ====================================================== -->
-    <h3 class="topic" id="t11">11. Summary</h3>
-    <div class="summary">
-      <h3>Key ideas</h3>
-      <ol>
-        <li>A linear system is $Ax = b$: the matrix $A$ (rows = rules, columns = funds) times the unknowns $x$ equals the targets $b$.</li>
-        <li><b>Row picture:</b> each equation is a line (2D), plane (3D) or hyperplane; the solution is where they all meet.</li>
-        <li><b>Column picture ★:</b> $b$ is a linear combination of the columns; the solution gives the weights. ₹7 lakh Nifty + ₹3 lakh bonds = (₹10 lakh, ₹105 thousand).</li>
-        <li>$Ax$ is a combination of the columns of $A$; it can also be computed by rows with dot products.</li>
-        <li>$Ax = b$ is solvable for every $b$ exactly when the columns fill the whole space: $A$ is <b>invertible</b> (non-singular).</li>
-        <li>If one column is a combination of the others (two identical funds, a balanced fund), $A$ is <b>singular</b>: some targets have no solution, others have infinitely many.</li>
-        <li>The column picture keeps working in $n$ dimensions, where nothing can be drawn.</li>
-      </ol>
-    </div>
-    <h4>Words in this lesson</h4>
-    <dl class="vocab">
-      <dt>Linear equation</dt><dd>Unknowns only multiplied by numbers and added: $12x + 7y = 105$.</dd>
-      <dt>System / solution</dt><dd>Several equations true at once / values that make all of them true.</dd>
-      <dt>Vector, component</dt><dd>An ordered list of numbers, drawn as an arrow / one number in the list.</dd>
-      <dt>$\mathbb{R}^n$</dt><dd>All vectors with $n$ real components.</dd>
-      <dt>Linear combination</dt><dd>Scale some vectors and add them: $x\,c + y\,d$. In this lesson, a portfolio.</dd>
-      <dt>Matrix, $m \times n$</dt><dd>A table of numbers with $m$ rows and $n$ columns.</dd>
-      <dt>Coefficient matrix $A$</dt><dd>Row $i$ = equation $i$, column $j$ = everything multiplying unknown $j$.</dd>
-      <dt>Row / column picture</dt><dd>Lines or planes meeting / arrows combining to reach $b$.</dd>
-      <dt>Span, column space</dt><dd>All combinations of some vectors / of the columns of $A$.</dd>
-      <dt>Singular / invertible</dt><dd>Columns fill less than the whole space / fill all of it (one solution for every $b$).</dd>
-      <dt>Dot product</dt><dd>Multiply matching entries and add.</dd>
-      <dt>Beta</dt><dd>How much a fund moves when Nifty moves 1%.</dd>
-    </dl>
 
   </div>
   </section>
