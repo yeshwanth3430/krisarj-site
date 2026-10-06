@@ -52,6 +52,7 @@
         <li><a href="#t6">Which targets can we reach?</a></li>
         <li><a href="#t7">Three funds: 3 × 3</a></li>
         <li><a href="#t8">When it goes wrong: singular</a></li>
+        <li><a href="#t9">Summary</a></li>
       </ol>
     </nav>
 
@@ -67,6 +68,7 @@
       <li><a href="#t6">Which targets can we reach?</a><span>All mixes of the columns. When do they cover every possible target?</span></li>
       <li><a href="#t7">Three funds: 3 × 3</a><span>Add a third fund and a third rule. Planes in the row picture, 3D arrows in the column picture.</span></li>
       <li><a href="#t8">When it goes wrong: singular</a><span>Funds that add nothing new: no answer, or endless answers. What changes with many funds.</span></li>
+      <li class="no-print"><a href="#t9">Summary</a><span>The key ideas and words on one screen.</span></li>
     </ol>
 
     <!-- ====================================================== -->
@@ -552,6 +554,40 @@
     <details class="check"><summary>Check yourself: is the target $(10, 111, 7.4)$ reachable with Nifty, bond and balanced funds?</summary>
       <p>Every reachable target $(B, R, E)$ satisfies $-7B + R - 5E = 0$ (the equation of the plane; each column passes, e.g. Nifty: $-7 + 12 - 5 = 0$). For $(10, 111, 7.4)$: $-70 + 111 - 37 = 4 \ne 0$. So <b>no</b>: it is off the plane.</p>
     </details>
+
+
+    <!-- ====================================================== -->
+    <!-- Summary: website only (left out of the PDF report) -->
+    <div class="no-print">
+    <h3 class="topic" id="t9">9. Summary</h3>
+    <div class="summary">
+      <h3>Key ideas</h3>
+      <ol>
+        <li>A linear system is $Ax = b$: the matrix $A$ (rows = rules, columns = funds) times the unknowns $x$ equals the targets $b$. (<a href="#t3">topic 3</a>)</li>
+        <li>$Ax$ is a combination of the columns of $A$; it can also be computed by rows with dot products. (<a href="#t3mv">topic 3</a>)</li>
+        <li><b>Row picture:</b> each equation is a line (2D) or a plane (3D); the solution is where they all meet. (<a href="#t4">topic 4</a>)</li>
+        <li><b>Column picture ★:</b> $b$ is a linear combination of the columns; the solution gives the amounts. ₹7 lakh Nifty + ₹3 lakh bonds = (₹10 lakh, ₹105 thousand). (<a href="#t5">topic 5</a>)</li>
+        <li><b>Span:</b> vectors are your available directions; the span is everywhere they can reach. The column space $C(A)$ is the span of the columns, and $Ax = b$ is solvable exactly when $b$ is in it. (<a href="#t6">topic 6</a>)</li>
+        <li>The same ideas work for 3 × 3: three planes meet at $(5, 3, 2)$, and three fund arrows mix to reach $b$. (<a href="#t7">topic 7</a>)</li>
+        <li>If a column adds no new direction (a twin fund, a 50/50 balanced fund), $A$ is <b>singular</b>: some targets have no solution, others infinitely many. Otherwise $A$ is <b>invertible</b>. (<a href="#t8">topic 8</a>)</li>
+      </ol>
+    </div>
+    <h4>Words in this lesson</h4>
+    <dl class="vocab">
+      <dt>Linear equation</dt><dd>Unknowns only multiplied by numbers and added: $12x + 7y = 105$.</dd>
+      <dt>System / solution</dt><dd>Several equations true at once / values that make all of them true.</dd>
+      <dt>Vector, component</dt><dd>An ordered list of numbers, drawn as an arrow / one number in the list.</dd>
+      <dt>$\mathbb{R}^n$</dt><dd>All vectors with $n$ real components.</dd>
+      <dt>Linear combination</dt><dd>Scale some vectors and add them: $x\,c + y\,d$. In this lesson, a portfolio.</dd>
+      <dt>Matrix, $m \times n$</dt><dd>A table of numbers with $m$ rows and $n$ columns.</dd>
+      <dt>Coefficient matrix $A$</dt><dd>Row $i$ = equation $i$, column $j$ = everything multiplying unknown $j$.</dd>
+      <dt>Dot product</dt><dd>Multiply matching entries and add.</dd>
+      <dt>Row / column picture</dt><dd>Lines or planes meeting / arrows combining to reach $b$.</dd>
+      <dt>Span, column space</dt><dd>Everywhere some vectors can reach / everywhere the columns of $A$ can reach.</dd>
+      <dt>Singular / invertible</dt><dd>Columns fill less than the whole space / fill all of it (one solution for every $b$).</dd>
+      <dt>Beta</dt><dd>How much a fund moves when Nifty moves 1%.</dd>
+    </dl>
+    </div>
 
   </div>
   </section>
