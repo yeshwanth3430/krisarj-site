@@ -228,59 +228,84 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t6">6. Elimination as matrices</h3>
-    <p>Strang's main point: every elimination step is a <b>multiplication by a matrix</b>. The step "row 2 − 12 × row 1" is done by</p>
-    $$ E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \qquad E_{21}A = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 1 & 0 & 1.2 \end{bmatrix}. $$
-    <p>$E_{21}$ is the <dfn class="term" tabindex="0" data-def="The matrix with 1s on the diagonal and 0s elsewhere. It changes nothing: IA = A. The matrix version of the number 1.">identity matrix</dfn> $I$ (which changes nothing) with $-12$ in row 2, column 1. Rows 1 and 3 are copied unchanged; row 2 becomes $-12 \times$ row 1 $+$ row 2. In general, $E_{ij}$ is the identity with $-\ell_{ij}$ in position $(i, j)$.</p>
-    <p>Do the three steps (2, 1), (3, 1), (3, 2) in order and you reach $U$:</p>
-    $$ E_{32}\,E_{31}\,E_{21}\,A = U. $$
-    <div class="box theorem"><span class="label">One matrix does all of elimination</span>
-      <p>You may move the parentheses in a matrix product (it is <b>associative</b>), so $E = E_{32}E_{31}E_{21}$ is a single matrix with $EA = U$.</p>
+    <p>In <a href="#t3">topic 3</a> we did three row operations by hand. Strang's main point is that <b>each of them is a multiplication by a matrix</b>. Once that is true, the whole of elimination fits in one line, and that line is what the next lessons build on.</p>
+
+    <h4>How a matrix can change rows</h4>
+    <p>Lesson 1's key fact was about columns: <b>matrix × column</b> mixes the columns (<a href="01_geometry-of-linear-equations.html#t3mv">Lesson 1</a>). Its twin is about rows:</p>
+    <div class="box theorem"><span class="label">Row × matrix mixes the rows</span>
+      <p>$\begin{bmatrix} a & b & c \end{bmatrix} A = a\,(\text{row } 1 \text{ of } A) + b\,(\text{row } 2) + c\,(\text{row } 3)$.</p>
     </div>
-    <div class="box pitfall"><span class="label">Watch out: order matters</span>
-      <p>You may regroup, but you may <b>not</b> reorder: in general $AB \ne BA$. The matrices are multiplied in the order the steps were done, with the first step nearest to $A$.</p>
+    <p>Try it on our portfolio matrix with the row $\begin{bmatrix} -12 & 1 & 0 \end{bmatrix}$:</p>
+    $$ \begin{bmatrix} -12 & 1 & 0 \end{bmatrix}\begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} = -12\,(1, 1, 1) + 1\,(12, 7, 15) = (0, -5, 3). $$
+    <p>That is exactly the new return rule from step (2, 1): "return − 12 × budget". So a matrix whose rows are recipes like this can rebuild every row at once:</p>
+    <table>
+      <tr><th>Row of the matrix</th><th>Recipe it follows</th><th>New row</th></tr>
+      <tr><td>$\begin{bmatrix} 1 & 0 & 0 \end{bmatrix}$</td><td>keep row 1</td><td>budget, unchanged</td></tr>
+      <tr><td>$\begin{bmatrix} -12 & 1 & 0 \end{bmatrix}$</td><td>row 2 − 12 × row 1</td><td>return with $x$ removed</td></tr>
+      <tr><td>$\begin{bmatrix} 0 & 0 & 1 \end{bmatrix}$</td><td>keep row 3</td><td>exposure, unchanged</td></tr>
+    </table>
+    <p>Stacking those three rows gives the <b>elimination matrix</b> $E_{21}$. It is the <dfn class="term" tabindex="0" data-def="The matrix with 1s on the diagonal and 0s elsewhere. It changes nothing: IA = A. The matrix version of the number 1.">identity matrix</dfn> $I$ (which keeps every row) with one extra entry, $-12$, in row 2, column 1.</p>
+    <div class="box definition"><span class="label">Elimination matrix $E_{ij}$</span>
+      <p>The identity matrix with $-\ell_{ij}$ in row $i$, column $j$. Multiplying by it subtracts $\ell_{ij}$ × row $j$ from row $i$ and leaves every other row alone.</p>
     </div>
 
-    <details class="more"><summary>Show the details: row × matrix, all three $E$'s, and $E$ itself</summary>
-      <p><b>Why a matrix can do a row operation.</b> Lesson 1's key fact was that matrix × column combines the <b>columns</b> (<a href="01_geometry-of-linear-equations.html#t3mv">Lesson 1</a>). The twin fact: <b>row × matrix combines the rows</b>, $\begin{bmatrix} a & b & c \end{bmatrix} A = a\,(\text{row } 1) + b\,(\text{row } 2) + c\,(\text{row } 3)$. So row 2 of $E_{21}$, which is $\begin{bmatrix} -12 & 1 & 0 \end{bmatrix}$, produces $-12\,(\text{row } 1) + (\text{row } 2) = (0, -5, 3)$: exactly the new row 2.</p>
-      <p><b>All three steps.</b></p>
-      $$
-      E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad
-      E_{31} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -1 & 0 & 1 \end{bmatrix} \quad
-      E_{32} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -0.2 & 1 \end{bmatrix}
-      $$
-      <p><b>Checking one entry</b> the way Strang does: row 2 of $E_{21}$ times column 3 of $A$ is $-12(1) + 1(15) + 0(1.2) = 3$ ✓, the new entry in row 2, column 3.</p>
-      <p><b>The single matrix.</b></p>
-      $$ E = E_{32}E_{31}E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 1.4 & -0.2 & 1 \end{bmatrix}. $$
-      <p>Check its bottom row: $1.4(\text{row } 1) - 0.2(\text{row } 2) + 1(\text{row } 3) = (0, 0, -0.4)$ ✓, the last row of $U$.</p>
-      <p><b>Order really matters:</b> $E_{21}E_{32}$ has a $0$ in row 3, column 1, where $E_{32}E_{21}$ has $2.4$.</p>
-      <p><b>A teaser.</b> $E$ contains a messy $1.4$ even though the multipliers were the clean numbers $12, 1, 0.2$. Going the other way, from $U$ back to $A$, keeps them clean. That is <b>Lesson 4, $A = LU$</b>.</p>
-      <p><b>Check yourself:</b> what does the row $\begin{bmatrix} 1 & 2 & 7 \end{bmatrix}$ times a 3 × 3 matrix produce? <i>A row: $1 \times$ row 1 $+ 2 \times$ row 2 $+ 7 \times$ row 3 of that matrix (Strang's example).</i></p>
+    <h4>The whole of topic 3, as three multiplications</h4>
+    <p><b>Step (2, 1)</b>, $\ell_{21} = 12$: subtract 12 × budget from return.</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}}_{E_{21}}\begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 1 & 0 & 1.2 \end{bmatrix} $$
+    <p><b>Step (3, 1)</b>, $\ell_{31} = 1$: subtract budget from exposure.</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ -1 & 0 & 1 \end{bmatrix}}_{E_{31}}\begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 1 & 0 & 1.2 \end{bmatrix} = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & -1 & 0.2 \end{bmatrix} $$
+    <p><b>Step (3, 2)</b>, $\ell_{32} = 0.2$: subtract 0.2 × the new row 2 from row 3.</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & -0.2 & 1 \end{bmatrix}}_{E_{32}}\begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & -1 & 0.2 \end{bmatrix} = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{bmatrix} = U $$
+    <p>The same three matrices turn $b = (10, 111, 7.4)$ into $(10, -9, 7.4)$, then $(10, -9, -2.6)$, then $c = (10, -9, -0.8)$. Written as one line:</p>
+    $$ E_{32}\,E_{31}\,E_{21}\,A = U \qquad\text{and}\qquad E_{32}\,E_{31}\,E_{21}\,b = c. $$
+
+    <h4>One matrix for all of elimination</h4>
+    <p>Matrix multiplication is <b>associative</b>: you can move the parentheses, $E_{32}(E_{31}(E_{21}A)) = (E_{32}E_{31}E_{21})A$. So multiply the three $E$'s first and you get a single matrix that does every step at once:</p>
+    $$ E = E_{32}E_{31}E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 1.4 & -0.2 & 1 \end{bmatrix}, \qquad EA = U. $$
+    <p>Check its bottom row with the row rule: $1.4(1, 1, 1) - 0.2(12, 7, 15) + 1(1, 0, 1.2) = (1.4 - 2.4 + 1,\ 1.4 - 1.4 + 0,\ 1.4 - 3 + 1.2) = (0, 0, -0.4)$ ✓, the last row of $U$.</p>
+
+    <div class="box pitfall"><span class="label">Watch out: order matters</span>
+      <p>You may move parentheses, but you may <b>not</b> reorder: in general $AB \ne BA$. The first step sits next to $A$, the last step on the far left. Swap two of them and you get a different matrix:</p>
+      $$ E_{32}E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 2.4 & -0.2 & 1 \end{bmatrix} \qquad\text{but}\qquad E_{21}E_{32} = \begin{bmatrix} 1 & 0 & 0 \\ -12 & 1 & 0 \\ 0 & -0.2 & 1 \end{bmatrix}. $$
+      <p>Why: $E_{21}E_{32}$ does $E_{32}$ <i>first</i>, so it subtracts 0.2 × the <b>old</b> return row $(12, 7, 15)$ instead of the new one $(0, -5, 3)$. Same operations, different order, different result.</p>
+    </div>
+    <p class="note-soft">Notice the messy $1.4$ in $E$, even though the multipliers were the clean numbers $12, 1, 0.2$. Going the other way, from $U$ back to $A$, keeps them clean: that is <b>Lesson 4, $A = LU$</b>.</p>
+
+    <details class="check"><summary>Check yourself: what does the row $\begin{bmatrix} 1 & 2 & 7 \end{bmatrix}$ times a 3 × 3 matrix produce? (Strang's example)</summary>
+      <p>A row: $1 \times$ row 1 $+ 2 \times$ row 2 $+ 7 \times$ row 3 of that matrix.</p>
     </details>
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t7">7. Row exchanges: permutation matrices</h3>
-    <p>The row exchange in <a href="#t5">topic 5</a> is also a matrix. To find it, <b>do the exchange to the identity matrix</b>:</p>
-    $$ P_{23} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}: \qquad P_{23}A \text{ is } A \text{ with rows 2 and 3 swapped.} $$
-    <p>A matrix that only reorders rows is a <dfn class="term" tabindex="0" data-def="The identity matrix with its rows reordered. PA reorders the rows of A; AP reorders its columns.">permutation matrix</dfn>. For a 2 × 2:</p>
-    $$ \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}\begin{bmatrix} a & b \\ c & d \end{bmatrix} = \begin{bmatrix} c & d \\ a & b \end{bmatrix} \quad\text{(rows swapped)} $$
-    $$ \begin{bmatrix} a & b \\ c & d \end{bmatrix}\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} = \begin{bmatrix} b & a \\ d & c \end{bmatrix} \quad\text{(columns swapped)} $$
-    <div class="box theorem"><span class="label">Left acts on rows, right acts on columns</span>
-      <p>Multiplying <b>on the left</b> does row operations (all of elimination). Multiplying <b>on the right</b> does column operations. Since $PA$ and $AP$ are different matrices, this is another case of $AB \ne BA$.</p>
+    <p>The row exchange in <a href="#t5">topic 5</a> (the credit fund) is also a matrix. After column 1 we had a $0$ in the second pivot position:</p>
+    $$ M = \begin{bmatrix} 1 & 1 & 1 \\ 0 & \mathbf{0} & 3 \\ 0 & -1 & 0.2 \end{bmatrix} $$
+    <p><b>To build the matrix that swaps rows 2 and 3, do that swap to the identity matrix:</b></p>
+    $$ P_{23} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}, \qquad P_{23}M = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -1 & 0.2 \\ 0 & 0 & 3 \end{bmatrix}. $$
+    <p>Read its rows as recipes: "take row 1", "take row 3", "take row 2". A matrix that only reorders rows is a <dfn class="term" tabindex="0" data-def="The identity matrix with its rows reordered. PA reorders the rows of A; AP reorders its columns.">permutation matrix</dfn>. For the credit-fund system the whole elimination is $P_{23}\,E_{31}\,E_{21}\,A = U$.</p>
+
+    <h4>Left acts on rows, right acts on columns</h4>
+    <p>Take the two-fund matrix $A = \left[\begin{smallmatrix} 1 & 1 \\ 12 & 7 \end{smallmatrix}\right]$ and the swap $P = \left[\begin{smallmatrix} 0 & 1 \\ 1 & 0 \end{smallmatrix}\right]$:</p>
+    $$ PA = \begin{bmatrix} 12 & 7 \\ 1 & 1 \end{bmatrix} \;\;\text{(rows swapped)} \qquad\qquad AP = \begin{bmatrix} 1 & 1 \\ 7 & 12 \end{bmatrix} \;\;\text{(columns swapped)} $$
+    <div class="box theorem"><span class="label">The rule</span>
+      <p>A matrix on the <b>left</b> acts on rows: all of elimination works this way. A matrix on the <b>right</b> acts on columns. $PA \ne AP$: one more case of $AB \ne BA$.</p>
     </div>
-    <p>In portfolio terms: swapping two <b>rows</b> just lists the rules in a different order. Swapping two <b>columns</b> relabels which fund is $x$ and which is $y$.</p>
+    <p>In portfolio terms: $PA$ lists the <b>rules</b> in a different order (return first, then budget), which never changes the answer. $AP$ swaps the <b>funds</b>, so the first unknown becomes the bond amount: the answer comes out as $(3, 7)$ instead of $(7, 3)$.</p>
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t8">8. Undoing a step: inverses</h3>
-    <p>$E_{21}$ subtracted 12 × row 1 from row 2. The step that <b>undoes</b> it adds 12 × row 1 back:</p>
-    $$ E_{21}^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \qquad E_{21}^{-1}E_{21} = I. $$
-    <p>The matrix that undoes another is its <dfn class="term" tabindex="0" data-def="The matrix that undoes A: A⁻¹A = I. Not every matrix has one; singular matrices don't.">inverse</dfn>, written $E^{-1}$. Every elimination step and every row exchange can be undone like this.</p>
-    <div class="box theorem"><span class="label">Why elimination gives the right answer</span>
-      <p>Every step can be reversed, so $Ax = b$ and $Ux = c$ have exactly the same solutions: anything that solves one solves the other. That's why the answer we read off $U$ is the answer to the original portfolio.</p>
+    <p>$E_{21}$ subtracted 12 × budget from return. To undo it, <b>add 12 × budget back</b>. That is the identity with $+12$ where $E_{21}$ had $-12$:</p>
+    $$ E_{21}^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}. $$
+    <p>Check it on the portfolio: $E_{21}$ turned the return row $(12, 7, 15)$ into $(0, -5, 3)$. Adding 12 × budget gives $(0, -5, 3) + 12(1, 1, 1) = (12, 7, 15)$: the original return rule is back. So $E_{21}^{-1}(E_{21}A) = A$, and $E_{21}^{-1}E_{21} = I$.</p>
+    <div class="box definition"><span class="label">Inverse</span>
+      <p>The matrix that undoes $E$ is its <dfn class="term" tabindex="0" data-def="The matrix that undoes A: A⁻¹A = I. Not every matrix has one; singular matrices don't.">inverse</dfn>, written $E^{-1}$, with $E^{-1}E = I$. For an elimination matrix, just <b>flip the sign of the multiplier</b>. For a row exchange, <b>swap again</b>: $P_{23}^{-1} = P_{23}$.</p>
     </div>
-    <p>Inverses of whole matrices, and how to compute them, are the next lesson.</p>
+    <div class="box theorem"><span class="label">Why elimination gives the right answer</span>
+      <p>Every step can be undone, so no information is lost or added. Any portfolio that satisfies the original rules $Ax = b$ also satisfies the new rules $Ux = c$, and the other way round. That's why the answer we read off $U$, ₹5 lakh, ₹3 lakh and ₹2 lakh, is the answer to the original question.</p>
+    </div>
+    <p>Inverses of whole matrices (not just single steps), and when they exist, are the next lesson.</p>
 
-    <details class="check"><summary>Check yourself: what is the inverse of $E_{32}$ (which subtracts 0.2 × row 2 from row 3)?</summary>
-      <p>Add 0.2 × row 2 back to row 3: the identity with $+0.2$ in position $(3, 2)$.</p>
+    <details class="check"><summary>Check yourself: what is the inverse of $E_{32}$, which subtracts 0.2 × row 2 from row 3?</summary>
+      <p>Add 0.2 × row 2 back to row 3: the identity with $+0.2$ in row 3, column 2.</p>
     </details>
 
     <!-- ====================================================== -->
