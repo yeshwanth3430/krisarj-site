@@ -115,3 +115,40 @@ a.rmt:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -14px var(--a
   .rmm-edges path { animation: none; stroke-dashoffset: 0; }
   .rmt-next .rmt-dot { animation: none; }
 }
+
+/* ================= Learner tracker ================= */
+.qf-toplink { font: 600 13.5px/1 var(--sans); color: var(--accent) !important; border: 1px solid var(--accent); border-radius: 999px; padding: 7px 12px; margin-right: 10px; white-space: nowrap; text-decoration: none !important; }
+.qf-toplink:hover { background: var(--accent); color: var(--paper) !important; }
+.qf-btn { font: 600 14px/1 var(--sans); padding: 10px 14px; border-radius: 10px; border: 1.5px solid var(--accent); background: var(--accent); color: var(--paper) !important; cursor: pointer; text-decoration: none !important; display: inline-block; }
+.qf-btn.qf-ghost { background: transparent; color: var(--accent) !important; }
+.qf-small { font: 400 13.5px/1.5 var(--sans); color: var(--ink-soft); }
+.qf-k { font: 600 11px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+/* completion bar on lesson pages */
+.qf-done { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 28px 0 8px; padding: 16px 18px; border: 1.5px dashed var(--accent); border-radius: 14px; background: var(--paper-2); font-family: var(--sans); font-size: 15px; }
+.qf-done.is-done { border-style: solid; background: color-mix(in srgb, var(--accent) 9%, var(--paper)); }
+.qf-done .qf-msg { flex: 1 1 260px; color: var(--ink); }
+.qf-tick { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--paper); font-weight: 700; flex: none; }
+.qf-tick.qf-open { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
+/* tracker page */
+.qf-idcard { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; padding: 20px; border: 1.5px solid var(--rule); border-radius: 16px; background: var(--paper-2); margin: 10px 0 18px; }
+.qf-id { font: 700 26px/1.2 var(--mono); letter-spacing: .04em; color: var(--ink); margin: 6px 0 2px; }
+.qf-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.qf-useform { flex-basis: 100%; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.qf-useform input { font: 600 16px var(--mono); padding: 9px 12px; border: 1.5px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); width: 170px; text-transform: uppercase; }
+.qf-continue { display: grid; gap: 4px; padding: 18px 20px; border-radius: 16px; background: var(--accent); color: var(--paper) !important; text-decoration: none !important; margin-bottom: 8px; }
+.qf-continue .qf-k, .qf-continue .qf-small { color: var(--paper); opacity: .85; }
+.qf-continue b { font: 700 20px/1.3 var(--sans); }
+.qf-continue.qf-all { background: var(--paper-2); color: var(--ink) !important; border: 1.5px solid var(--rule); }
+.qf-subjs { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.qf-subj { padding: 14px 16px; border: 1.5px solid var(--rule); border-radius: 14px; background: var(--paper); font-family: var(--sans); }
+.qf-subj.qf-later { opacity: .6; }
+.qf-subj-top { display: flex; justify-content: space-between; gap: 10px; font-size: 14.5px; }
+.qf-subj-top span { color: var(--ink-soft); white-space: nowrap; }
+.qf-bar { height: 7px; border-radius: 4px; background: var(--paper-2); margin-top: 10px; overflow: hidden; }
+.qf-bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.qf-sub-note { margin-top: 6px; font-size: 12.5px; color: var(--ink-soft); }
+.qf-table td { vertical-align: top; }
+.qf-chip { display: inline-block; font: 600 11.5px/1 var(--sans); padding: 6px 9px; margin: 2px 4px 2px 0; border-radius: 999px; background: var(--paper-2); color: var(--ink-soft); border: 1px solid var(--rule); }
+.qf-chip.on { background: color-mix(in srgb, var(--accent) 14%, var(--paper)); color: var(--accent); border-color: var(--accent); }
+.qf-banner { padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--int-b); background: var(--int-bg); font-family: var(--sans); font-size: 15px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+@media (max-width: 640px) { .qf-toplink { padding: 6px 10px; font-size: 12.5px; } .qf-id { font-size: 22px; } }

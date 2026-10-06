@@ -1,0 +1,9 @@
+# Cloudflare Pages project for learn.krisarj.com
+name = "krisarj-site"
+pages_build_output_dir = "./public"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "krisarj-learn"
+database_id = "1984473d-00a3-4dfd-bbc3-cddf9d133a20"
