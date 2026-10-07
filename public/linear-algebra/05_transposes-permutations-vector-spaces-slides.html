@@ -78,13 +78,11 @@
 <!-- 2 -->
 <section class="slide">
   <div class="kicker">Permutations</div>
-  <h2>PA = LU, and P⁻¹ = Pᵀ</h2>
-  <p>A zero in a pivot position? Reorder the rows first: $PA = LU$ works for every invertible $A$.</p>
-  <ul>
-    <li>$n!$ permutation matrices: 2, 6, 24, 120…</li>
-    <li>Undoing a reordering = transposing it: $P^TP = I$</li>
-  </ul>
-  $$ P = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \end{bmatrix},\;\; P^T = \begin{bmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{bmatrix},\;\; P^TP = I $$
+  <h2>Same rules, different order</h2>
+  <p>A permutation only <b>re-lists the equations</b>. Same facts, same answer.</p>
+  $$ \begin{aligned} y &= 3 \\ x + y &= 8 \end{aligned} \quad\xrightarrow{\text{swap}}\quad \begin{aligned} x + y &= 8 \\ y &= 3 \end{aligned} $$
+  <p>Left: the first rule has no $x$, a 0 where the pivot should be, so elimination is stuck. Right: already triangular: $y = 3$, $x = 5$.</p>
+  <div class="box method"><span class="label">Rules</span><p>$PA = LU$: reorder first, then eliminate. Undo a reorder with $P^T$: $P^TP = I$. 3 rules → 6 orders ($3!$).</p></div>
 </section>
 
 <!-- 3 -->
