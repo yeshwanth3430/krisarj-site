@@ -44,6 +44,13 @@ const LESSONS = [
     page: "linear-algebra/05_transposes-permutations-vector-spaces.html",
     slides: "linear-algebra/05_transposes-permutations-vector-spaces-slides.html",
     plots: { csPlane: "linear-algebra/img/l5-colspace.png" }
+  },
+  {
+    slug: "la-06-column-space-and-nullspace",
+    title: "Linear Algebra · Lesson 6 · Column Space and Nullspace",
+    page: "linear-algebra/06_column-space-and-nullspace.html",
+    slides: "linear-algebra/06_column-space-and-nullspace-slides.html",
+    plots: { nsPlot: { file: "linear-algebra/img/l6-nullspace.png", width: 600, height: 520 } }
   }
 ];
 

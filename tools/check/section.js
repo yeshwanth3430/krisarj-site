@@ -1,6 +1,7 @@
 // Screenshot one section of a lesson page and report errors.
 // Usage: node tools/check/section.js <page.html> <#fromId> <#toId> <outPrefix> [setup]
 // setup "spacetest" also cycles the space tester's presets and prints each verdict.
+// setup "examples" opens the Examples tab first; "nslab" also cycles the nullspace lab presets.
 const path = require("path");
 const { chromium } = require(path.join(__dirname, "../downloads/node_modules/playwright-core"));
 (async () => {
@@ -14,6 +15,12 @@ const { chromium } = require(path.join(__dirname, "../downloads/node_modules/pla
     const n = await p.$$eval(".st-pick option", o => o.length);
     for (let i = 0; i < n; i++) { await p.selectOption(".st-pick", String(i)); await p.waitForTimeout(250); console.log(i + ": " + (await p.$eval(".st-out", e => e.innerText.replace(/\s+/g, " ").slice(-110)))); }
     await p.selectOption(".st-pick", "1"); await p.waitForTimeout(300);
+  }
+  if (setup === "examples" || setup === "nslab") { await p.click('.tabs button[data-tab="examples"]'); await p.waitForTimeout(800); }
+  if (setup === "nslab") {
+    const n = await p.$$eval(".ns-pick option", o => o.length);
+    for (let i = 0; i < n; i++) { await p.selectOption(".ns-pick", String(i)); await p.waitForTimeout(300); console.log(i + ": " + (await p.$$eval(".ns-out .answer, .ns-out .lab-warn", es => es.map(e => e.innerText.replace(/\s+/g, " ")).join(" | ")))); }
+    await p.selectOption(".ns-pick", "0"); await p.waitForTimeout(300);
   }
   const y0 = await p.evaluate(s => document.querySelector(s).getBoundingClientRect().top + scrollY - 60, from);
   const y1 = await p.evaluate(s => document.querySelector(s).getBoundingClientRect().top + scrollY - 60, to);

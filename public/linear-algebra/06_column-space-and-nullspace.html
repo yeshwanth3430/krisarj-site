@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Column Space and Nullspace · Topic 4 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 4, Lesson 6: the column space and the nullspace, explained step by step: which targets your funds can reach, which trades change nothing, and why every answer is one solution plus the nullspace.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-04-1">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-04.html">Topic 4</a> / <b>Column Space and Nullspace</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 6</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 4 · Lesson 6 (MIT 18.06, Lecture 6)</p>
+  <h1>Column Space and Nullspace</h1>
+  <p class="subtitle">Every matrix carries two spaces. The column space answers "which targets can I reach?". The nullspace answers "which trades change nothing?". Together they describe every answer to $Ax = b$.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-06-column-space-and-nullspace-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-06-column-space-and-nullspace-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F06_column-space-and-nullspace" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">When can Ax = b be solved?</a></li>
+        <li><a href="#t2">The nullspace: trades that change nothing</a></li>
+        <li><a href="#t3">Why the nullspace is a subspace</a></li>
+        <li><a href="#t4">When the nullspace is only zero</a></li>
+        <li><a href="#t5">All solutions: one answer + the nullspace</a></li>
+        <li><a href="#t6">Spotting subspaces: rules that equal zero</a></li>
+        <li><a href="#t7">Summary</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">When can Ax = b be solved?</a><span>Exactly when $b$ is in the column space. MIT's 4 × 3 example and our funds with a balanced fund.</span></li>
+      <li><a href="#t2">The nullspace: trades that change nothing</a><span>All $x$ with $Ax = 0$. Found by elimination on a 2 × 2 and a 3 × 3: the trade $(1, 1, -2)$.</span></li>
+      <li><a href="#t3">Why the nullspace is a subspace</a><span>Two do-nothing trades add to a do-nothing trade. Column space vs nullspace side by side.</span></li>
+      <li><a href="#t4">When the nullspace is only zero</a><span>With midcap, elimination leaves no free fund: every target has exactly one portfolio.</span></li>
+      <li><a href="#t5">All solutions: one answer + the nullspace</a><span>Every portfolio that hits a target, as a slider. Why these solutions are not a subspace.</span></li>
+      <li><a href="#t6">Spotting subspaces: rules that equal zero</a><span>Zero-cost and market-neutral trades are nullspaces; meeting both is an intersection.</span></li>
+      <li class="no-print"><a href="#t7">Summary</a><span>The key ideas and words on one screen.</span></li>
+    </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-solvable">Ax = b solvable ⇔ b ∈ C(A)</a> <a href="#m-nullspace">Nullspace N(A)</a> <a href="#m-elim0">Elimination on Ax = 0</a> <a href="#m-nsub">N(A) is a subspace</a> <a href="#m-indep">N(A) = {0} test</a> <a href="#m-complete">Particular + nullspace</a> <a href="#m-intersect">Intersection of nullspaces</a></p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="05_transposes-permutations-vector-spaces.html#t7">The column space C(A)</a> (Lesson 5): the targets your funds can reach, and the plane $R = 7B + 5E$.</li>
+      <li><a href="05_transposes-permutations-vector-spaces.html#t4">Vector spaces</a> and <a href="05_transposes-permutations-vector-spaces.html#t6">subspaces</a> (Lesson 5): closed under adding and scaling; zero-cost trades.</li>
+      <li><a href="02_elimination-with-matrices.html#t3">Elimination, 3 × 3</a> and <a href="02_elimination-with-matrices.html#t4">back substitution</a> (Lesson 2).</li>
+      <li><a href="01_geometry-of-linear-equations.html#t8">Singular matrices</a> (Lesson 1): the balanced fund that added nothing new.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p><b>Column space:</b> which targets can my funds reach? <b>Nullspace:</b> which trades change nothing at all? Every portfolio that hits a target = <b>one</b> portfolio that hits it + <b>any</b> do-nothing trade.</p>
+    </div>
+
+    <div class="box finance"><span class="label">The running example: the same funds, one new one</span>
+      <p>Rules (rows): budget (₹ lakh), return (₹ thousand), market exposure. Each fund is a column: what ₹1 lakh of it does to the three rules.</p>
+      <table>
+        <tr><th>Fund</th><th>Return</th><th>Beta</th><th>Column (budget, return, exposure)</th></tr>
+        <tr><td>Nifty</td><td>12%</td><td>1.0</td><td>$(1, 12, 1)$</td></tr>
+        <tr><td>Bonds</td><td>7%</td><td>0</td><td>$(1, 7, 0)$</td></tr>
+        <tr><td>Midcap</td><td>15%</td><td>1.2</td><td>$(1, 15, 1.2)$</td></tr>
+        <tr><td>Balanced (half Nifty, half bonds)</td><td>9.5%</td><td>0.5</td><td>$(1, 9.5, 0.5)$</td></tr>
+      </table>
+      <p>We'll use two fund matrices: one with the <b>balanced</b> fund (it repeats what Nifty and bonds already do) and one with <b>midcap</b> (it adds something new).</p>
+      $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 9.5 \\ 1 & 0 & 0.5 \end{bmatrix} \text{ (Nifty, bonds, balanced)} \qquad A_{\text{mid}} = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} \text{ (Nifty, bonds, midcap)} $$
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. When can Ax = b be solved?</h3>
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>$Ax$ is always a mix of the columns of $A$. So $Ax = b$ has an answer <b>exactly when $b$ is a mix of the columns</b>, that is, when $b$ is in the column space $C(A)$.</p>
+    </div>
+
+    <h4>Step 1: Ax is a mix of the columns</h4>
+    <p>Hold ₹7 lakh Nifty, ₹3 lakh bonds, nothing in balanced: $x = (7, 3, 0)$. Row by row:</p>
+    $$ Ax = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 9.5 \\ 1 & 0 & 0.5 \end{bmatrix}\begin{bmatrix} 7 \\ 3 \\ 0 \end{bmatrix} = \begin{bmatrix} 1(7) + 1(3) + 1(0) \\ 12(7) + 7(3) + 9.5(0) \\ 1(7) + 0(3) + 0.5(0) \end{bmatrix} = \begin{bmatrix} 7 + 3 + 0 \\ 84 + 21 + 0 \\ 7 + 0 + 0 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \\ 7 \end{bmatrix}. $$
+    <p>Column by column, the same product is $7 \times$ (Nifty column) $+\ 3 \times$ (bonds column) $+\ 0 \times$ (balanced column). Whatever $x$ you pick, $Ax$ is some mix of the columns. That's all a matrix can produce.</p>
+
+    <h4>Step 2: so the target must be a mix too</h4>
+    <div class="box method" id="m-solvable"><span class="label">Rule · Ax = b is solvable exactly when b is in C(A)</span>
+      <p>If $Ax = b$ has a solution, then $b = Ax$ is a mix of the columns, so $b \in C(A)$. If $b \in C(A)$, the amounts of each column in that mix <b>are</b> a solution $x$. In money terms: a target can be hit exactly when it's a target your funds can reach.</p>
+    </div>
+    <p>A handy way to <b>build</b> reachable targets: pick any $x$ first, then compute $b = Ax$. Every $b$ you make this way is in $C(A)$, and you already know one answer for it.</p>
+
+    <h4>Step 3: MIT's example: 4 rules, 3 unknowns</h4>
+    <p>Strang's matrix has four rows (four equations) and only three columns (three unknowns):</p>
+    $$ A_{\text{MIT}} = \begin{bmatrix} 1 & 1 & 2 \\ 2 & 1 & 3 \\ 3 & 1 & 4 \\ 4 & 1 & 5 \end{bmatrix}. $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">What</span> Its columns live in $\mathbb{R}^4$ (four entries each). Can three columns reach every target in $\mathbb{R}^4$?</p>
+        <p class="k"><span class="kl">Why not</span> Three directions can fill at most a 3D slice of a 4D space. Some targets must be out of reach.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Look closer</span> Column 3 = column 1 + column 2: $1 + 1 = 2$, $2 + 1 = 3$, $3 + 1 = 4$, $4 + 1 = 5$ ✓.</p>
+        <p class="k"><span class="kl">So</span> Column 3 adds no new direction. $C(A_{\text{MIT}})$ is only the <b>plane</b> of mixes $a(1, 2, 3, 4) + c(1, 1, 1, 1) = (a + c,\ 2a + c,\ 3a + c,\ 4a + c)$, a 2D plane inside $\mathbb{R}^4$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Reachable</span> Each entry is $a$ more than the one before, so the four entries must go up in <b>equal steps</b>. $(1, 2, 3, 4)$: steps 1, 1, 1 ✓. $(2, 3, 4, 5)$ ✓.</p>
+        <p class="k"><span class="kl">Not reachable</span> $(1, 0, 0, 0)$: steps $-1, 0, 0$, not equal ✗. No $x$ solves $A_{\text{MIT}}x = (1, 0, 0, 0)$.</p>
+      </li>
+    </ol>
+
+    <h4>Step 4: the same thing with our funds</h4>
+    <p>The balanced fund is half Nifty, half bonds: $\tfrac12(1, 12, 1) + \tfrac12(1, 7, 0) = (0.5 + 0.5,\ 6 + 3.5,\ 0.5 + 0) = (1, 9.5, 0.5)$ ✓. Like column 3 above, it adds no new direction. So $C(A)$ is still the plane from <a href="05_transposes-permutations-vector-spaces.html#t7">Lesson 5</a>: targets with $R = 7B + 5E$. The target $(10, 105, 7)$ passes ($70 + 35 = 105$); $(10, 105, 5)$ still fails ($70 + 25 = 95$).</p>
+    <div class="box intuition"><span class="label">In one line</span><p>A target is hittable exactly when it's in $C(A)$; a column that's a mix of the others makes $C(A)$ no bigger.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. The nullspace: trades that change nothing</h3>
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>The <b>nullspace</b> $N(A)$ is every trade $x$ with $Ax = 0$: trades that move <b>no</b> rule at all. Same budget, same return, same exposure, just different funds.</p>
+    </div>
+    <div class="box method" id="m-nullspace"><span class="label">Method · Nullspace N(A)</span>
+      <p>For a matrix $A$ with $n$ columns, $N(A)$ is the set of all $x$ in $\mathbb{R}^n$ with $Ax = 0$. It always contains $x = 0$ ("do nothing"). The question is whether it contains anything else.</p>
+    </div>
+
+    <h4>Step 1: two twin index funds (2 × 2)</h4>
+    <p>Two Nifty index funds from different fund houses do exactly the same thing. With just the budget and return rules, both columns are $(1, 12)$:</p>
+    $$ A_{\text{twin}} = \begin{bmatrix} 1 & 1 \\ 12 & 12 \end{bmatrix}, \qquad \text{solve } A_{\text{twin}}\begin{bmatrix} x \\ y \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}. $$
+    <div class="box method" id="m-elim0"><span class="label">Method · Elimination on Ax = 0</span>
+      <p>Eliminate as usual (the right side is all zeros and stays zeros, so we leave it out). A column with no pivot gives a <b>free</b> unknown: choose it, then back-substitute for the rest. No free unknown means the only answer is $x = 0$.</p>
+    </div>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">What we do</span> Clear $x$ out of row 2.</p>
+        <p class="k"><span class="kl">How</span> Multiplier $= 12 / 1 = 12$. Row 2 $-\ 12 \times$ row 1: $12 - 12(1) = 0$, $12 - 12(1) = 0$.</p>
+        <p class="k"><span class="kl">Now</span> Row 2 is $0x + 0y = 0$: always true, no information. Column 2 has no pivot, so $y$ is <b>free</b>.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Choose</span> $y = -1$. Row 1: $x + (-1) = 0$, so $x = 1$.</p>
+        <p class="k"><span class="kl">Check</span> Budget: $1(1) + 1(-1) = 0$ ✓. Return: $12(1) + 12(-1) = 0$ ✓.</p>
+        <p class="k"><span class="kl">Meaning</span> $N(A_{\text{twin}})$ = all multiples $c(1, -1)$: move ₹$c$ lakh from one twin to the other. Nothing changes. A <b>line</b> of do-nothing trades.</p>
+      </li>
+    </ol>
+    <p>Compare Nifty and bonds, $\left[\begin{smallmatrix} 1 & 1 \\ 12 & 7 \end{smallmatrix}\right]$: row 2 $-\ 12 \times$ row 1 gives $12 - 12 = 0$ and $7 - 12 = -5$, so row 2 reads $-5y = 0$. Then $y = 0$ and row 1 gives $x = 0$. Only the zero trade: $N = \{0\}$. Different funds, so nothing can be swapped for free.</p>
+
+    <h4>Step 2: Nifty, bonds and balanced (3 × 3)</h4>
+    <p>Solve $Ax = 0$ for $A$ = (Nifty, bonds, balanced), one entry at a time.</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">What we do</span> Clear Nifty out of the return row (row 2).</p>
+        <p class="k"><span class="kl">Why</span> The pivot is the 1 in row 1, column 1.</p>
+        <p class="k"><span class="kl">How</span> Multiplier $= 12 / 1 = 12$. Row 2 $-\ 12 \times$ row 1: $12 - 12(1) = 0$, $\;7 - 12(1) = -5$, $\;9.5 - 12(1) = -2.5$.</p>
+        <p class="k"><span class="kl">Now</span> Row 2 $= (0, -5, -2.5)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">What we do</span> Clear Nifty out of the exposure row (row 3).</p>
+        <p class="k"><span class="kl">How</span> Multiplier $= 1 / 1 = 1$. Row 3 $-\ 1 \times$ row 1: $1 - 1 = 0$, $\;0 - 1 = -1$, $\;0.5 - 1 = -0.5$.</p>
+        <p class="k"><span class="kl">Now</span> Row 3 $= (0, -1, -0.5)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">What we do</span> Clear bonds out of row 3, using the pivot $-5$ in row 2.</p>
+        <p class="k"><span class="kl">How</span> Multiplier $= (-1) / (-5) = 0.2$. Row 3 $-\ 0.2 \times$ row 2: $0 - 0.2(0) = 0$, $\;-1 - 0.2(-5) = -1 + 1 = 0$, $\;-0.5 - 0.2(-2.5) = -0.5 + 0.5 = 0$.</p>
+        <p class="k"><span class="kl">Now</span> Row 3 is all zeros. Column 3 (balanced) has <b>no pivot</b>, so the balanced amount $z$ is free.</p>
+      </li>
+    </ol>
+    $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 \\ 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 \end{bmatrix} \qquad \text{pivots in columns 1 and 2; column 3 is free.} $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Choose</span> $z = -2$ (any number works; $-2$ keeps the others whole).</p>
+        <p class="k"><span class="kl">Row 2</span> $-5y - 2.5(-2) = 0 \Rightarrow -5y + 5 = 0 \Rightarrow y = 1$.</p>
+        <p class="k"><span class="kl">Row 1</span> $x + 1 + (-2) = 0 \Rightarrow x = 1$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Check</span> Budget: $1(1) + 1(1) + 1(-2) = 1 + 1 - 2 = 0$ ✓. Return: $12(1) + 7(1) + 9.5(-2) = 12 + 7 - 19 = 0$ ✓. Exposure: $1(1) + 0(1) + 0.5(-2) = 1 + 0 - 1 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Meaning</span> Buy ₹1 lakh Nifty and ₹1 lakh bonds, sell ₹2 lakh balanced. You have just built the balanced fund yourself, so <b>nothing changes</b>.</p>
+      </li>
+    </ol>
+    <p>Every multiple works too: $c(1, 1, -2)$. So $N(A)$ is a <b>line through the origin</b> in $\mathbb{R}^3$, the space of trades. You'll see it drawn in topic 5.</p>
+    <div class="box intuition"><span class="label">In one line</span><p>The nullspace collects the do-nothing trades; a free column in elimination is a sign it holds more than zero.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. Why the nullspace is a subspace</h3>
+    <p>Run the <a href="05_transposes-permutations-vector-spaces.html#m-subspace">subspace test</a> from Lesson 5 on "all trades that change nothing".</p>
+    <div class="box method" id="m-nsub"><span class="label">Rule · N(A) is always a subspace</span>
+      <p>If $Av = 0$ and $Aw = 0$, then $A(v + w) = Av + Aw = 0 + 0 = 0$ and $A(cv) = c\,Av = c \cdot 0 = 0$. And $A0 = 0$. So sums, multiples and zero all stay inside.</p>
+    </div>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Zero</span> Doing nothing changes nothing: $A0 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Sums</span> Do one do-nothing trade, then another: still nothing changed. $(1, 1, -2) + (2, 2, -4) = (3, 3, -6)$, and $A(3, 3, -6) = (3 + 3 - 6,\ 36 + 21 - 57,\ 3 + 0 - 3) = (0, 0, 0)$ ✓.</p>
+        <p class="k"><span class="kl">Multiples</span> Do it 5 times bigger, or in reverse: $-5 \times (1, 1, -2) = (-5, -5, 10)$, still $0$ ✓.</p>
+      </li>
+    </ol>
+    <p>Notice this works for <b>every</b> matrix, without solving anything. That's why Strang calls the nullspace and the column space the two subspaces every matrix comes with. They live in different places:</p>
+    <table>
+      <tr><th></th><th>Column space $C(A)$</th><th>Nullspace $N(A)$</th></tr>
+      <tr><td>Made of</td><td>targets $b$ (outputs)</td><td>trades $x$ (inputs)</td></tr>
+      <tr><td>Lives in</td><td>$\mathbb{R}^m$: one entry per <b>rule</b> (row)</td><td>$\mathbb{R}^n$: one entry per <b>fund</b> (column)</td></tr>
+      <tr><td>Question</td><td>Which targets can I reach?</td><td>Which trades change nothing?</td></tr>
+      <tr><td>How you get it</td><td>All mixes of the columns</td><td>All solutions of $Ax = 0$</td></tr>
+      <tr><td>Nifty, bonds, balanced</td><td>the plane $R = 7B + 5E$</td><td>the line through $(1, 1, -2)$</td></tr>
+    </table>
+    <p>For MIT's $4 \times 3$ matrix the two spaces aren't even the same size of vector: $C(A_{\text{MIT}})$ sits in $\mathbb{R}^4$, and $N(A_{\text{MIT}})$ sits in $\mathbb{R}^3$. Its nullspace is the line through $(1, 1, -1)$ (column 1 + column 2 − column 3 $= 0$): row by row, $1 + 1 - 2 = 0$, $2 + 1 - 3 = 0$, $3 + 1 - 4 = 0$, $4 + 1 - 5 = 0$ ✓.</p>
+    <div class="box intuition"><span class="label">In one line</span><p>Do-nothing trades add and scale into do-nothing trades, so $N(A)$ is always a subspace, of the <b>trade</b> space $\mathbb{R}^n$.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. When the nullspace is only zero</h3>
+    <p>Swap the balanced fund for midcap. Does anything still change nothing?</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Row 2</span> Multiplier $12$. Row 2 $-\ 12 \times$ row 1: $12 - 12 = 0$, $\;7 - 12 = -5$, $\;15 - 12 = 3$. Now $(0, -5, 3)$.</p>
+        <p class="k"><span class="kl">Row 3</span> Multiplier $1$. Row 3 $-$ row 1: $1 - 1 = 0$, $\;0 - 1 = -1$, $\;1.2 - 1 = 0.2$. Now $(0, -1, 0.2)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Row 3 again</span> Multiplier $(-1)/(-5) = 0.2$. Row 3 $-\ 0.2 \times$ row 2: $0$, $\;-1 - 0.2(-5) = 0$, $\;0.2 - 0.2(3) = 0.2 - 0.6 = -0.4$.</p>
+        <p class="k"><span class="kl">Now</span> $U = \left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{smallmatrix}\right]$: three pivots, <b>no free column</b>.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Back-substitute</span> Row 3: $-0.4z = 0 \Rightarrow z = 0$. Row 2: $-5y + 3(0) = 0 \Rightarrow y = 0$. Row 1: $x + 0 + 0 = 0 \Rightarrow x = 0$.</p>
+        <p class="k"><span class="kl">Meaning</span> $N(A_{\text{mid}}) = \{0\}$. No trade among these three funds leaves all three rules untouched.</p>
+      </li>
+    </ol>
+    <div class="box method" id="m-indep"><span class="label">Rule · N(A) = {0} means no column is redundant</span>
+      <p>A non-zero $x$ in $N(A)$ says "this mix of columns adds to zero", so one column can be rebuilt from the others. $N(A) = \{0\}$ says no column can be rebuilt: each adds a new direction. (Lesson 9 names this <b>independence</b>.)</p>
+    </div>
+    <p><b>Why a trader cares.</b> When $N(A) = \{0\}$, each reachable target has <b>exactly one</b> portfolio: if $Ax = b$ and $Ay = b$, then $A(x - y) = 0$, so $x - y = 0$. That's why every client in Lessons 1–4 got a single answer. With the balanced fund, there's never just one answer, as the next topic shows.</p>
+    <details class="more"><summary>For the curious: midcap breaks the link, and a free trade appears</summary>
+      <p>Midcap doesn't obey $R = 7B + 5E$ ($7 + 6 = 13 \ne 15$). Take the trade $(-6, 1, 5)$ from Lesson 5: $A_{\text{mid}}(-6, 1, 5) = (-6 + 1 + 5,\ -72 + 7 + 75,\ -6 + 0 + 6) = (0, 10, 0)$. It changes only the return. That's a direction the balanced fund could never give, and it's why $C(A_{\text{mid}})$ is all of $\mathbb{R}^3$.</p>
+    </details>
+    <div class="box intuition"><span class="label">In one line</span><p>No free column ⇒ $N(A) = \{0\}$ ⇒ every reachable target has one, and only one, portfolio.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. All solutions: one answer + the nullspace</h3>
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>Find <b>one</b> portfolio that hits the target. Add any do-nothing trade and it still hits it. That gives <b>all</b> of them.</p>
+    </div>
+
+    <h4>Step 1: one answer</h4>
+    <p>Target $b = (10, 105, 7)$ with Nifty, bonds, balanced. From topic 1 we already know one answer: $x_p = (7, 3, 0)$ (the "p" is for <b>particular</b>).</p>
+
+    <h4>Step 2: add the do-nothing trade</h4>
+    <div class="box method" id="m-complete"><span class="label">Rule · All solutions = particular + nullspace</span>
+      <p>If $Ax_p = b$ and $Ax_n = 0$, then $A(x_p + x_n) = b + 0 = b$. And every solution comes this way: if $Ax = b$, then $A(x - x_p) = b - b = 0$, so $x - x_p$ is in $N(A)$. Here: $x = (7, 3, 0) + t(1, 1, -2) = (7 + t,\ 3 + t,\ -2t)$.</p>
+    </div>
+    <table>
+      <tr><th>$t$</th><th>Portfolio (Nifty, bonds, balanced)</th><th>Budget</th><th>Return</th><th>Exposure</th></tr>
+      <tr><td>0</td><td>$(7, 3, 0)$</td><td>$7 + 3 + 0 = 10$</td><td>$84 + 21 + 0 = 105$</td><td>$7 + 0 + 0 = 7$</td></tr>
+      <tr><td>1</td><td>$(8, 4, -2)$</td><td>$8 + 4 - 2 = 10$</td><td>$96 + 28 - 19 = 105$</td><td>$8 + 0 - 1 = 7$</td></tr>
+      <tr><td>$-1$</td><td>$(6, 2, 2)$</td><td>$6 + 2 + 2 = 10$</td><td>$72 + 14 + 19 = 105$</td><td>$6 + 0 + 1 = 7$</td></tr>
+      <tr><td>$-3$</td><td>$(4, 0, 6)$</td><td>$4 + 0 + 6 = 10$</td><td>$48 + 0 + 57 = 105$</td><td>$4 + 0 + 3 = 7$</td></tr>
+    </table>
+    <p>Four different portfolios, all with ₹10 lakh, ₹105 thousand and exposure 7. There are infinitely many: one for every $t$.</p>
+
+    <h4>Try it: slide along the solutions</h4>
+    <div id="addnull" class="lab-controls"></div>
+    <figure class="fig plot3d">
+      <div id="nsPlot" class="plot3d-box"></div>
+      <figcaption><b>Two parallel lines in the space of trades (drag to rotate).</b> Purple: the nullspace, do-nothing trades through $0$. Green: every portfolio that hits $(10, 105, 7)$, the same line shifted to pass through $(7, 3, 0)$. The orange arrow is $t \times (1, 1, -2)$.</figcaption>
+    </figure>
+
+    <h4>Step 3: these solutions are not a subspace</h4>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Zero test</span> Is $(0, 0, 0)$ a solution? It would need $7 + t = 0$ and $3 + t = 0$ at once: $t = -7$ and $t = -3$. Impossible ✗. (Also, doing nothing has budget 0, not 10.)</p>
+        <p class="k"><span class="kl">Sum test</span> $(7, 3, 0) + (6, 2, 2) = (13, 5, 2)$. Budget $13 + 5 + 2 = 20$, return $156 + 35 + 19 = 210$, exposure $13 + 0 + 1 = 14$: that's $2b$, not $b$ ✗.</p>
+        <p class="k"><span class="kl">Picture</span> The green line is the purple line <b>shifted off the origin</b>. A shifted line misses $0$, like the fixed-budget line in <a href="05_transposes-permutations-vector-spaces.html#t5">Lesson 5</a>.</p>
+      </li>
+    </ol>
+    <p>MIT's version: $A_{\text{MIT}}x = (1, 2, 3, 4)$ is solved by $(1, 0, 0)$, and by $(1, 0, 0) + c(1, 1, -1)$ for every $c$. At $c = -1$ that's $(0, -1, 1)$: $-1(1, 1, 1, 1) + 1(2, 3, 4, 5) = (1, 2, 3, 4)$ ✓. A line through $(1, 0, 0)$ and $(0, -1, 1)$, but not through $0$.</p>
+    <details class="more"><summary>For the curious: which of these portfolios are long-only?</summary>
+      <p>Long-only needs every amount $\ge 0$: $7 + t \ge 0$, $3 + t \ge 0$ and $-2t \ge 0$. The last says $t \le 0$; the second says $t \ge -3$. So only $-3 \le t \le 0$ works: from $(7, 3, 0)$ (no balanced) to $(4, 0, 6)$ (no bonds). The algebra gives a whole line; the "no shorting" rule cuts it to a segment. That cut is what portfolio optimisers work with.</p>
+    </details>
+    <div class="box intuition"><span class="label">In one line</span><p>All answers = one answer + the nullspace: a copy of $N(A)$ shifted to pass through $x_p$. A unique answer happens exactly when $N(A) = \{0\}$.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. Spotting subspaces: rules that equal zero</h3>
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>Any set described by <b>linear rules that equal zero</b> is a nullspace, so it is automatically a subspace. Change one zero to anything else and it stops being one.</p>
+    </div>
+    <h4>Step 1: zero-cost trades are a nullspace</h4>
+    <p>With Nifty, bonds, midcap, a zero-cost trade has $x + y + z = 0$. That is $\begin{bmatrix} 1 & 1 & 1 \end{bmatrix}\begin{bmatrix} x \\ y \\ z \end{bmatrix} = 0$: the nullspace of the $1 \times 3$ matrix $\begin{bmatrix} 1 & 1 & 1 \end{bmatrix}$. One rule, three unknowns, two free: a <b>plane</b> through $0$.</p>
+    <h4>Step 2: market-neutral trades are a nullspace</h4>
+    <p>A trade that adds no market exposure has $1x + 0y + 1.2z = 0$: the nullspace of $\begin{bmatrix} 1 & 0 & 1.2 \end{bmatrix}$. Another plane through $0$.</p>
+    <h4>Step 3: both at once: stack the rules</h4>
+    <div class="box method" id="m-intersect"><span class="label">Rule · Stacking rules intersects nullspaces (MIT 6.3)</span>
+      <p>If $C = \left[\begin{smallmatrix} A \\ B \end{smallmatrix}\right]$ (the rows of $A$ on top of the rows of $B$), then $Cx = 0$ means $Ax = 0$ <b>and</b> $Bx = 0$. So $N(C) = N(A) \cap N(B)$, and the intersection of two subspaces is a subspace.</p>
+    </div>
+    $$ C = \begin{bmatrix} 1 & 1 & 1 \\ 1 & 0 & 1.2 \end{bmatrix} \;\begin{matrix} \leftarrow \text{zero cost} \\ \leftarrow \text{zero exposure} \end{matrix} $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Eliminate</span> Multiplier $1$. Row 2 $-$ row 1: $1 - 1 = 0$, $\;0 - 1 = -1$, $\;1.2 - 1 = 0.2$. Now $\left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -1 & 0.2 \end{smallmatrix}\right]$: column 3 is free.</p>
+        <p class="k"><span class="kl">Choose</span> $z = 5$. Row 2: $-y + 0.2(5) = 0 \Rightarrow y = 1$. Row 1: $x + 1 + 5 = 0 \Rightarrow x = -6$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Check</span> Cost: $-6 + 1 + 5 = 0$ ✓. Exposure: $-6 + 0 + 1.2(5) = -6 + 6 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Meaning</span> $N(C)$ is the line through $(-6, 1, 5)$: the trade from <a href="05_transposes-permutations-vector-spaces.html#t6">Lesson 5</a>, now found as a nullspace. Two planes through $0$ meet in a line through $0$.</p>
+      </li>
+    </ol>
+    <h4>Step 4: what breaks it</h4>
+    <table>
+      <tr><th>Set of trades</th><th>Rule</th><th>Subspace?</th><th>Why</th></tr>
+      <tr><td>Zero-cost</td><td>$x + y + z = 0$</td><td>yes</td><td>linear, $= 0$: a nullspace</td></tr>
+      <tr><td>Zero-cost and market-neutral</td><td>both rules $= 0$</td><td>yes</td><td>intersection of two nullspaces</td></tr>
+      <tr><td>Budget exactly 10</td><td>$x + y + z = 10$</td><td>no</td><td>$0$ is not in it: a shifted plane</td></tr>
+      <tr><td>Zero-cost <b>or</b> market-neutral</td><td>either rule</td><td>no</td><td>a union: adding one of each can satisfy neither</td></tr>
+      <tr><td>Bonds = Nifty × midcap</td><td>$y = xz$</td><td>no</td><td>not linear: $(1, 1, 1)$ is in, $2 \times$ it, $(2, 2, 2)$, is not ($2 \ne 4$)</td></tr>
+    </table>
+    <div class="box intuition"><span class="label">In one line</span><p>Linear rules set to zero always carve out a subspace (a nullspace); a non-zero right side, an "or", or a product breaks it.</p></div>
+
+    <details class="check"><summary>Check yourself (MIT recitation): which of these sets of $(b_1, b_2, b_3)$ are subspaces of $\mathbb{R}^3$? (1) $b_1 + b_2 - b_3 = 0$; (2) $b_3 = b_1 b_2$; (3) $(1, 0, 0) + c_1(1, 0, -1) + c_2(1, 0, 1)$; (4) $(0, 1, 0) + c_1(1, 0, -1) + c_2(1, 0, 1)$.</summary>
+      <p>(1) Yes: it's the nullspace of $\begin{bmatrix} 1 & 1 & -1 \end{bmatrix}$. (2) No: $(1, 1, 1)$ is in it ($1 = 1 \times 1$), but $(2, 2, 2)$ isn't ($2 \ne 2 \times 2$). (3) Yes: $(1, 0, 0) = \tfrac12(1, 0, -1) + \tfrac12(1, 0, 1)$ already lies in the plane, so shifting by it changes nothing; the set is just the plane of all $c_1(1, 0, -1) + c_2(1, 0, 1)$. (4) No: every mix of the two vectors has middle entry 0, so adding $(0, 1, 0)$ makes the middle entry 1. The zero vector is never reached.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <!-- Summary: website only (left out of the PDF report) -->
+    <div class="no-print">
+    <h3 class="topic" id="t7">7. Summary</h3>
+    <div class="summary">
+      <h3>Key ideas</h3>
+      <ol>
+        <li>$Ax$ is always a mix of the columns, so $Ax = b$ is solvable exactly when $b \in C(A)$. (<a href="#t1">topic 1</a>)</li>
+        <li>The nullspace $N(A)$ is all $x$ with $Ax = 0$: the trades that change nothing. Find it by elimination: free columns give non-zero solutions. (<a href="#t2">topic 2</a>)</li>
+        <li>$N(A)$ is always a subspace, of $\mathbb{R}^n$ (trades); $C(A)$ is a subspace of $\mathbb{R}^m$ (targets). (<a href="#t3">topic 3</a>)</li>
+        <li>$N(A) = \{0\}$ means no redundant column, and one portfolio per reachable target. (<a href="#t4">topic 4</a>)</li>
+        <li>All solutions of $Ax = b$ = one particular solution + the nullspace: a shifted copy, not a subspace. (<a href="#t5">topic 5</a>)</li>
+        <li>Linear rules "$= 0$" give nullspaces; stacking rules intersects them. (<a href="#t6">topic 6</a>)</li>
+      </ol>
+    </div>
+    <h4>Words in this lesson</h4>
+    <dl class="vocab">
+      <dt>Column space $C(A)$</dt><dd>All mixes of the columns of $A$: the reachable targets. A subspace of $\mathbb{R}^m$.</dd>
+      <dt>Nullspace $N(A)$</dt><dd>All $x$ with $Ax = 0$: the do-nothing trades. A subspace of $\mathbb{R}^n$.</dd>
+      <dt>Free column / free unknown</dt><dd>A column with no pivot after elimination; its unknown can be chosen freely.</dd>
+      <dt>Particular solution $x_p$</dt><dd>Any one solution of $Ax = b$.</dd>
+      <dt>Complete solution</dt><dd>$x = x_p + x_n$ with $x_n$ in $N(A)$: every solution.</dd>
+      <dt>Intersection $S \cap T$</dt><dd>Vectors in both $S$ and $T$; a subspace whenever $S$ and $T$ are.</dd>
+    </dl>
+    </div>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: redundant hedges</a></li>
+        <li><a href="#ex2">Lot sizes: put–call parity is a nullspace</a></li>
+        <li><a href="#ex3">Nullspace lab</a></li>
+      </ol>
+    </nav>
+
+    <p>The other two running examples through this lesson's question: which trades change nothing, and what does that do to the answers?</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, redundant hedges</h3>
+    <p>Rows: (market, currency, rates) exposure. Hedges: Nifty futures $(1, 0, 0)$, Nifty IT futures $(1, 1, 0)$, Bank Nifty futures $(1, 0, 1)$.</p>
+
+    <h4>2 × 2: Nifty and IT futures, market and currency only</h4>
+    <p>$\left[\begin{smallmatrix} 1 & 1 \\ 0 & 1 \end{smallmatrix}\right]x = 0$ is already triangular. Row 2: $y = 0$. Row 1: $x + 0 = 0$, so $x = 0$. $N = \{0\}$: each (market, currency) exposure has exactly one hedge.</p>
+
+    <h4>3 × 3: the three futures</h4>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} $$
+    <p>Already upper triangular with pivots $1, 1, 1$, so no free column. Row 3: $z = 0$. Row 2: $y = 0$. Row 1: $x + 0 + 0 = 0$, so $x = 0$. $N(A) = \{0\}$: every exposure has one hedge, and none of the three futures can be built from the other two.</p>
+
+    <h4>Swap Bank Nifty for a spread contract</h4>
+    <p>Suppose the desk is offered an "IT minus Nifty" spread, which carries only currency exposure: $(0, 1, 0)$. Columns: Nifty fut, IT fut, spread.</p>
+    $$ A_s = \begin{bmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 0 \end{bmatrix} \;\begin{matrix} \leftarrow \text{market} \\ \leftarrow \text{currency} \\ \leftarrow \text{rates} \end{matrix} $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Pivots</span> Columns 1 and 2. Row 3 is all zeros; column 3 (spread) is free.</p>
+        <p class="k"><span class="kl">Choose</span> spread $z = 1$. Row 2: $y + 1 = 0 \Rightarrow y = -1$. Row 1: $x + (-1) = 0 \Rightarrow x = 1$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Check</span> Market: $1 - 1 + 0 = 0$ ✓. Currency: $0 - 1 + 1 = 0$ ✓. Rates: $0$ ✓.</p>
+        <p class="k"><span class="kl">Meaning</span> Buy 1 Nifty fut, sell 1 IT fut, buy 1 spread: zero exposure everywhere. The spread <b>is</b> "IT minus Nifty", so it's redundant. $N(A_s)$ = all $c(1, -1, 1)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Target</span> Hedge $(10, 3, 0)$. One answer: $x_p = (7, 3, 0)$, as in Lesson 5.</p>
+        <p class="k"><span class="kl">All answers</span> $(7 + t,\ 3 - t,\ t)$. At $t = 3$: $(10, 0, 3)$. Market $10 + 0 + 0 = 10$, currency $0 + 0 + 3 = 3$, rates $0$ ✓. The desk can skip IT futures entirely and use the spread.</p>
+        <p class="k"><span class="kl">But</span> Rate exposure is still unreachable: every column has 0 in the rates row. Redundancy gives more ways to hit the same targets, not more targets.</p>
+      </li>
+    </ol>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, put–call parity is a nullspace</h3>
+    <p>Rows: Nifty ends at 19,800 / 20,000 / 20,200. Entries: payoff in points per lot. Columns: futures $(-200, 0, 200)$, 20,000 call $(0, 0, 200)$, 20,000 put $(200, 0, 0)$.</p>
+
+    <h4>2 × 2: futures and the call, two scenarios</h4>
+    <p>Using only the 19,800 and 20,200 scenarios: $\left[\begin{smallmatrix} -200 & 0 \\ 200 & 200 \end{smallmatrix}\right]x = 0$. Multiplier $200 / (-200) = -1$, so row 2 $+$ row 1: $200 - 200 = 0$, $200 + 0 = 200$. Row 2: $200y = 0 \Rightarrow y = 0$. Row 1: $-200x = 0 \Rightarrow x = 0$. $N = \{0\}$.</p>
+
+    <h4>3 × 3: futures, call and put</h4>
+    $$ A = \begin{bmatrix} -200 & 0 & 200 \\ 0 & 0 & 0 \\ 200 & 200 & 0 \end{bmatrix} \;\begin{matrix} \leftarrow 19{,}800 \\ \leftarrow 20{,}000 \\ \leftarrow 20{,}200 \end{matrix} $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Row 3</span> Multiplier $200 / (-200) = -1$, so row 3 $+$ row 1: $200 - 200 = 0$, $\;200 + 0 = 200$, $\;0 + 200 = 200$. Now $(0, 200, 200)$.</p>
+        <p class="k"><span class="kl">Swap</span> Row 2 is all zeros (nothing pays at 20,000). Swap rows 2 and 3 to bring the pivot up: $U = \left[\begin{smallmatrix} -200 & 0 & 200 \\ 0 & 200 & 200 \\ 0 & 0 & 0 \end{smallmatrix}\right]$. Column 3 (put) is free.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Choose</span> put $z = 1$. Row 2: $200y + 200 = 0 \Rightarrow y = -1$. Row 1: $-200x + 200 = 0 \Rightarrow x = 1$.</p>
+        <p class="k"><span class="kl">Check</span> 19,800: $-200 - 0 + 200 = 0$ ✓. 20,000: $0$ ✓. 20,200: $200 - 200 + 0 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Meaning</span> Long 1 future, short 1 call, long 1 put pays nothing anywhere: <a href="03_multiplication-and-inverse-matrices.html#m-pcp">put–call parity</a> (a conversion). $N(A)$ = all $c(1, -1, 1)$.</p>
+      </li>
+    </ol>
+
+    <h4>Every way to build a payoff</h4>
+    <p>Client payoff $(-200, 0, 600)$. One answer: 1 future + 2 calls, $x_p = (1, 2, 0)$. All answers: $(1 + t,\ 2 - t,\ t)$.</p>
+    <table>
+      <tr><th>$t$</th><th>Lots (futures, call, put)</th><th>at 19,800</th><th>at 20,000</th><th>at 20,200</th></tr>
+      <tr><td>0</td><td>$(1, 2, 0)$</td><td>$-200 + 0 + 0 = -200$</td><td>$0$</td><td>$200 + 400 + 0 = 600$</td></tr>
+      <tr><td>1</td><td>$(2, 1, 1)$</td><td>$-400 + 0 + 200 = -200$</td><td>$0$</td><td>$400 + 200 + 0 = 600$</td></tr>
+      <tr><td>2</td><td>$(3, 0, 2)$</td><td>$-600 + 0 + 400 = -200$</td><td>$0$</td><td>$600 + 0 + 0 = 600$</td></tr>
+    </table>
+    <p>"1 future + 2 calls" and "3 futures + 2 puts" pay the same in every scenario. In real markets the cheaper route wins, and if one route is cheaper than another <b>by more than costs</b>, a desk sells the expensive one and buys the cheap one. That gap is what parity arbitrage trades.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Nullspace lab</h3>
+    <p>Pick an example or type your own $3 \times 3$ matrix and target. The lab eliminates, finds the free columns and the nullspace, checks it entry by entry, and, if the target is reachable, lists every solution as one answer + the nullspace.</p>
+    <div id="nslab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="05_transposes-permutations-vector-spaces.html">← Lesson 5: Transposes, Permutations, Vector Spaces</a>
+    <span class="off">Next: Lesson 7 (coming soon)</span>
+  </nav>
+  </div>
+</main>
+<script defer src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script>
+// Interactive pieces: Notes topic 5 (slider + 3D plot of N(A) and the solution line) and the Examples tab (nullspace lab).
+window.addEventListener("load", function () {
+  var css = getComputedStyle(document.documentElement);
+  function c(v) { return css.getPropertyValue(v).trim(); }
+  var blue = c("--def-b"), green = c("--ex-b"), orange = c("--int-b"), red = c("--warn-b"), purple = c("--thm-b"), ink = c("--ink"), soft = c("--ink-soft"), rule = c("--rule"), paper2 = c("--paper-2");
+  function f(v) { var r = Math.round(v * 1e4) / 1e4; if (Math.abs(r) < 1e-9) r = 0; return String(r); }
+  function vec(v) { return "(" + v.map(f).join(", ") + ")"; }
+  function km(el) { if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false }); }
+  var config = { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["toImage"] };
+
+  // ---- Notes, topic 5: slide along the solutions of Ax = (10, 105, 7) ----
+  var setPoint = null;
+  (function () {
+    var root = document.getElementById("addnull"); if (!root) return;
+    root.innerHTML = '<div class="lab-row"><label>$t$ = <input type="range" class="an-t" min="-4" max="2" step="0.5" value="-1" style="width:14em"></label> <b class="an-tv"></b></div><div class="an-out mixer-out"></div>';
+    km(root.querySelector(".lab-row"));
+    var inp = root.querySelector(".an-t"), tv = root.querySelector(".an-tv"), out = root.querySelector(".an-out");
+    function term(a, x) { return a + "(" + f(x) + ")"; }
+    function update() {
+      var t = +inp.value, x = [7 + t, 3 + t, -2 * t];
+      tv.textContent = f(t);
+      var B = x[0] + x[1] + x[2], R = 12 * x[0] + 7 * x[1] + 9.5 * x[2], E = x[0] + 0.5 * x[2];
+      var longOnly = x.every(function (v) { return v >= -1e-9; });
+      var h = "<p>Portfolio $= (7, 3, 0) + " + (t < 0 ? "(" + f(t) + ")" : f(t)) + " \\times (1, 1, -2) = " + vec(x) + "$: ₹" + f(x[0]) + " lakh Nifty, ₹" + f(x[1]) + " lakh bonds, ₹" + f(x[2]) + " lakh balanced.</p>";
+      h += "<p>Budget: $" + [term(1, x[0]), term(1, x[1]), term(1, x[2])].join(" + ") + " = " + f(B) + "$ ✓<br>Return: $" + [term(12, x[0]), term(7, x[1]), term(9.5, x[2])].join(" + ") + " = " + f(R) + "$ ✓<br>Exposure: $" + [term(1, x[0]), term(0, x[1]), term(0.5, x[2])].join(" + ") + " = " + f(E) + "$ ✓</p>";
+      h += longOnly ? '<p class="answer">Hits (10, 105, 7), and it is long-only (no negative amounts).</p>' : '<p class="answer">Hits (10, 105, 7). <span class="lab-warn">Needs a short position (a negative amount).</span></p>';
+      out.innerHTML = h; km(out);
+      if (setPoint) setPoint(t);
+    }
+    inp.addEventListener("input", update);
+    window.__anUpdate = update;
+  })();
+
+  if (window.Plotly && document.getElementById("nsPlot")) {
+    var box = [[-4, 10], [-4, 6], [-8, 8]];
+    function axis(t, lo, hi, d) {
+      return { title: { text: t, font: { size: 14, color: ink } }, range: [lo, hi], autorange: false, tickmode: "linear", tick0: 0, dtick: d,
+        tickfont: { size: 11, color: soft }, gridcolor: rule, zeroline: true, zerolinecolor: soft, zerolinewidth: 3,
+        showbackground: true, backgroundcolor: paper2, showspikes: false, linecolor: soft, showline: true };
+    }
+    var span = function (r) { return r[1] - r[0]; }, mx = Math.max(span(box[0]), span(box[1]), span(box[2]));
+    var layout = {
+      margin: { l: 0, r: 0, t: 0, b: 60 }, paper_bgcolor: "rgba(0,0,0,0)", showlegend: true, uirevision: "keep",
+      legend: { orientation: "h", x: 0, y: -0.02, yanchor: "top", font: { color: ink, size: 12 }, bgcolor: "rgba(0,0,0,0)" },
+      scene: { xaxis: axis("Nifty (₹ lakh)", box[0][0], box[0][1], 2), yaxis: axis("bonds (₹ lakh)", box[1][0], box[1][1], 2), zaxis: axis("balanced (₹ lakh)", box[2][0], box[2][1], 2),
+        aspectmode: "manual", aspectratio: { x: span(box[0]) / mx * 1.3, y: span(box[1]) / mx * 1.3, z: span(box[2]) / mx * 1.3 },
+        dragmode: "turntable", camera: { eye: { x: 1.5, y: -1.6, z: 0.8 }, up: { x: 0, y: 0, z: 1 } } }
+    };
+    function line(t0, t1, p, d) { return { x: [p[0] + t0 * d[0], p[0] + t1 * d[0]], y: [p[1] + t0 * d[1], p[1] + t1 * d[1]], z: [p[2] + t0 * d[2], p[2] + t1 * d[2]] }; }
+    var dN = [1, 1, -2], xp = [7, 3, 0];
+    var traces = [
+      Object.assign({ type: "scatter3d", mode: "lines", name: "N(A): all t × (1, 1, −2)", line: { color: purple, width: 7 } }, line(-3.5, 3.5, [0, 0, 0], dN)),
+      Object.assign({ type: "scatter3d", mode: "lines", name: "all solutions: (7, 3, 0) + t × (1, 1, −2)", line: { color: green, width: 7 } }, line(-4, 2, xp, dN)),
+      { type: "scatter3d", mode: "markers+text", name: "0: do nothing", marker: { color: ink, size: 5 }, x: [0], y: [0], z: [0], text: ["0"], textposition: "bottom center", textfont: { color: ink, size: 13 } },
+      { type: "scatter3d", mode: "markers+text", name: "x_p = (7, 3, 0)", marker: { color: green, size: 7 }, x: [7], y: [3], z: [0], text: ["(7, 3, 0)"], textposition: "bottom right", textfont: { color: green, size: 13 } },
+      { type: "scatter3d", mode: "lines", name: "+ t × (1, 1, −2)", line: { color: orange, width: 6, dash: "dash" }, x: [7, 6], y: [3, 2], z: [0, 2] },
+      { type: "scatter3d", mode: "markers+text", name: "current portfolio", marker: { color: orange, size: 7 }, x: [6], y: [2], z: [2], text: ["(6, 2, 2)"], textposition: "top left", textfont: { color: orange, size: 13 } }
+    ];
+    Plotly.newPlot("nsPlot", traces, layout, config);
+    setPoint = function (t) {
+      var p = [7 + t, 3 + t, -2 * t];
+      Plotly.restyle("nsPlot", { x: [[7, p[0]], [p[0]]], y: [[3, p[1]], [p[1]]], z: [[0, p[2]], [p[2]]], text: [null, [vec(p)]] }, [4, 5]);
+    };
+  }
+  if (window.__anUpdate) window.__anUpdate();
+
+  // ---- Examples tab: nullspace lab (3 × 3 matrix, one target) ----
+  (function () {
+    var root = document.getElementById("nslab"); if (!root) return;
+    var presets = [
+      { label: "Portfolio · Nifty, bonds, balanced", rows: ["budget", "return", "exposure"], cols: ["Nifty", "Bonds", "Balanced"], A: [[1, 1, 1], [12, 7, 9.5], [1, 0, 0.5]], b: [10, 105, 7] },
+      { label: "Portfolio · Nifty, bonds, midcap", rows: ["budget", "return", "exposure"], cols: ["Nifty", "Bonds", "Midcap"], A: [[1, 1, 1], [12, 7, 15], [1, 0, 1.2]], b: [10, 111, 7.4] },
+      { label: "Hedging · Nifty fut, IT fut, spread", rows: ["market", "currency", "rates"], cols: ["Nifty fut", "IT fut", "Spread"], A: [[1, 1, 0], [0, 1, 1], [0, 0, 0]], b: [10, 3, 0] },
+      { label: "Lot sizes · futures, call, put (20,000)", rows: ["at 19,800", "at 20,000", "at 20,200"], cols: ["Futures", "Call", "Put"], A: [[-200, 0, 200], [0, 0, 0], [200, 200, 0]], b: [-200, 0, 600] },
+      { label: "Three Nifty twins (a plane of do-nothing trades)", rows: ["budget", "return", "exposure"], cols: ["Nifty A", "Nifty B", "Nifty C"], A: [[1, 1, 1], [12, 12, 12], [1, 1, 1]], b: [10, 120, 10] }
+    ];
+    var TOL = 1e-9;
+    function t(v) { return f(v); }
+    root.innerHTML = '<div class="lab-controls"><div class="lab-row"><label>Example <select class="ns-pick">' +
+      presets.map(function (p, i) { return '<option value="' + i + '">' + p.label + "</option>"; }).join("") +
+      '</select></label><button type="button" class="lab-btn ns-reset">Reset numbers</button></div><div class="ns-grid"></div></div><div class="ns-out"></div>';
+    var pick = root.querySelector(".ns-pick"), grid = root.querySelector(".ns-grid"), out = root.querySelector(".ns-out"), P;
+    var colors = [blue, green, orange];
+    function build() {
+      P = presets[+pick.value];
+      var h = '<table class="lab-table sl-table"><tr><th></th>' + P.cols.map(function (cn, j) { return '<th style="color:' + colors[j] + '">' + cn + "</th>"; }).join("") + "<th>target b</th></tr>";
+      for (var i = 0; i < 3; i++) {
+        h += "<tr><th>" + P.rows[i] + "</th>";
+        for (var j = 0; j < 3; j++) h += '<td><input type="number" step="any" data-i="' + i + '" data-j="' + j + '" value="' + P.A[i][j] + '"></td>';
+        h += '<td><input type="number" step="any" data-i="' + i + '" data-j="3" value="' + P.b[i] + '"></td></tr>';
+      }
+      grid.innerHTML = h + "</table>"; update();
+    }
+    function aug(M, piv) {
+      return "\\left[\\begin{array}{ccc|c}" + M.map(function (r, i) {
+        return r.map(function (v, j) { return piv.some(function (p) { return p[0] === i && p[1] === j; }) ? "\\boxed{" + t(v) + "}" : t(v); }).join(" & ");
+      }).join(" \\\\ ") + "\\end{array}\\right]";
+    }
+    function dotLine(row, x) {
+      return row.map(function (a, j) { return t(a) + "(" + t(x[j]) + ")"; }).join(" + ") + " = " + t(row.reduce(function (s, a, j) { return s + a * x[j]; }, 0));
+    }
+    function niceScale(v) {
+      var nz = v.filter(function (a) { return Math.abs(a) > 1e-9; }).map(Math.abs); if (!nz.length) return v;
+      var first = v.filter(function (a) { return Math.abs(a) > 1e-9; })[0];
+      var m = Math.min.apply(null, nz) * (first < 0 ? -1 : 1), w = v.map(function (a) { return a / m; });   // whole numbers, first entry positive
+      return w.every(function (a) { return Math.abs(a - Math.round(a)) < 1e-9; }) ? w : v;
+    }
+    function update() {
+      var M = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+      grid.querySelectorAll("input").forEach(function (el) { var x = parseFloat(el.value); M[+el.dataset.i][+el.dataset.j] = isFinite(x) ? x : 0; });
+      var A0 = M.map(function (r) { return r.slice(0, 3); }), b0 = M.map(function (r) { return r[3]; });
+      var scale = Math.max(1, Math.max.apply(null, M.map(function (r) { return Math.max.apply(null, r.map(Math.abs)); })));
+      var zero = function (v) { return Math.abs(v) < TOL * scale * 1e3; };
+      var steps = [], piv = [], row = 0;
+      for (var col = 0; col < 3 && row < 3; col++) {
+        var p = -1; for (var i = row; i < 3; i++) if (!zero(M[i][col])) { p = i; break; }
+        if (p < 0) continue;
+        if (p !== row) { var tmp = M[p]; M[p] = M[row]; M[row] = tmp; steps.push({ txt: "Swap rows " + (row + 1) + " and " + (p + 1) + ": a 0 sat in the pivot spot." }); }
+        for (var r2 = row + 1; r2 < 3; r2++) {
+          if (zero(M[r2][col])) { M[r2][col] = 0; continue; }
+          var l = M[r2][col] / M[row][col];
+          var before = M[r2].slice();
+          for (var k = 0; k < 4; k++) { M[r2][k] -= l * M[row][k]; if (zero(M[r2][k])) M[r2][k] = 0; }
+          var calc = before.map(function (v, k) { return t(v) + " - (" + t(l) + ")(" + t(M[row][k]) + ") = " + t(M[r2][k]); }).join(", \\;");
+          steps.push({ txt: "Clear " + P.cols[col] + " from row " + (r2 + 1) + ". Multiplier $= " + t(before[col]) + " / " + t(M[row][col]) + " = " + t(l) + "$. Row " + (r2 + 1) + " − (" + t(l) + ") × row " + (row + 1) + ", entry by entry (last entry is the target): $" + calc + "$" });
+        }
+        piv.push([row, col]); row++;
+      }
+      var pivCols = piv.map(function (p) { return p[1]; }), free = [0, 1, 2].filter(function (j) { return pivCols.indexOf(j) < 0; });
+      function back(rhs, freeVals) {
+        var x = [0, 0, 0]; free.forEach(function (j, k) { x[j] = freeVals[k]; });
+        for (var q = piv.length - 1; q >= 0; q--) {
+          var pr = piv[q][0], pc = piv[q][1], s = rhs ? M[pr][3] : 0;
+          for (var j = pc + 1; j < 3; j++) s -= M[pr][j] * x[j];
+          x[pc] = s / M[pr][pc];
+        }
+        return x;
+      }
+      var h = "<h4>1. Eliminate</h4><p>Start: $" + aug(A0.map(function (r, i) { return r.concat([b0[i]]); }), []) + "$</p>";
+      if (!steps.length) h += "<p>Nothing to clear: already in echelon form.</p>";
+      steps.forEach(function (s, i) { h += "<p><b>Step " + (i + 1) + ".</b> " + s.txt + "</p>"; });
+      h += "<p>Echelon form (pivots boxed): $" + aug(M, piv) + "$</p>";
+      h += "<h4>2. The nullspace</h4><p>Pivot columns: " + (pivCols.length ? pivCols.map(function (j) { return P.cols[j]; }).join(", ") : "none") + ". Free columns: " + (free.length ? free.map(function (j) { return P.cols[j]; }).join(", ") : "none") + ".</p>";
+      var specials = free.map(function (fj, k) { var fv = free.map(function (_, m) { return m === k ? 1 : 0; }); return niceScale(back(false, fv)); });
+      if (!free.length) h += '<p class="answer">No free column, so $N(A) = \\{0\\}$: no trade changes nothing except doing nothing. Every reachable target has exactly one solution.</p>';
+      else {
+        specials.forEach(function (s, k) {
+          h += "<p>Set " + P.cols[free[k]] + " free and back-substitute: $s_" + (k + 1) + " = " + vec(s) + "$. Check $As_" + (k + 1) + "$ row by row: " +
+            A0.map(function (r, i) { return P.rows[i] + " $" + dotLine(r, s) + "$"; }).join("; ") + " ✓</p>";
+        });
+        h += '<p class="answer">' + (free.length === 1 ? "$N(A)$ is a line through 0: every multiple $t\\,s_1$." : free.length === 2 ? "$N(A)$ is a plane through 0: every mix $t\\,s_1 + u\\,s_2$." : "$A$ is all zeros: every trade changes nothing, $N(A) = \\mathbb{R}^3$.") + "</p>";
+      }
+      h += "<h4>3. Solutions of $Ax = b$</h4>";
+      var bad = [0, 1, 2].filter(function (i) { return i >= piv.length && !zero(M[i][3]); });
+      if (bad.length) {
+        h += '<p class="lab-warn"><b>No solution.</b> Row ' + (bad[0] + 1) + " reads $0 = " + t(M[bad[0]][3]) + "$: the target is not in $C(A)$.</p>";
+      } else {
+        var xp = back(true, free.map(function () { return 0; }));
+        h += "<p>Set the free amounts to 0 and back-substitute: $x_p = " + vec(xp) + "$. Check $Ax_p$: " + A0.map(function (r, i) { return P.rows[i] + " $" + dotLine(r, xp) + "$"; }).join("; ") + " ✓</p>";
+        h += '<p class="answer">' + (!free.length ? "Exactly one solution: $x = " + vec(xp) + "$." :
+          "All solutions: $x = " + vec(xp) + (free.length >= 1 ? " + t\\," + vec(specials[0]) : "") + (free.length >= 2 ? " + u\\," + vec(specials[1]) : "") + (free.length === 3 ? " + w\\," + vec(specials[2]) : "") + "$, one answer + the nullspace.") + "</p>";
+      }
+      out.innerHTML = h; km(out);
+    }
+    pick.addEventListener("change", build); root.querySelector(".ns-reset").addEventListener("click", build); grid.addEventListener("input", update);
+    build();
+  })();
+
+  // Plots drawn while their tab was hidden need a resize once the tab is shown.
+  document.querySelectorAll(".tabs button[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      setTimeout(function () { if (window.Plotly) document.querySelectorAll(".plot3d-box").forEach(function (el) { Plotly.Plots.resize(el); }); }, 0);
+    });
+  });
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=7"></script>
+</body>
+</html>

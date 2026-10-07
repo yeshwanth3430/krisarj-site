@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Column Space and Nullspace · Slides</title>
+<meta name="description" content="Linear Algebra Lesson 6 as a slide carousel: the column space, the nullspace, and every solution as one answer plus the nullspace, on portfolio, hedging and options examples.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<style>
+  /* One slide = one 1080 × 1350 page (LinkedIn's portrait carousel size). Always light. */
+  @page { size: 1080px 1350px; margin: 0; }
+  html, body { margin: 0; background: #e9e5dc; }
+  body { font: 34px/1.5 var(--serif); color: var(--ink); }
+  .slide {
+    position: relative; overflow: hidden; box-sizing: border-box;
+    width: 1080px; height: 1350px; margin: 0 auto 24px; padding: 96px 84px 130px;
+    background: var(--paper); display: flex; flex-direction: column;
+    font-size: 38px; line-height: 1.45;   /* set here, so print styles for the notes don't shrink it */
+    break-after: page; page-break-after: always;
+  }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .kicker { font: 600 22px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .slide h1 { font: 700 82px/1.06 var(--sans); letter-spacing: -.02em; margin: 22px 0 30px; }
+  .slide h2 { font: 700 60px/1.12 var(--sans); letter-spacing: -.015em; margin: 14px 0 34px; padding: 0; border: 0; }
+  .slide p { margin: 0 0 26px; }
+  .slide ul, .slide ol { margin: 0 0 26px; padding-left: 40px; }
+  .slide li { margin: 0 0 14px; }
+  .lead { font-size: 44px; line-height: 1.38; }
+  .soft { color: var(--ink-soft); }
+  .slide table { display: table; width: 100%; font-size: 32px; margin: 10px 0 28px; }
+  .slide th { font-size: 24px; }
+  .slide th, .slide td { padding: 12px 16px; }
+  .slide .box { font-size: 34px; margin: 10px 0 26px; padding: 18px 24px; }
+  .slide .box > .label { font-size: 18px; }
+  .slide figure.fig { width: 100%; max-width: 660px; align-self: center; margin: 6px 0 0; padding: 18px; }
+  .slide .figs { width: 100%; }
+  .slide .figs figure.fig { max-width: none; }
+  .slide figure.fig figcaption { font-size: 26px; }
+  .slide .fig .tick { font-size: 12px; }
+  .slide .figs { gap: 22px; }
+  .slide img.plot { display: block; align-self: center; max-width: 100%; max-height: 440px; width: auto; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .slide .katex { font-size: 1.04em; }
+  .answer { font-size: 1em; }
+  .foot {
+    position: absolute; left: 84px; right: 84px; bottom: 48px;
+    display: flex; justify-content: space-between; gap: 20px;
+    padding-top: 18px; border-top: 2px solid var(--rule);
+    font: 500 21px/1 var(--sans); color: var(--ink-soft);
+  }
+  .cover { justify-content: center; }
+  .cover h1 { font-size: 104px; }
+  .cover .lead { font-size: 44px; }
+  .chip { display: inline-block; font: 600 24px/1 var(--sans); color: var(--accent); border: 2px solid var(--accent); border-radius: 999px; padding: 12px 20px; margin: 0 10px 12px 0; }
+  .center { text-align: center; }
+  .grow { flex: 1; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  @media screen and (max-width: 1100px) { .slide { zoom: .5; } }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide cover">
+  <div class="kicker">Linear Algebra · Lesson 6</div>
+  <h1>Column Space and Nullspace</h1>
+  <p class="lead">Two questions every matrix answers: <b>which targets can I reach?</b> and <b>which trades change nothing?</b></p>
+  <p class="lead soft">With portfolios, hedges and put–call parity.</p>
+  <div><span class="chip">C(A) and N(A)</span><span class="chip">x = xₚ + xₙ</span><span class="chip">MIT 18.06, Lecture 6</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">The setup</div>
+  <h2>Funds as columns</h2>
+  <p>Rows: budget (₹ lakh), return (₹ thousand), exposure. Columns: Nifty, bonds, and a <b>balanced</b> fund (half Nifty, half bonds).</p>
+  $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 9.5 \\ 1 & 0 & 0.5 \end{bmatrix} $$
+  <table>
+    <tr><th></th><th>Column space $C(A)$</th><th>Nullspace $N(A)$</th></tr>
+    <tr><td>Question</td><td>Which targets can I reach?</td><td>Which trades change nothing?</td></tr>
+    <tr><td>Made of</td><td>targets $b$</td><td>trades $x$</td></tr>
+  </table>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="kicker">The column space</div>
+  <h2>Ax = b is solvable exactly when b ∈ C(A)</h2>
+  <p>$Ax$ is always a mix of the columns:</p>
+  $$ A\begin{bmatrix} 7 \\ 3 \\ 0 \end{bmatrix} = 7\begin{bmatrix} 1 \\ 12 \\ 1 \end{bmatrix} + 3\begin{bmatrix} 1 \\ 7 \\ 0 \end{bmatrix} + 0\begin{bmatrix} 1 \\ 9.5 \\ 0.5 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \\ 7 \end{bmatrix} $$
+  <p>So a target can be hit only if it's a mix of the columns. Balanced = ½ Nifty + ½ bonds adds no new direction: $C(A)$ stays the plane $R = 7B + 5E$.</p>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">The nullspace, 2 × 2</div>
+  <h2>Twin index funds</h2>
+  <p>Two Nifty funds from different houses: both columns $(1, 12)$.</p>
+  $$ \begin{bmatrix} 1 & 1 \\ 12 & 12 \end{bmatrix}\begin{bmatrix} 1 \\ -1 \end{bmatrix} = \begin{bmatrix} 1 - 1 \\ 12 - 12 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix} $$
+  <p>Move ₹1 lakh from one twin to the other: <b>nothing changes</b>. All multiples $c(1, -1)$ form the nullspace, a line.</p>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="kicker">The nullspace, 3 × 3</div>
+  <h2>Find it by elimination</h2>
+  $$ U = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & 0 \end{bmatrix} $$
+  <p>No pivot in column 3, so balanced is <b>free</b>. Choose $z = -2$: then $y = 1$, $x = 1$.</p>
+  <p>Check: $1 + 1 - 2 = 0$, $\;12 + 7 - 19 = 0$, $\;1 + 0 - 1 = 0$ ✓</p>
+  <div class="box finance"><span class="label">Meaning</span><p>Buy ₹1L Nifty + ₹1L bonds, sell ₹2L balanced: you built the balanced fund yourself.</p></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">A subspace</div>
+  <h2>Do-nothing + do-nothing = do-nothing</h2>
+  <p>If $Av = 0$ and $Aw = 0$:</p>
+  $$ A(v + w) = 0 + 0 = 0 \qquad A(cv) = c \cdot 0 = 0 $$
+  <p>So $N(A)$ is always a subspace, of the <b>trade</b> space $\mathbb{R}^n$. $C(A)$ is a subspace of the <b>target</b> space $\mathbb{R}^m$.</p>
+  <p>Swap balanced for midcap and elimination finds 3 pivots: $N(A) = \{0\}$, and every target has <b>exactly one</b> portfolio.</p>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">Every solution</div>
+  <h2>One answer + the nullspace</h2>
+  $$ x = \begin{bmatrix} 7 \\ 3 \\ 0 \end{bmatrix} + t\begin{bmatrix} 1 \\ 1 \\ -2 \end{bmatrix} $$
+  <img class="plot" style="max-height:500px" src="img/l6-nullspace.png" alt="The nullspace line through the origin and the parallel line of all solutions through (7, 3, 0)">
+  <p style="margin-top:20px">$(7, 3, 0)$, $(6, 2, 2)$, $(4, 0, 6)$ all give ₹10L, ₹105K, exposure 7.</p>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="kicker">Not a subspace</div>
+  <h2>The solutions are a shifted line</h2>
+  <p>$(0, 0, 0)$ isn't a solution: doing nothing has budget 0, not 10.</p>
+  <p>Add two solutions: $(7, 3, 0) + (6, 2, 2) = (13, 5, 2)$ hits $(20, 210, 14)$, which is $2b$, not $b$.</p>
+  <div class="box method"><span class="label">Rule</span><p>Linear rules "$= 0$" give a subspace (a nullspace). A non-zero right side shifts it off the origin.</p></div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="kicker">In markets</div>
+  <h2>Put–call parity is a nullspace</h2>
+  <p>Payoff per lot at 19,800 / 20,000 / 20,200: futures $(-200, 0, 200)$, 20,000 call $(0, 0, 200)$, 20,000 put $(200, 0, 0)$.</p>
+  $$ 1\cdot\text{fut} - 1\cdot\text{call} + 1\cdot\text{put} = (0, 0, 0) $$
+  <p>So "1 future + 2 calls" and "3 futures + 2 puts" pay the same everywhere. If one costs more, sell it and buy the other.</p>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="kicker">Recap</div>
+  <h2>Key takeaways</h2>
+  <ol class="lead" style="font-size:36px">
+    <li>$Ax = b$ solvable ⇔ $b \in C(A)$.</li>
+    <li>$N(A)$ = all $x$ with $Ax = 0$: do-nothing trades.</li>
+    <li>Free columns in elimination ⇒ non-zero nullspace.</li>
+    <li>$N(A) = \{0\}$ ⇒ one portfolio per target.</li>
+    <li>All solutions = $x_p$ + nullspace.</li>
+    <li>Solutions of $Ax = b \ne 0$ are not a subspace.</li>
+  </ol>
+</section>
+
+<!-- 11 -->
+<section class="slide cover">
+  <div class="kicker">Quant from First Principles</div>
+  <h1 style="font-size:76px">The full interactive lesson is free</h1>
+  <p class="lead">A nullspace lab for your own funds and targets, a slider through every solution, and worked hedging and options examples:</p>
+  <p class="lead"><b>learn.krisarj.com</b></p>
+  <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
+</section>
+
+<script>
+// Footer with page numbers on every slide.
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  slides.forEach(function (s, i) {
+    var f = document.createElement("div");
+    f.className = "foot";
+    f.innerHTML = "<span>Quant from First Principles · learn.krisarj.com</span><span>" + (i + 1) + " / " + slides.length + "</span>";
+    s.appendChild(f);
+  });
+})();
+window.addEventListener("load", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {
+    delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>
