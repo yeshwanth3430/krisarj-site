@@ -61,6 +61,7 @@ LIVE = {
     2: "02_elimination-with-matrices.html",
     3: "03_multiplication-and-inverse-matrices.html",
     4: "04_factorization-into-a-lu.html",
+    5: "05_transposes-permutations-vector-spaces.html",
 }
 
 assert len(LECTURES) == 31 and sorted(sum((t[2] for t in TOPICS), [])) == list(range(1, 32))

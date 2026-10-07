@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transposes, Permutations, Vector Spaces · Topic 3 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 3, Lesson 5: transposes, permutations and vector spaces, explained step by step: symmetric R-transpose-R and covariance, long-only vs zero-cost portfolios, subspaces and the column space.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-03-2">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-03.html">Topic 3</a> / <b>Transposes, Permutations, Vector Spaces</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 5</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 3 · Lesson 5 (MIT 18.06, Lecture 5)</p>
+  <h1>Transposes, Permutations, Vector Spaces</h1>
+  <p class="subtitle">Finish elimination with $PA = LU$, flip matrices with transposes, then step up from vectors to whole spaces of vectors, and the column space of a matrix.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-05-transposes-permutations-vector-spaces-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-05-transposes-permutations-vector-spaces-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F05_transposes-permutations-vector-spaces" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">Permutations and PA = LU</a></li>
+        <li><a href="#t2">Transposes</a></li>
+        <li><a href="#t3">Symmetric matrices and RᵀR</a></li>
+        <li><a href="#t4">Vector spaces</a></li>
+        <li><a href="#t5">When a set is not a space</a></li>
+        <li><a href="#t6">Subspaces of R² and R³</a></li>
+        <li><a href="#t7">The column space C(A)</a></li>
+        <li><a href="#t8">Summary</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">Permutations and PA = LU</a><span>Row exchanges as matrices, all six 3 × 3 permutations, and why $P^{-1} = P^T$.</span></li>
+      <li><a href="#t2">Transposes</a><span>Rows become columns. Portfolio return as $r^Tx$, and $(AB)^T = B^TA^T$ entry by entry.</span></li>
+      <li><a href="#t3">Symmetric matrices and RᵀR</a><span>Why $R^TR$ is always symmetric, and how covariance matrices come from it.</span></li>
+      <li><a href="#t4">Vector spaces</a><span>A set you can add and scale inside without leaving: portfolios as a space.</span></li>
+      <li><a href="#t5">When a set is not a space</a><span>Long-only portfolios, fixed-budget portfolios and unions fail the test.</span></li>
+      <li><a href="#t6">Subspaces of R² and R³</a><span>Lines and planes through the origin. Zero-cost (self-financing) trades form one.</span></li>
+      <li><a href="#t7">The column space C(A)</a><span>All combinations of the columns: exactly the targets your funds can reach.</span></li>
+      <li class="no-print"><a href="#t8">Summary</a><span>The key ideas and words on one screen.</span></li>
+    </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-plu">PA = LU</a> <a href="#m-pinv">P⁻¹ = Pᵀ</a> <a href="#m-transpose">Transpose</a> <a href="#m-xty">Dot product xᵀy</a> <a href="#m-prodT">(AB)ᵀ = BᵀAᵀ</a> <a href="#m-rtr">RᵀR is symmetric</a> <a href="#m-cov">Covariance matrix</a> <a href="#m-space">Vector space test</a> <a href="#m-subspace">Subspace test</a> <a href="#m-selffin">Self-financing trades</a> <a href="#m-colspace">Column space C(A)</a></p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="01_geometry-of-linear-equations.html#t6">Span and column space, first look</a> (Lesson 1): "every point you can reach by mixing".</li>
+      <li><a href="02_elimination-with-matrices.html#t7">Permutation matrices</a> (Lesson 2): $PA$ swaps rows, $AP$ swaps columns.</li>
+      <li><a href="04_factorization-into-a-lu.html#t7">PA = LU</a> and <a href="04_factorization-into-a-lu.html#t1">transposes of products</a> (Lesson 4).</li>
+      <li><a href="03_multiplication-and-inverse-matrices.html#t1">The entry rule</a> and <a href="03_multiplication-and-inverse-matrices.html#t8">building-block trades</a> (Lesson 3).</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box finance"><span class="label">The running example: the same funds, new questions</span>
+      <p>Funds: Nifty (12%, beta 1.0), bonds (7%, beta 0), midcap (15%, beta 1.2). Rules: budget, return (₹ thousand), market exposure. The fund matrix and the matrix of <b>scenario returns</b> we'll use:</p>
+      $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} \qquad R = \begin{bmatrix} -10 & 4 \\ 10 & 7 \\ 30 & 10 \end{bmatrix} \;\begin{matrix} \leftarrow \text{bad year} \\ \leftarrow \text{normal year} \\ \leftarrow \text{good year} \end{matrix} $$
+      <p>$R$ lists the yearly return (%) of Nifty (column 1) and bonds (column 2) in three scenarios. This lesson asks three new questions. What happens when rows and columns swap roles? Which sets of portfolios behave like a "space"? And exactly which targets can a set of funds reach?</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. Permutations and PA = LU</h3>
+    <p>Strang starts by finishing Chapter 2. Elimination sometimes meets a 0 in a pivot position and must exchange rows (Lesson 2). Lesson 4 wrote that as $PA = LU$; here we collect the facts about $P$.</p>
+    <div class="box method" id="m-plu"><span class="label">Rule · PA = LU</span>
+      <p>For every invertible $A$ there is a permutation $P$ that puts the rows in a workable order, and then $PA = LU$ with no further exchanges. When no exchange is needed, $P = I$ and this is $A = LU$.</p>
+    </div>
+    <p>Lesson 2's <b>credit fund</b> (12% return like Nifty, beta 0) is the example: its matrix needs rows 2 and 3 swapped. Entry by entry, $P_{23}$ takes row 1, then row 3, then row 2:</p>
+    $$ P_{23}A_{\text{credit}} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}\begin{bmatrix} 1 & 1 & 1 \\ 12 & 12 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} = \begin{bmatrix} 1 & 1 & 1 \\ 1 & 0 & 1.2 \\ 12 & 12 & 15 \end{bmatrix} \;\begin{matrix} \leftarrow \text{budget} \\ \leftarrow \text{exposure} \\ \leftarrow \text{return} \end{matrix} $$
+    <p>Strang adds a practical note: software such as MATLAB also exchanges rows when a pivot is merely <i>small</i>, because tiny pivots magnify rounding errors. Algebra only <i>requires</i> an exchange when a pivot is exactly 0.</p>
+
+    <h4>How many permutation matrices are there?</h4>
+    <p>A permutation matrix is the identity with its rows reordered (leaving them alone counts). Count the reorderings of $n$ rows: $n$ choices for the top row, then $n - 1$ for the next, and so on: $n! = n(n-1)\cdots 2 \cdot 1$.</p>
+    <table>
+      <tr><th>Size</th><th>Count</th><th>The permutation matrices</th></tr>
+      <tr><td>2 × 2</td><td>$2! = 2$</td><td>$\left[\begin{smallmatrix} 1 & 0 \\ 0 & 1 \end{smallmatrix}\right]$ (no change), $\left[\begin{smallmatrix} 0 & 1 \\ 1 & 0 \end{smallmatrix}\right]$ (swap)</td></tr>
+      <tr><td>3 × 3</td><td>$3! = 6$</td><td>identity, three single swaps, two cycles (listed in <a href="04_factorization-into-a-lu.html#t7">Lesson 4</a>)</td></tr>
+      <tr><td>4 × 4</td><td>$4! = 24$</td><td>too many to list</td></tr>
+      <tr><td>5 × 5</td><td>$5! = 120$</td><td>"not so much fun" (Strang)</td></tr>
+    </table>
+
+    <h4>Why P⁻¹ = Pᵀ, worked for a cycle</h4>
+    <div class="box method" id="m-pinv"><span class="label">Rule · P⁻¹ = Pᵀ</span>
+      <p>The inverse of a permutation matrix is its transpose: $P^TP = I$. Undoing a reordering is the reverse reordering, and transposing $P$ produces exactly that.</p>
+    </div>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Take</span> the cycle $P = \left[\begin{smallmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \end{smallmatrix}\right]$: new row 1 = old row 2, new row 2 = old row 3, new row 3 = old row 1.</p>
+        <p class="k"><span class="kl">Transpose</span> Rows become columns: $P^T = \left[\begin{smallmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{smallmatrix}\right]$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Multiply</span> $P^TP$, entry by entry. Row 1 of $P^T$ is $(0, 0, 1)$; dotted with the columns of $P$, $(0, 0, 1)$, $(1, 0, 0)$, $(0, 1, 0)$: $1, 0, 0$. Row 2, $(1, 0, 0)$: $0, 1, 0$. Row 3, $(0, 1, 0)$: $0, 0, 1$.</p>
+        <p class="k"><span class="kl">What we have now</span> $P^TP = I$ ✓: each 1 in $P^T$ lands exactly on a 1 in $P$ ("the ones hit the ones", Strang).</p>
+      </li>
+    </ol>
+    <div class="box intuition"><span class="label">In one line</span><p>Row exchanges are matrices; $PA = LU$ covers every invertible $A$; there are $n!$ permutations and each has $P^{-1} = P^T$.</p></div>
+
+    <details class="check"><summary>Check yourself (MIT problem 5.1): find a 3 × 3 permutation with $P^3 = I$ but $P \ne I$.</summary>
+      <p>The cycle above. $P$ moves each row one step round a cycle of length 3, so after three applications every row is back where it started: $P^3 = I$. (Multiplying out: $P^2 = \left[\begin{smallmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{smallmatrix}\right] = P^T$, and $P^2 P = P^TP = I$.)</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. Transposes</h3>
+    <div class="box method" id="m-transpose"><span class="label">Method · Transpose</span>
+      <p>The <b>transpose</b> $A^T$ flips $A$ across its main diagonal: rows become columns and columns become rows. In symbols, $(A^T)_{ij} = A_{ji}$: the entry in row $i$, column $j$ of $A^T$ is the entry in row $j$, column $i$ of $A$. An $m \times n$ matrix has an $n \times m$ transpose.</p>
+    </div>
+
+    <h4>Transposing the fund matrices</h4>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">2 × 2</span> $A = \left[\begin{smallmatrix} 1 & 1 \\ 12 & 7 \end{smallmatrix}\right]$. Row 1 $(1, 1)$ becomes column 1; row 2 $(12, 7)$ becomes column 2: $A^T = \left[\begin{smallmatrix} 1 & 12 \\ 1 & 7 \end{smallmatrix}\right]$.</p>
+        <p class="k"><span class="kl">Check one entry</span> $(A^T)_{12}$ should be $A_{21} = 12$ ✓.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">3 × 3</span> Each row of $A$ becomes a column:</p>
+        <p class="k"><span class="kl">Result</span> $A^T = \left[\begin{smallmatrix} 1 & 12 & 1 \\ 1 & 7 & 0 \\ 1 & 15 & 1.2 \end{smallmatrix}\right]$. Diagonal entries $1, 7, 1.2$ stay put; $A_{21} = 12$ moved to position $(1, 2)$, $A_{32} = 0$ to $(2, 3)$, and so on.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Rectangular</span> With only Nifty and bonds but all three rules, $A$ is $3 \times 2$: $\left[\begin{smallmatrix} 1 & 1 \\ 12 & 7 \\ 1 & 0 \end{smallmatrix}\right]$. Its transpose is $2 \times 3$: $\left[\begin{smallmatrix} 1 & 12 & 1 \\ 1 & 7 & 0 \end{smallmatrix}\right]$.</p>
+        <p class="k"><span class="kl">Meaning</span> In $A$ each <b>column</b> is a fund; in $A^T$ each <b>row</b> is a fund's full profile: Nifty $= (1, 12, 1)$, bonds $= (1, 7, 0)$.</p>
+      </li>
+    </ol>
+
+    <h4>Row vectors and the dot product</h4>
+    <p>Vectors are columns. Their transposes are rows. That gives a compact way to write a dot product:</p>
+    <div class="box method" id="m-xty"><span class="label">Method · Dot product as xᵀy</span>
+      <p>For column vectors $x$ and $y$ with $n$ entries, $x^Ty$ is a $(1 \times n)(n \times 1) = 1 \times 1$ product: a single number, $x_1y_1 + \cdots + x_ny_n$.</p>
+    </div>
+    <p><b>Portfolio return in one line.</b> Let $r = (12, 7, 15)$ be the returns per lakh and $x = (5, 3, 2)$ the holdings. Then</p>
+    $$ r^Tx = \begin{bmatrix} 12 & 7 & 15 \end{bmatrix}\begin{bmatrix} 5 \\ 3 \\ 2 \end{bmatrix} = 12 \times 5 + 7 \times 3 + 15 \times 2 = 60 + 21 + 30 = 111. $$
+    <p>₹111 thousand: exactly the return rule (row 2 of $A$) applied to client 1. Finance writes portfolio return as $w^Tr$ ("weights transpose returns") all the time; this is that formula.</p>
+
+    <h4>The transpose of a product reverses the order</h4>
+    <div class="box method" id="m-prodT"><span class="label">Rule · (AB)ᵀ = BᵀAᵀ</span>
+      <p>Transpose each factor and reverse the order, just like inverses (Lesson 4). Also $(A^T)^T = A$: flipping twice returns the original.</p>
+    </div>
+    <p>Check it on Lesson 3's two clients, $A = \left[\begin{smallmatrix} 1 & 1 \\ 12 & 7 \end{smallmatrix}\right]$ and $X = \left[\begin{smallmatrix} 7 & 4 \\ 3 & 6 \end{smallmatrix}\right]$, where $AX = \left[\begin{smallmatrix} 10 & 10 \\ 105 & 90 \end{smallmatrix}\right]$:</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Left side</span> Transpose $AX$: $(AX)^T = \left[\begin{smallmatrix} 10 & 105 \\ 10 & 90 \end{smallmatrix}\right]$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Right side</span> $X^T = \left[\begin{smallmatrix} 7 & 3 \\ 4 & 6 \end{smallmatrix}\right]$ and $A^T = \left[\begin{smallmatrix} 1 & 12 \\ 1 & 7 \end{smallmatrix}\right]$. Entry by entry: $(7 \cdot 1 + 3 \cdot 1,\ 7 \cdot 12 + 3 \cdot 7) = (10, 105)$ for row 1, and $(4 \cdot 1 + 6 \cdot 1,\ 4 \cdot 12 + 6 \cdot 7) = (10, 90)$ for row 2.</p>
+        <p class="k"><span class="kl">What we have now</span> $X^TA^T = \left[\begin{smallmatrix} 10 & 105 \\ 10 & 90 \end{smallmatrix}\right] = (AX)^T$ ✓.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Meaning</span> $AX$ had one <b>column</b> per client; $(AX)^T$ has one <b>row</b> per client: (budget, return) for client 1, then client 2. That's the same report sorted the other way, like a spreadsheet with clients as rows.</p>
+        <p class="k"><span class="kl">Why not $A^TX^T$?</span> $A^TX^T = \left[\begin{smallmatrix} 1 \cdot 7 + 12 \cdot 4 & 1 \cdot 3 + 12 \cdot 6 \\ 1 \cdot 7 + 7 \cdot 4 & 1 \cdot 3 + 7 \cdot 6 \end{smallmatrix}\right] = \left[\begin{smallmatrix} 55 & 75 \\ 35 & 45 \end{smallmatrix}\right]$: wrong order, meaningless numbers.</p>
+      </li>
+    </ol>
+    <div class="box intuition"><span class="label">In one line</span><p>$(A^T)_{ij} = A_{ji}$; $x^Ty$ is a dot product; $(AB)^T = B^TA^T$.</p></div>
+
+    <details class="check"><summary>Check yourself (Strang's example): transpose $\left[\begin{smallmatrix} 1 & 3 \\ 2 & 3 \\ 4 & 1 \end{smallmatrix}\right]$.</summary>
+      <p>Column 1 $(1, 2, 4)$ becomes row 1 and column 2 $(3, 3, 1)$ becomes row 2: $\left[\begin{smallmatrix} 1 & 2 & 4 \\ 3 & 3 & 1 \end{smallmatrix}\right]$, a $2 \times 3$ matrix.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. Symmetric matrices and RᵀR</h3>
+    <div class="box definition"><span class="label">Definition: symmetric matrix</span>
+      <p>A square matrix is <b>symmetric</b> if transposing doesn't change it: $S^T = S$, that is $S_{ij} = S_{ji}$ for every $i, j$. Everything above the diagonal is mirrored below it. Example: $\left[\begin{smallmatrix} 3 & 1 & 7 \\ 1 & 2 & 9 \\ 7 & 9 & 4 \end{smallmatrix}\right]$.</p>
+    </div>
+    <p>Strang: symmetric matrices "show up in a lot of applications", and he shows where they come from. Take <b>any</b> matrix $R$, even a rectangular one, and multiply its transpose by it.</p>
+    <div class="box method" id="m-rtr"><span class="label">Rule · RᵀR is always symmetric</span>
+      <p>For any $m \times n$ matrix $R$, the $n \times n$ matrix $R^TR$ is symmetric. Proof in two lines: $(R^TR)^T = R^T(R^T)^T = R^TR$, using "reverse the order" and $(R^T)^T = R$. ($RR^T$, which is $m \times m$, is symmetric for the same reason.)</p>
+    </div>
+
+    <h4>RᵀR for the scenario returns, entry by entry</h4>
+    <p>$R$ is $3 \times 2$ (3 scenarios × 2 funds), so $R^TR$ is $2 \times 2$. Entry $(i, j)$ = (column $i$ of $R$) · (column $j$ of $R$). The columns are Nifty $(-10, 10, 30)$ and bonds $(4, 7, 10)$.</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Entry (1, 1)</span> Nifty · Nifty $= (-10)^2 + 10^2 + 30^2 = 100 + 100 + 900 = 1100$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Entry (1, 2)</span> Nifty · bonds $= (-10)(4) + (10)(7) + (30)(10) = -40 + 70 + 300 = 330$.</p>
+        <p class="k"><span class="kl">Entry (2, 1)</span> bonds · Nifty: the same three products in the other order, $4(-10) + 7(10) + 10(30) = 330$. <b>This is the symmetry</b>: a dot product doesn't care which vector comes first.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Entry (2, 2)</span> bonds · bonds $= 4^2 + 7^2 + 10^2 = 16 + 49 + 100 = 165$.</p>
+        <p class="k"><span class="kl">What we have now</span> $R^TR = \left[\begin{smallmatrix} 1100 & 330 \\ 330 & 165 \end{smallmatrix}\right]$: symmetric ✓.</p>
+      </li>
+    </ol>
+    <p>The 3 × 3 version $RR^T$ compares <b>scenarios</b> instead of funds (entry $(i, j)$ = row $i$ · row $j$ of $R$):</p>
+    $$ RR^T = \begin{bmatrix} (-10)^2 + 4^2 & (-10)(10) + 4 \cdot 7 & (-10)(30) + 4 \cdot 10 \\ \cdot & 10^2 + 7^2 & 10 \cdot 30 + 7 \cdot 10 \\ \cdot & \cdot & 30^2 + 10^2 \end{bmatrix} = \begin{bmatrix} 116 & -72 & -260 \\ -72 & 149 & 370 \\ -260 & 370 & 1000 \end{bmatrix}. $$
+    <p>Only the upper triangle needed computing; symmetry fills in the rest.</p>
+
+    <div class="box method" id="m-cov"><span class="label">Model · Covariance matrix (preview)</span>
+      <p>Subtract each fund's average return first, then form $\tfrac{1}{m}C^TC$ (with $m$ scenarios): that is the <b>covariance matrix</b> of the funds, the core input of portfolio risk models. Because it has the form $C^TC$, <b>a covariance matrix is always symmetric</b>.</p>
+    </div>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Averages</span> Nifty: $(-10 + 10 + 30)/3 = 10$. Bonds: $(4 + 7 + 10)/3 = 7$.</p>
+        <p class="k"><span class="kl">Subtract them</span> Nifty: $(-10 - 10,\ 10 - 10,\ 30 - 10) = (-20, 0, 20)$. Bonds: $(4 - 7,\ 7 - 7,\ 10 - 7) = (-3, 0, 3)$. These are the columns of $C$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">$C^TC$</span> $(1, 1)$: $400 + 0 + 400 = 800$. $(1, 2) = (2, 1)$: $(-20)(-3) + 0 + 20 \cdot 3 = 60 + 60 = 120$. $(2, 2)$: $9 + 0 + 9 = 18$.</p>
+        <p class="k"><span class="kl">Divide by 3</span> Covariance $= \left[\begin{smallmatrix} 800/3 & 40 \\ 40 & 6 \end{smallmatrix}\right] \approx \left[\begin{smallmatrix} 266.7 & 40 \\ 40 & 6 \end{smallmatrix}\right]$.</p>
+        <p class="k"><span class="kl">Meaning</span> Nifty's variance ≈ 266.7 (volatility ≈ $\sqrt{266.7} \approx 16.3\%$), bonds' variance 6 (≈ 2.4%), and a positive covariance 40: in these scenarios the two funds move together. Risk models come back in the probability course.</p>
+      </li>
+    </ol>
+    <div class="box intuition"><span class="label">In one line</span><p>$S^T = S$ means mirrored across the diagonal; $R^TR$ is always symmetric, which is why covariance matrices are.</p></div>
+
+    <details class="check"><summary>Check yourself (MIT problem 5.2): how many entries of a 4 × 4 matrix can be chosen freely if it is symmetric? If it is skew-symmetric ($A^T = -A$)?</summary>
+      <p>Symmetric: the 4 diagonal entries plus the 6 above the diagonal (the 6 below are copies): <b>10</b>. Skew-symmetric: the diagonal must be 0 (since $a_{ii} = -a_{ii}$) and the lower triangle is minus the upper: <b>6</b>.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. Vector spaces</h3>
+    <p>Strang calls this "the beginning of real linear algebra": instead of single vectors, we look at whole <b>spaces</b> of vectors. What do we do with vectors? Two things: <b>add</b> them and <b>multiply them by numbers</b>. A space is a collection where those two operations never take you outside it.</p>
+    <div class="box method" id="m-space"><span class="label">Rule · Vector space test (closure)</span>
+      <p>A collection $V$ of vectors is a <b>vector space</b> if, for any $v, w$ in $V$ and any real number $c$: (1) $v + w$ is in $V$ (closed under addition), and (2) $c\,v$ is in $V$ (closed under multiplication by scalars). Together: every <b>linear combination</b> $c\,v + d\,w$ stays in $V$. (There are eight more rules about how addition behaves, such as $v + w = w + v$; for vectors of numbers they hold automatically.)</p>
+    </div>
+
+    <h4>The big examples: Rⁿ</h4>
+    <p>$\mathbb{R}^2$ is all vectors with 2 real components: the whole $xy$-plane. In portfolio terms, think of $(x, y)$ as "₹ lakh in Nifty, ₹ lakh in bonds", where negative numbers mean selling short. Check the two rules on real portfolios:</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Add</span> Client 1 $(7, 3)$ plus client 2 $(4, 6)$, component by component: $(7 + 4,\ 3 + 6) = (11, 9)$. Merging two books gives another pair of numbers: still in $\mathbb{R}^2$ ✓.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Scale</span> Double client 1: $2(7, 3) = (14, 6)$. Reverse it: $-1 \times (7, 3) = (-7, -3)$ (short both). Scale by zero: $0 \times (7, 3) = (0, 0)$, the empty portfolio. All still in $\mathbb{R}^2$ ✓.</p>
+      </li>
+    </ol>
+    <p>$\mathbb{R}^3$ is all vectors with 3 components, for example three-fund portfolios $(5, 3, 2)$, and $\mathbb{R}^n$ is all vectors with $n$ components. Careful: $(3, 2, 0)$ is in $\mathbb{R}^3$, not $\mathbb{R}^2$. It has three components; one of them happens to be zero.</p>
+    <div class="box pitfall"><span class="label">Watch out: the zero vector is essential</span>
+      <p>Every vector space contains $0$, because you must be allowed to multiply any vector by the number 0. Strang: "Every vector space has got that zero vector in it." A plane with the origin removed is <b>not</b> a space.</p>
+    </div>
+    <div class="box intuition"><span class="label">In one line</span><p>A vector space is closed under adding and scaling, so under all linear combinations, and always contains $0$.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. When a set is not a space</h3>
+    <p>The test is easiest to understand from sets that fail it. Here are three, all natural in portfolio work.</p>
+    <figure class="fig" style="max-width:460px;margin:20px auto">
+      <svg viewBox="0 0 360 300" role="img" aria-label="The long-only quadrant, the budget-10 line, and the zero-budget line in the portfolio plane">
+        <rect x="180" y="6" width="170" height="144" fill="var(--ex-b)" fill-opacity=".12"/>
+        <line class="axis" x1="20" y1="150" x2="350" y2="150"/><line class="axis" x1="180" y1="6" x2="180" y2="294"/>
+        <text class="tick" x="320" y="166">x: Nifty</text><text class="tick" x="186" y="18">y: bonds</text>
+        <text class="tick" x="236" y="166">5</text><text class="tick" x="296" y="166">10</text><text class="tick" x="114" y="166">−5</text>
+        <text class="tick" x="166" y="94">5</text><text class="tick" x="160" y="34">10</text><text class="tick" x="160" y="214">−5</text>
+        <line class="l3" x1="156" y1="6" x2="324" y2="174"/>
+        <line class="l1" x1="60" y1="30" x2="300" y2="270"/>
+        <circle class="pt" cx="264" cy="114" r="4"/><text class="lbl ci" x="270" y="112">(7, 3)</text>
+        <circle class="pt" cx="252" cy="102" r="4"/><text class="lbl ci" x="232" y="92">(6, 4)</text>
+        <circle class="pt" cx="180" cy="150" r="4"/>
+        <text class="lbl c2" x="268" y="40">long-only</text><text class="lbl c2" x="268" y="54">x ≥ 0, y ≥ 0</text>
+        <text class="lbl c3" x="248" y="200">x + y = 10</text>
+        <text class="lbl c1" x="104" y="252">x + y = 0 (zero-cost)</text>
+      </svg>
+      <figcaption>The portfolio plane. Shaded: long-only portfolios. Red: all portfolios with a ₹10 lakh budget. Blue: zero-cost trades, $x + y = 0$. Only the blue line passes the vector-space test.</figcaption>
+    </figure>
+
+    <h4>Failure 1: long-only portfolios (a quadrant)</h4>
+    <p>Many funds may only <b>buy</b>, never sell short: $x \ge 0$ and $y \ge 0$. Strang uses exactly this quarter-plane as his first non-example.</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Addition</span> Two long-only portfolios, $(7, 3) + (6, 4) = (13, 7)$: both components still $\ge 0$ ✓. Adding is fine.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Scaling</span> Multiply $(7, 3)$ by $-1$: $(-7, -3)$, both negative, so outside the quadrant ✗. (Strang multiplies by $-5$; any negative number fails.)</p>
+        <p class="k"><span class="kl">Verdict</span> Closed under addition, <b>not</b> under scalar multiplication: <b>not a vector space</b>.</p>
+      </li>
+    </ol>
+    <div class="box finance"><span class="label">In markets</span>
+      <p>This is why a <b>long-only</b> constraint changes the maths of portfolio construction. Without it, the set of allowed portfolios is a vector space and linear algebra solves everything directly. With it, you need inequality-constrained optimisation, a different toolkit.</p>
+    </div>
+
+    <h4>Failure 2: a fixed budget (a line not through the origin)</h4>
+    <p>All portfolios that use exactly ₹10 lakh: $x + y = 10$ (the red line).</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Addition</span> $(7, 3)$ and $(6, 4)$ both have budget 10. Their sum $(13, 7)$ has budget $13 + 7 = 20 \ne 10$ ✗.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Zero</span> $0 \times (7, 3) = (0, 0)$ has budget $0 \ne 10$ ✗. The zero vector is not on the line.</p>
+        <p class="k"><span class="kl">Verdict</span> <b>Not a vector space</b>. Strang: a line in $\mathbb{R}^2$ that misses the origin is never a subspace.</p>
+      </li>
+    </ol>
+
+    <h4>Failure 3: "all-Nifty or all-bonds" (a union of two lines)</h4>
+    <p>From the recitation: take every all-Nifty portfolio $(t, 0)$ together with every all-bond portfolio $(0, t)$.</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Scaling</span> A multiple of an all-Nifty portfolio is still all-Nifty, and the same for bonds ✓.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Addition</span> $(1, 0) + (0, 1) = (1, 1)$: a mixed portfolio, on neither line ✗.</p>
+        <p class="k"><span class="kl">Verdict</span> <b>Not a vector space</b>. Each line alone is a subspace, but their union isn't: adding escapes it.</p>
+      </li>
+    </ol>
+    <div class="box intuition"><span class="label">In one line</span><p>To fail, a set only has to let one sum or one multiple escape: long-only (negatives), fixed budget (sums and 0), unions (sums).</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. Subspaces of R² and R³</h3>
+    <div class="box method" id="m-subspace"><span class="label">Rule · Subspace test</span>
+      <p>A <b>subspace</b> is a vector space sitting inside a bigger one. To check that a set inside $\mathbb{R}^n$ is a subspace: (1) it contains $0$; (2) sums stay inside; (3) multiples stay inside. Strang: once a subspace contains a non-zero vector $v$, it must contain the <b>whole line</b> of multiples $c\,v$.</p>
+    </div>
+
+    <h4>All the subspaces of R²</h4>
+    <table>
+      <tr><th>Subspace</th><th>Example in portfolio terms</th></tr>
+      <tr><td>All of $\mathbb{R}^2$</td><td>every portfolio of Nifty and bonds, long or short</td></tr>
+      <tr><td>A line through $(0, 0)$</td><td>all-Nifty portfolios $(t, 0)$; or zero-cost trades $(t, -t)$</td></tr>
+      <tr><td>Just $\{(0, 0)\}$</td><td>the empty portfolio alone</td></tr>
+    </table>
+    <p>There is nothing in between. A line through the origin inside $\mathbb{R}^2$ looks like $\mathbb{R}^1$ but isn't the same thing: its vectors still have <b>two</b> components (Strang's point).</p>
+
+    <h4>Zero-cost trades: a subspace that matters</h4>
+    <div class="box method" id="m-selffin"><span class="label">Model · Self-financing (zero-cost) trades</span>
+      <p>A trade is <b>self-financing</b> (zero-cost) if the money it puts into some funds is exactly taken out of others: the changes add up to zero. Rebalancing an existing portfolio without adding or withdrawing money is always a zero-cost trade.</p>
+    </div>
+    <p>With two funds the zero-cost trades are $\{(x, y): x + y = 0\}$, the blue line through $(1, -1)$. Run the subspace test:</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Zero</span> $(0, 0)$: $0 + 0 = 0$ ✓ ("do nothing" costs nothing).</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Sums</span> Two zero-cost trades $(a, -a)$ and $(b, -b)$ add to $(a + b,\ -a - b) = (a + b,\ -(a + b))$: components still add to 0 ✓. Example: $(2, -2) + (1, -1) = (3, -3)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Multiples</span> $c\,(a, -a) = (ca, -ca)$: still adds to 0 ✓. Example: $-3 \times (2, -2) = (-6, 6)$.</p>
+        <p class="k"><span class="kl">Verdict</span> <b>A subspace</b>: a line through the origin. Compare with "budget = 10": the only difference is the right-hand side, 0 instead of 10, and that 0 is what lets the origin in.</p>
+      </li>
+    </ol>
+
+    <h4>All the subspaces of R³</h4>
+    <table>
+      <tr><th>Subspace</th><th>Example with three funds</th></tr>
+      <tr><td>All of $\mathbb{R}^3$</td><td>every three-fund portfolio</td></tr>
+      <tr><td>A plane through $0$</td><td>zero-cost trades: $x + y + z = 0$</td></tr>
+      <tr><td>A line through $0$</td><td>zero-cost trades that also keep market exposure unchanged</td></tr>
+      <tr><td>Just $\{0\}$</td><td>the empty trade</td></tr>
+    </table>
+    <p><b>Working out that line.</b> A trade $(x, y, z)$ that changes neither the budget nor the exposure needs $x + y + z = 0$ and $x + 1.2z = 0$.</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">From the exposure rule</span> $x = -1.2z$.</p>
+        <p class="k"><span class="kl">From the budget rule</span> $y = -x - z = 1.2z - z = 0.2z$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">So</span> every such trade is $z \times (-1.2, 0.2, 1)$. Taking $z = 5$ gives whole numbers: $(-6, 1, 5)$.</p>
+        <p class="k"><span class="kl">Check</span> Budget: $-6 + 1 + 5 = 0$ ✓. Exposure: $-6 + 1.2 \times 5 = -6 + 6 = 0$ ✓. Return: $12(-6) + 7(1) + 15(5) = -72 + 7 + 75 = 10$.</p>
+        <p class="k"><span class="kl">Meaning</span> The trades that change <b>only the return</b> form a line, and this one adds ₹10 thousand. It is exactly $10\times$ the building-block column $(-0.6, 0.1, 0.5)$ of $A^{-1}$ in <a href="03_multiplication-and-inverse-matrices.html#t8">Lesson 3</a>.</p>
+      </li>
+    </ol>
+    <p>That line is where the zero-cost plane and the zero-exposure plane meet. In general, <b>the intersection of two subspaces is a subspace</b> (both conditions survive), while a union usually isn't (topic 5). Add a third condition, "zero return change", and only $(0, 0, 0)$ is left: the three planes meet only at the origin, because the fund matrix is invertible.</p>
+    <div class="box intuition"><span class="label">In one line</span><p>Subspaces are $\{0\}$, lines and planes through the origin, and the whole space. Zero-cost trades are a subspace; fixed-budget portfolios are not.</p></div>
+
+    <details class="check"><summary>Check yourself (MIT problem 5.3): do the symmetric 2 × 2 matrices form a subspace of all 2 × 2 matrices? Do the non-symmetric ones?</summary>
+      <p>Symmetric: yes. If $A^T = A$ and $B^T = B$ then $(A + B)^T = A^T + B^T = A + B$ and $(cA)^T = cA^T = cA$; and the zero matrix is symmetric. Non-symmetric: no. $\left[\begin{smallmatrix} 1 & 1 \\ 0 & 0 \end{smallmatrix}\right] + \left[\begin{smallmatrix} 0 & 0 \\ 1 & 1 \end{smallmatrix}\right] = \left[\begin{smallmatrix} 1 & 1 \\ 1 & 1 \end{smallmatrix}\right]$, which is symmetric, so the sum escapes (and $0$ isn't in the set at all).</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t7">7. The column space C(A)</h3>
+    <p>Now the subspace that comes straight out of a matrix. Strang: take the columns, and "not satisfied with a few vectors, we want a space of vectors".</p>
+    <div class="box method" id="m-colspace"><span class="label">Method · Column space C(A)</span>
+      <p>The <b>column space</b> $C(A)$ of an $m \times n$ matrix is the set of <b>all linear combinations of its columns</b>. It is a subspace of $\mathbb{R}^m$: combinations of combinations are still combinations, and $0 \times$ every column gives $0$.</p>
+    </div>
+
+    <h4>Two funds, three rules: a plane in R³</h4>
+    <p>Use only Nifty and bonds, but keep all three rules. Then $A$ is $3 \times 2$ and its columns live in $\mathbb{R}^3$:</p>
+    $$ A = \begin{bmatrix} 1 & 1 \\ 12 & 7 \\ 1 & 0 \end{bmatrix} \;\begin{matrix} \leftarrow \text{budget} \\ \leftarrow \text{return} \\ \leftarrow \text{exposure} \end{matrix} \qquad C(A) = \left\{ x\begin{bmatrix} 1 \\ 12 \\ 1 \end{bmatrix} + y\begin{bmatrix} 1 \\ 7 \\ 0 \end{bmatrix} \right\} $$
+    <p>Each choice of $(x, y)$ gives one reachable target. All of them together fill a <b>plane through the origin</b> in $\mathbb{R}^3$: more than a line (the columns point in different directions), but not all of $\mathbb{R}^3$ (only two directions).</p>
+
+    <h4>Which targets are in it?</h4>
+    <p>Look at the exposure row: $1 \cdot x + 0 \cdot y = E$. With only Nifty (beta 1) and bonds (beta 0), <b>the exposure always equals the Nifty amount</b>. That one fact decides everything:</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Target</span> $(10, 105, 7)$: ₹10 lakh, ₹105 thousand, exposure 7.</p>
+        <p class="k"><span class="kl">How</span> Exposure row: $x = 7$. Budget row: $7 + y = 10$, so $y = 3$. Return row (the check): $12(7) + 7(3) = 84 + 21 = 105$ ✓.</p>
+        <p class="k"><span class="kl">Verdict</span> <b>In $C(A)$</b>: $7 \times (1, 12, 1) + 3 \times (1, 7, 0) = (10, 105, 7)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Target</span> $(10, 105, 5)$: the same budget and return, exposure 5.</p>
+        <p class="k"><span class="kl">How</span> Exposure row: $x = 5$. Budget row: $y = 5$. Return row: $12(5) + 7(5) = 60 + 35 = 95 \ne 105$ ✗.</p>
+        <p class="k"><span class="kl">Verdict</span> <b>Not in $C(A)$</b>: no mix of Nifty and bonds gives ₹105 thousand with exposure only 5. (You would need a third fund, such as midcap.)</p>
+      </li>
+    </ol>
+    <p><b>The plane's equation.</b> Every reachable $(B, R, E)$ satisfies one equation: $-7B + R - 5E = 0$. Check it on both columns: Nifty $-7 + 12 - 5 = 0$ ✓, bonds $-7 + 7 - 0 = 0$ ✓. Then the targets: $(10, 105, 7)$ gives $-70 + 105 - 35 = 0$ (in), while $(10, 105, 5)$ gives $-70 + 105 - 25 = 10$ (out by 10). (The numbers $(-7, 1, -5)$ come from the <i>cross product</i> of the two columns, a 3D tool from the calculus course.)</p>
+    <figure class="fig plot3d">
+      <div id="csPlane" class="plot3d-box"></div>
+      <figcaption><b>The column space $C(A)$: a plane through the origin (drag to rotate).</b> 7 Nifty steps plus 3 bond steps reach $(10, 105, 7)$ on the plane. The target $(10, 105, 5)$ sits off it: no mix of these two funds reaches it.</figcaption>
+    </figure>
+
+    <h4>Three funds: the whole space</h4>
+    <p>Add the midcap column $(1, 15, 1.2)$. The three columns point in three independent directions (the matrix is invertible, Lesson 3), so $C(A)$ is <b>all of $\mathbb{R}^3$</b>: every (budget, return, exposure) target is reachable, which is why every client so far had an answer. With the balanced fund instead, the three columns lie in one plane and $C(A)$ is only that plane (Lesson 1).</p>
+    <div class="box theorem"><span class="label">What's next</span>
+      <p>$Ax = b$ has a solution <b>exactly when $b$ is in $C(A)$</b>. The next lesson turns this into the full story of when, and how many, solutions exist.</p>
+    </div>
+    <div class="box intuition"><span class="label">In one line</span><p>$C(A)$ = all combinations of the columns = every target the funds can reach; it is a line, a plane or the whole space.</p></div>
+
+    <details class="check"><summary>Check yourself (Strang's example): what is the column space of $\left[\begin{smallmatrix} 1 & 3 \\ 2 & 3 \\ 4 & 1 \end{smallmatrix}\right]$? Is $(4, 5, 5)$ in it?</summary>
+      <p>The plane through the origin containing $(1, 2, 4)$ and $(3, 3, 1)$ (they point in different directions, so it is a plane, not a line). And $(4, 5, 5) = 1 \times (1, 2, 4) + 1 \times (3, 3, 1)$, so yes: it is the sum of the two columns.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <!-- Summary: website only (left out of the PDF report) -->
+    <div class="no-print">
+    <h3 class="topic" id="t8">8. Summary</h3>
+    <div class="summary">
+      <h3>Key ideas</h3>
+      <ol>
+        <li>Row exchanges are permutation matrices: $PA = LU$ for every invertible $A$; there are $n!$ of them and $P^{-1} = P^T$. (<a href="#t1">topic 1</a>)</li>
+        <li>$(A^T)_{ij} = A_{ji}$; $x^Ty$ is a dot product (portfolio return $r^Tx$); $(AB)^T = B^TA^T$. (<a href="#t2">topic 2</a>)</li>
+        <li>$R^TR$ is always symmetric, which is why covariance matrices are symmetric. (<a href="#t3">topic 3</a>)</li>
+        <li>A vector space is closed under adding and scaling, and contains $0$. (<a href="#t4">topic 4</a>)</li>
+        <li>Long-only portfolios, fixed-budget portfolios and unions of lines are not spaces. (<a href="#t5">topic 5</a>)</li>
+        <li>Subspaces of $\mathbb{R}^3$: $\{0\}$, lines and planes through $0$, all of $\mathbb{R}^3$. Zero-cost trades form one. (<a href="#t6">topic 6</a>)</li>
+        <li>$C(A)$ = all combinations of the columns = the targets the funds can reach; $Ax = b$ is solvable exactly when $b \in C(A)$. (<a href="#t7">topic 7</a>)</li>
+      </ol>
+    </div>
+    <h4>Words in this lesson</h4>
+    <dl class="vocab">
+      <dt>Permutation matrix</dt><dd>The identity with rows reordered; $n!$ of them; $P^{-1} = P^T$.</dd>
+      <dt>Transpose $A^T$</dt><dd>Rows and columns swapped: $(A^T)_{ij} = A_{ji}$.</dd>
+      <dt>Symmetric</dt><dd>$S^T = S$: mirrored across the diagonal.</dd>
+      <dt>$R^TR$</dt><dd>Always symmetric; entry $(i, j)$ = column $i$ · column $j$ of $R$.</dd>
+      <dt>Covariance matrix</dt><dd>$\tfrac1m C^TC$ with averages removed: symmetric.</dd>
+      <dt>Vector space</dt><dd>Closed under addition and scalar multiplication; contains $0$.</dd>
+      <dt>Subspace</dt><dd>A vector space inside a bigger one: a line or plane through $0$, etc.</dd>
+      <dt>Self-financing trade</dt><dd>Changes that add up to zero cost; they form a subspace.</dd>
+      <dt>Column space $C(A)$</dt><dd>All combinations of the columns of $A$.</dd>
+    </dl>
+    </div>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: which risks can be hedged?</a></li>
+        <li><a href="#ex2">Lot sizes: which payoffs can be built?</a></li>
+        <li><a href="#ex3">Column-space explorer</a></li>
+      </ol>
+    </nav>
+
+    <p>The other two running examples through this lesson's ideas: transposes, symmetric $A^TA$, and above all the column space, "what can these instruments actually reach?".</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, which risks can be hedged?</h3>
+    <p>Hedges: Nifty futures $(1, 0, 0)$, Nifty IT futures $(1, 1, 0)$, Bank Nifty futures $(1, 0, 1)$ for (market, currency, rates).</p>
+
+    <h4>Only two hedges: the column space is a plane</h4>
+    <p>Suppose Bank Nifty futures aren't available. With only Nifty and Nifty IT futures, $A$ is $3 \times 2$:</p>
+    $$ A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \\ 0 & 0 \end{bmatrix} \;\begin{matrix} \leftarrow \text{market} \\ \leftarrow \text{currency} \\ \leftarrow \text{rates} \end{matrix} \qquad C(A) = \left\{ x\begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} + y\begin{bmatrix} 1 \\ 1 \\ 0 \end{bmatrix} \right\} = \{(x + y,\ y,\ 0)\}. $$
+    <p>Every combination has <b>0 in the rates position</b>: neither hedge touches interest rates. So $C(A)$ is the plane "rates = 0".</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Exposure</span> $(10, 3, 0)$: market 10, currency 3, no rate risk.</p>
+        <p class="k"><span class="kl">How</span> Currency row: $y = 3$. Market row: $x + 3 = 10$, so $x = 7$. Rates row: $0 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Verdict</span> In $C(A)$: sell 7 Nifty futures and 3 Nifty IT futures.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Exposure</span> $(10, 3, 2)$: the same plus rate exposure 2.</p>
+        <p class="k"><span class="kl">How</span> Rates row: $0 \cdot x + 0 \cdot y = 2$, that is $0 = 2$ ✗.</p>
+        <p class="k"><span class="kl">Verdict</span> Not in $C(A)$: rate risk can't be hedged with these two instruments. Adding Bank Nifty futures (a column with a 1 in the rates row) makes $C(A)$ all of $\mathbb{R}^3$.</p>
+      </li>
+    </ol>
+
+    <h4>AᵀA: how much the hedges overlap</h4>
+    <p>For the full three-hedge matrix, $A^TA$ has entry $(i, j)$ = (hedge $i$'s profile) · (hedge $j$'s profile):</p>
+    <table>
+      <tr><th></th><th>Nifty fut $(1, 0, 0)$</th><th>IT fut $(1, 1, 0)$</th><th>Bank Nifty fut $(1, 0, 1)$</th></tr>
+      <tr><td><b>Nifty fut</b></td><td>$1 + 0 + 0 = 1$</td><td>$1 + 0 + 0 = 1$</td><td>$1 + 0 + 0 = 1$</td></tr>
+      <tr><td><b>IT fut</b></td><td>$1$</td><td>$1 + 1 + 0 = 2$</td><td>$1 + 0 + 0 = 1$</td></tr>
+      <tr><td><b>Bank Nifty fut</b></td><td>$1$</td><td>$1$</td><td>$1 + 0 + 1 = 2$</td></tr>
+    </table>
+    $$ A^TA = \begin{bmatrix} 1 & 1 & 1 \\ 1 & 2 & 1 \\ 1 & 1 & 2 \end{bmatrix}: \text{ symmetric, as promised.} $$
+    <p>Diagonal: how much risk each hedge carries in total. Off-diagonal: how much two hedges share. Every pair shares exactly 1 unit, the market risk they all carry.</p>
+
+    <h4>Rules in another order</h4>
+    <p>Listing the rules as (currency, market, rates) is $P_{12}A$; the hedges don't change, only the order of the equations. That's the $PA = LU$ story from topic 1: $P_{12}$ restores the triangular order and $P_{12}^{-1} = P_{12}^T = P_{12}$.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, which payoffs can be built?</h3>
+    <p>Rows: Nifty ends at 19,800 / 20,000 / 20,200. Entries: payoff in points per lot.</p>
+
+    <h4>Futures and one call: the column space is a plane</h4>
+    $$ A = \begin{bmatrix} -200 & 0 \\ 0 & 0 \\ 200 & 200 \end{bmatrix} \;\begin{matrix} \leftarrow 19{,}800 \\ \leftarrow 20{,}000 \\ \leftarrow 20{,}200 \end{matrix} \qquad \text{columns: futures, 20,000 call} $$
+    <p>Combination $x \times$ futures $+\ y \times$ call $= (-200x,\ 0,\ 200x + 200y)$. The middle entry is <b>always 0</b>: neither product pays anything if Nifty ends exactly at 20,000. So $C(A)$ is the plane "payoff at 20,000 = 0".</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Client wants</span> $(-200, 0, 600)$.</p>
+        <p class="k"><span class="kl">How</span> 19,800 row: $-200x = -200$, so $x = 1$. 20,200 row: $200(1) + 200y = 600$, so $200y = 400$ and $y = 2$. 20,000 row: $0 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Verdict</span> In $C(A)$: 1 futures lot + 2 call lots, the Lesson 1 answer.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Client wants</span> $(0, 100, 0)$: 100 points only if Nifty ends at 20,000.</p>
+        <p class="k"><span class="kl">How</span> 20,000 row: $0 = 100$ ✗.</p>
+        <p class="k"><span class="kl">Verdict</span> Not in $C(A)$. You need a product that pays at 20,000, such as the 19,900 call, and then $C(A)$ grows to all of $\mathbb{R}^3$ (Lesson 3's Arrow–Debreu blocks).</p>
+      </li>
+    </ol>
+
+    <h4>AᵀA: how similar the payoffs are</h4>
+    <p>For the three products futures $(-200, 0, 200)$, 19,900 call $(0, 100, 300)$, 20,100 call $(0, 0, 100)$, each entry of $A^TA$ is a dot product of two payoff columns. Dividing everything by 10,000 to keep the numbers small:</p>
+    <table>
+      <tr><th>÷ 10,000</th><th>Futures</th><th>19,900 C</th><th>20,100 C</th></tr>
+      <tr><td><b>Futures</b></td><td>$(40{,}000 + 0 + 40{,}000) = 8$</td><td>$(0 + 0 + 60{,}000) = 6$</td><td>$(0 + 0 + 20{,}000) = 2$</td></tr>
+      <tr><td><b>19,900 C</b></td><td>$6$</td><td>$(0 + 10{,}000 + 90{,}000) = 10$</td><td>$(0 + 0 + 30{,}000) = 3$</td></tr>
+      <tr><td><b>20,100 C</b></td><td>$2$</td><td>$3$</td><td>$(0 + 0 + 10{,}000) = 1$</td></tr>
+    </table>
+    <p>$A^TA = 10{,}000 \times \left[\begin{smallmatrix} 8 & 6 & 2 \\ 6 & 10 & 3 \\ 2 & 3 & 1 \end{smallmatrix}\right]$: symmetric. The futures and the 19,900 call overlap a lot (6, since both pay well when Nifty rises); the futures and the 20,100 call overlap less (2).</p>
+
+    <h4>The trades that pay nothing: a subspace</h4>
+    <p>Lesson 3's put–call parity: with futures, a 20,000 call and a 20,000 put, the trade $(1, -1, 1)$ pays 0 in every scenario. Every multiple $c(1, -1, 1)$ does too, and sums of such trades still pay 0. These "pay-nothing" trades form a <b>line through the origin</b>, a subspace. The next lessons name it: the <b>nullspace</b>.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Column-space explorer</h3>
+    <p>Pick two instruments (two columns in $\mathbb{R}^3$) and a target. The explorer finds the plane they span, tests whether the target lies on it, and if it does, finds the mix. Change any number.</p>
+    <div id="cslab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="04_factorization-into-a-lu.html">← Lesson 4: Factorization into A = LU</a>
+    <span class="off">Next: Lesson 6 (coming soon)</span>
+  </nav>
+  </div>
+</main>
+<script defer src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script>
+// Interactive figures: Notes topic 7 (the column-space plane) and the Examples tab (column-space explorer).
+window.addEventListener("load", function () {
+  if (!window.Plotly) return;
+  var css = getComputedStyle(document.documentElement);
+  function c(v) { return css.getPropertyValue(v).trim(); }
+  var blue = c("--def-b"), green = c("--ex-b"), orange = c("--int-b"), red = c("--warn-b"), ink = c("--ink"), soft = c("--ink-soft"), rule = c("--rule");
+
+  var paper2 = c("--paper-2");
+  // Fixed range + whole-number ticks, so the numbers never jump while rotating or zooming.
+  function axis(t, lo, hi) {
+    return { title: { text: t, font: { size: 15, color: ink } }, range: [lo, hi], autorange: false,
+      tickmode: "linear", tick0: 0, dtick: 1, tickfont: { size: 12, color: soft },
+      gridcolor: rule, gridwidth: 1, zeroline: true, zerolinecolor: soft, zerolinewidth: 3,
+      showbackground: true, backgroundcolor: paper2, showspikes: false, linecolor: soft, showline: true };
+  }
+  function scene(xr, yr, zr, eye) {
+    var span = function (r) { return r[1] - r[0]; }, m = Math.max(span(xr), span(yr), span(zr));
+    return { xaxis: axis("x", xr[0], xr[1]), yaxis: axis("y", yr[0], yr[1]), zaxis: axis("z", zr[0], zr[1]),
+      aspectmode: "manual", aspectratio: { x: span(xr) / m * 1.3, y: span(yr) / m * 1.3, z: span(zr) / m * 1.3 },
+      dragmode: "turntable", camera: { eye: eye, up: { x: 0, y: 0, z: 1 } } };
+  }
+  var layout = {
+    margin: { l: 0, r: 0, t: 0, b: 60 }, paper_bgcolor: "rgba(0,0,0,0)", showlegend: true, uirevision: "keep",
+    legend: { orientation: "h", x: 0, y: -0.02, yanchor: "top", font: { color: ink, size: 12 }, bgcolor: "rgba(0,0,0,0)" },
+    scene: scene([-2, 2], [-2, 2], [-2, 4], { x: 1.7, y: -1.5, z: 0.9 })
+  };
+  var config = { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["toImage"] };
+
+  // ---- Notes, topics 7 & 8: the portfolio-mix example in 3D ----
+  // The part of the plane n·p = d that lies inside the box, as a flat polygon (triangle fan).
+  function planeInBox(n, d, box, color, name) {
+    var f = function (p) { return n[0] * p[0] + n[1] * p[1] + n[2] * p[2] - d; };
+    var pts = [];
+    for (var m = 0; m < 8; m++) {
+      var p = [box[0][m & 1], box[1][(m >> 1) & 1], box[2][(m >> 2) & 1]];
+      for (var a = 0; a < 3; a++) {
+        if ((m >> a) & 1) continue;
+        var q = p.slice(); q[a] = box[a][1];
+        var fp = f(p), fq = f(q);
+        if (fp === fq || fp * fq > 0) continue;
+        var t = fp / (fp - fq), r = [p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1]), p[2] + t * (q[2] - p[2])];
+        if (!pts.some(function (s) { return Math.abs(s[0] - r[0]) + Math.abs(s[1] - r[1]) + Math.abs(s[2] - r[2]) < 1e-9; })) pts.push(r);
+      }
+    }
+    var c = [0, 1, 2].map(function (k) { return pts.reduce(function (s, p) { return s + p[k]; }, 0) / pts.length; });
+    var u = Math.abs(n[0]) < 0.9 * Math.hypot(n[0], n[1], n[2]) ? [0, -n[2], n[1]] : [-n[2], 0, n[0]];
+    var v = [n[1] * u[2] - n[2] * u[1], n[2] * u[0] - n[0] * u[2], n[0] * u[1] - n[1] * u[0]];
+    function dot(x, y) { return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]; }
+    pts.sort(function (p, q) {
+      var dp = [p[0] - c[0], p[1] - c[1], p[2] - c[2]], dq = [q[0] - c[0], q[1] - c[1], q[2] - c[2]];
+      return Math.atan2(dot(dp, v), dot(dp, u)) - Math.atan2(dot(dq, v), dot(dq, u));
+    });
+    var I = [], J = [], K = [];
+    for (var k = 1; k < pts.length - 1; k++) { I.push(0); J.push(k); K.push(k + 1); }
+    return { type: "mesh3d", name: name, showlegend: true, opacity: 0.45, color: color, flatshading: true, hoverinfo: "name",
+      x: pts.map(function (p) { return p[0]; }), y: pts.map(function (p) { return p[1]; }), z: pts.map(function (p) { return p[2]; }),
+      i: I, j: J, k: K };
+  }
+  function seg3(a, b, color, name, dash) {
+    return { type: "scatter3d", mode: "lines+markers", name: name, line: { color: color, width: dash ? 5 : 8, dash: dash ? "dash" : "solid" },
+      marker: { size: [2, 5], color: color }, x: [a[0], b[0]], y: [a[1], b[1]], z: [a[2], b[2]] };
+  }
+  function pfScene(r, ticks, titles, eye) {
+    var S = scene(r[0], r[1], r[2], eye);
+    ["xaxis", "yaxis", "zaxis"].forEach(function (k, i) { S[k].dtick = ticks[i]; S[k].title.text = titles[i]; });
+    return S;
+  }
+  var FUNDS = ["Nifty (₹ lakh)", "bonds (₹ lakh)", "midcap (₹ lakh)"];
+  var TARGETS = ["budget (₹ lakh)", "return (₹ thousand)", "exposure (₹ lakh)"];
+
+  // ---- Notes, topic 7: C(A) for Nifty + bonds with three rules is a plane ----
+  if (document.getElementById("csPlane")) {
+    var Lp = JSON.parse(JSON.stringify(layout));
+    var boxP = [[0, 12], [0, 120], [0, 10]];
+    Lp.scene = pfScene(boxP, [2, 20, 2], ["budget (₹ lakh)", "return (₹ thousand)", "exposure"], { x: 1.6, y: -1.7, z: 0.7 });
+    Plotly.newPlot("csPlane", [
+      planeInBox([-7, 1, -5], 0, boxP, c("--thm-b"), "C(A): the plane −7B + R − 5E = 0"),
+      seg3([0, 0, 0], [7, 84, 7], blue, "7 × Nifty (1, 12, 1)"),
+      seg3([7, 84, 7], [10, 105, 7], green, "+ 3 × bonds (1, 7, 0)"),
+      { type: "scatter3d", mode: "markers+text", name: "(10, 105, 7) ✓ in C(A)", marker: { color: green, size: 7 }, x: [10], y: [105], z: [7], text: ["(10, 105, 7) ✓"], textposition: "top left", textfont: { color: green, size: 13 } },
+      { type: "scatter3d", mode: "markers+text", name: "(10, 105, 5) ✗ not in C(A)", marker: { color: red, size: 7 }, x: [10], y: [105], z: [5], text: ["(10, 105, 5) ✗"], textposition: "bottom left", textfont: { color: red, size: 13 } },
+      { type: "scatter3d", mode: "lines", name: "gap: exposure must be 7", line: { color: red, width: 4, dash: "dot" }, x: [10, 10], y: [105, 105], z: [5, 7] }
+    ], Lp, config);
+  }
+
+  // ---- Examples tab: column-space explorer (two columns in R^3, one target) ----
+  (function () {
+    var root = document.getElementById("cslab"); if (!root) return;
+    var presets = [
+      { label: "Portfolio · Nifty + bonds", rows: ["budget", "return", "exposure"], cols: ["Nifty", "Bonds"], c1: [1, 12, 1], c2: [1, 7, 0], b: [10, 105, 7] },
+      { label: "Portfolio · Nifty + midcap", rows: ["budget", "return", "exposure"], cols: ["Nifty", "Midcap"], c1: [1, 12, 1], c2: [1, 15, 1.2], b: [10, 135, 11] },
+      { label: "Hedging · Nifty fut + IT fut", rows: ["market", "currency", "rates"], cols: ["Nifty fut", "IT fut"], c1: [1, 0, 0], c2: [1, 1, 0], b: [10, 3, 2] },
+      { label: "Lot sizes · futures + 20,000 call", rows: ["at 19,800", "at 20,000", "at 20,200"], cols: ["Futures", "20,000 call"], c1: [-200, 0, 200], c2: [0, 0, 200], b: [-200, 0, 600] },
+      { label: "Strang's example", rows: ["row 1", "row 2", "row 3"], cols: ["column 1", "column 2"], c1: [1, 2, 4], c2: [3, 3, 1], b: [4, 5, 5] }
+    ];
+    function f(v) { var r = Math.round(v * 1e4) / 1e4; if (Math.abs(r) < 1e-9) r = 0; return (r < 0 ? "−" : "") + Math.abs(r); }
+    function vec(v) { return "(" + v.map(f).join(", ") + ")"; }
+    root.innerHTML = '<div class="lab-controls"><div class="lab-row"><label>Example <select class="cs-pick">' +
+      presets.map(function (p, i) { return '<option value="' + i + '">' + p.label + "</option>"; }).join("") +
+      '</select></label><button type="button" class="lab-btn cs-reset">Reset numbers</button></div><div class="cs-grid"></div></div>' +
+      '<div class="cs-out"></div><figure class="fig plot3d"><div class="plot3d-box cs-plot"></div></figure>';
+    var pick = root.querySelector(".cs-pick"), grid = root.querySelector(".cs-grid"), out = root.querySelector(".cs-out"), plot = root.querySelector(".cs-plot"), P;
+    function build() {
+      P = presets[+pick.value];
+      var h = '<table class="lab-table sl-table"><tr><th></th><th style="color:' + blue + '">' + P.cols[0] + '</th><th style="color:' + green + '">' + P.cols[1] + '</th><th>target b</th></tr>';
+      for (var i = 0; i < 3; i++) h += "<tr><th>" + P.rows[i] + '</th><td><input type="number" step="any" data-k="c1" data-i="' + i + '" value="' + P.c1[i] + '"></td><td><input type="number" step="any" data-k="c2" data-i="' + i + '" value="' + P.c2[i] + '"></td><td><input type="number" step="any" data-k="b" data-i="' + i + '" value="' + P.b[i] + '"></td></tr>';
+      grid.innerHTML = h + "</table>"; update();
+    }
+    function update() {
+      var v = { c1: [0, 0, 0], c2: [0, 0, 0], b: [0, 0, 0] };
+      grid.querySelectorAll("input").forEach(function (el) { var x = parseFloat(el.value); v[el.dataset.k][+el.dataset.i] = isFinite(x) ? x : 0; });
+      var a = v.c1, d = v.c2, b = v.b;
+      var n = [a[1] * d[2] - a[2] * d[1], a[2] * d[0] - a[0] * d[2], a[0] * d[1] - a[1] * d[0]];
+      var nn = Math.hypot(n[0], n[1], n[2]), scale = Math.max(1, Math.hypot(a[0], a[1], a[2]) * Math.hypot(d[0], d[1], d[2]), Math.hypot(b[0], b[1], b[2]));
+      var h = "", inside = false, w = null;
+      if (nn < 1e-9 * scale) {
+        h += '<p class="lab-warn"><b>The two columns point the same way</b> (or one is zero), so $C(A)$ is only a line, not a plane.</p>';
+      } else {
+        var test = n[0] * b[0] + n[1] * b[1] + n[2] * b[2];
+        var eq = [0, 1, 2].filter(function (k) { return Math.abs(n[k]) > 1e-12; }).map(function (k, idx) {
+          var cf = Math.abs(n[k]), sgn = n[k] < 0 ? "-" : (idx ? "+" : ""), num = Math.abs(cf - 1) < 1e-12 ? "" : f(cf);
+          return (idx ? " " + sgn + " " : sgn) + num + "b_" + (k + 1);
+        }).join("");
+        h += "<p><b>Step 1, the plane.</b> The cross product of the columns is $n = " + vec(n).replace(/−/g, "-") + "$, so every point of $C(A)$ satisfies $" + eq + " = 0$.</p>";
+        h += "<p><b>Step 2, test the target.</b> $" + [0, 1, 2].map(function (k) { return "(" + f(n[k]).replace("−", "-") + ")(" + f(b[k]).replace("−", "-") + ")"; }).join(" + ") + " = " + f(test).replace("−", "-") + "$.</p>";
+        inside = Math.abs(test) < 1e-7 * Math.max(1, nn * Math.hypot(b[0], b[1], b[2]));
+        if (inside) {
+          var best = null;
+          [[0, 1], [0, 2], [1, 2]].forEach(function (pr) { var det = a[pr[0]] * d[pr[1]] - a[pr[1]] * d[pr[0]]; if (!best || Math.abs(det) > Math.abs(best.det)) best = { i: pr[0], j: pr[1], det: det }; });
+          var x = (b[best.i] * d[best.j] - b[best.j] * d[best.i]) / best.det, y = (a[best.i] * b[best.j] - a[best.j] * b[best.i]) / best.det;
+          w = [x, y];
+          h += '<p class="answer">0, so b is in C(A).</p><p><b>Step 3, the mix.</b> Solve the ' + P.rows[best.i] + " and " + P.rows[best.j] + " rows: " + P.cols[0] + " $= " + f(x).replace("−", "-") + "$, " + P.cols[1] + " $= " + f(y).replace("−", "-") + "$. Check: $" + f(x).replace("−", "-") + " \\times " + vec(a).replace(/−/g, "-") + " + " + f(y).replace("−", "-") + " \\times " + vec(d).replace(/−/g, "-") + " = " + vec([0, 1, 2].map(function (k) { return x * a[k] + y * d[k]; })).replace(/−/g, "-") + "$ ✓</p>";
+        } else {
+          h += '<p class="lab-warn"><b>Not 0, so b is not in C(A):</b> no mix of these two columns reaches this target.</p>';
+        }
+      }
+      out.innerHTML = h;
+      if (window.renderMathInElement) renderMathInElement(out, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
+      var pts = [[0, 0, 0], a, d, b]; if (w) pts.push([w[0] * a[0], w[0] * a[1], w[0] * a[2]]);
+      var box = [0, 1, 2].map(function (k) { var lo = Math.min.apply(null, pts.map(function (p) { return p[k]; })), hi = Math.max.apply(null, pts.map(function (p) { return p[k]; })), pad = (hi - lo || 1) * 0.15; return [lo - pad, hi + pad]; });
+      var tr = [];
+      if (nn >= 1e-9 * scale) { var pl = planeInBox(n, 0, box, c("--thm-b"), "C(A): plane through the origin"); if (pl) tr.push(pl); }
+      if (w) {
+        var m1 = [w[0] * a[0], w[0] * a[1], w[0] * a[2]];
+        tr.push(seg3([0, 0, 0], m1, blue, f(w[0]) + " × " + P.cols[0]), seg3(m1, b, green, "+ " + f(w[1]) + " × " + P.cols[1]));
+      } else {
+        tr.push(seg3([0, 0, 0], a, blue, P.cols[0] + " " + vec(a)), seg3([0, 0, 0], d, green, P.cols[1] + " " + vec(d)));
+      }
+      tr.push({ type: "scatter3d", mode: "markers+text", name: "target b " + vec(b), marker: { color: inside ? green : red, size: 7 }, x: [b[0]], y: [b[1]], z: [b[2]], text: [inside ? "b ✓" : "b ✗"], textposition: "top center", textfont: { color: inside ? green : red } });
+      var Lc = JSON.parse(JSON.stringify(layout));
+      Lc.scene = scene(box[0], box[1], box[2], { x: 1.6, y: -1.6, z: 0.8 });
+      ["xaxis", "yaxis", "zaxis"].forEach(function (k, i) { Lc.scene[k].title.text = P.rows[i]; Lc.scene[k].tickmode = "auto"; delete Lc.scene[k].dtick; });
+      Plotly.react(plot, tr, Lc, config);
+    }
+    pick.addEventListener("change", build); root.querySelector(".cs-reset").addEventListener("click", build); grid.addEventListener("input", update);
+    build();
+  })();
+
+  // Plots drawn while their tab was hidden need a resize once the tab is shown.
+  document.querySelectorAll(".tabs button[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      setTimeout(function () { document.querySelectorAll(".plot3d-box").forEach(function (el) { Plotly.Plots.resize(el); }); }, 0);
+    });
+  });
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=6"></script>
+</body>
+</html>

@@ -37,6 +37,13 @@ const LESSONS = [
     page: "linear-algebra/04_factorization-into-a-lu.html",
     slides: "linear-algebra/04_factorization-into-a-lu-slides.html",
     plots: { costChart: { file: "linear-algebra/img/l4-cost.png", width: 560, height: 420 } }
+  },
+  {
+    slug: "la-05-transposes-permutations-vector-spaces",
+    title: "Linear Algebra · Lesson 5 · Transposes, Permutations, Vector Spaces",
+    page: "linear-algebra/05_transposes-permutations-vector-spaces.html",
+    slides: "linear-algebra/05_transposes-permutations-vector-spaces-slides.html",
+    plots: { csPlane: "linear-algebra/img/l5-colspace.png" }
   }
 ];
 
