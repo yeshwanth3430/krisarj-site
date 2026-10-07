@@ -65,7 +65,7 @@
       <li><a href="#t4">Vector spaces</a><span>A set you can add and scale inside without leaving: portfolios as a space.</span></li>
       <li><a href="#t5">When a set is not a space</a><span>Long-only portfolios, fixed-budget portfolios and unions fail the test.</span></li>
       <li><a href="#t6">Subspaces of R² and R³</a><span>Lines and planes through the origin. Zero-cost (self-financing) trades form one.</span></li>
-      <li><a href="#t7">The column space C(A)</a><span>All combinations of the columns: exactly the targets your funds can reach.</span></li>
+      <li><a href="#t7">The column space C(A)</a><span>Everything the columns can build: which targets your funds can reach, one fund at a time.</span></li>
       <li class="no-print"><a href="#t8">Summary</a><span>The key ideas and words on one screen.</span></li>
     </ol>
     <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-plu">PA = LU</a> <a href="#m-pinv">P⁻¹ = Pᵀ</a> <a href="#m-transpose">Transpose</a> <a href="#m-xty">Dot product xᵀy</a> <a href="#m-prodT">(AB)ᵀ = BᵀAᵀ</a> <a href="#m-rtr">RᵀR is symmetric</a> <a href="#m-cov">Covariance matrix</a> <a href="#m-space">Vector space test</a> <a href="#m-subspace">Subspace test</a> <a href="#m-selffin">Self-financing trades</a> <a href="#m-colspace">Column space C(A)</a></p>
@@ -494,45 +494,97 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t7">7. The column space C(A)</h3>
-    <p>Now the subspace that comes straight out of a matrix. Strang: take the columns, and "not satisfied with a few vectors, we want a space of vectors".</p>
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>The <b>column space</b> $C(A)$ is <b>everything you can build by mixing the columns of $A$</b> in any amounts. With funds as columns, it is exactly <b>the set of targets your funds can reach</b>.</p>
+    </div>
+    <p>Every lesson so far asked "which portfolio hits this target?". The column space asks the question before that one: <b>which targets can be hit at all?</b> We'll build the answer one fund at a time.</p>
+
     <div class="box method" id="m-colspace"><span class="label">Method · Column space C(A)</span>
-      <p>The <b>column space</b> $C(A)$ of an $m \times n$ matrix is the set of <b>all linear combinations of its columns</b>. It is a subspace of $\mathbb{R}^m$: combinations of combinations are still combinations, and $0 \times$ every column gives $0$.</p>
+      <p>For a matrix $A$ with $m$ rows, $C(A)$ is the set of all linear combinations of its columns: every $Ax$, over all possible $x$. It always lives in $\mathbb{R}^m$ (one component per rule).</p>
     </div>
 
-    <h4>Two funds, three rules: a plane in R³</h4>
-    <p>Use only Nifty and bonds, but keep all three rules. Then $A$ is $3 \times 2$ and its columns live in $\mathbb{R}^3$:</p>
-    $$ A = \begin{bmatrix} 1 & 1 \\ 12 & 7 \\ 1 & 0 \end{bmatrix} \;\begin{matrix} \leftarrow \text{budget} \\ \leftarrow \text{return} \\ \leftarrow \text{exposure} \end{matrix} \qquad C(A) = \left\{ x\begin{bmatrix} 1 \\ 12 \\ 1 \end{bmatrix} + y\begin{bmatrix} 1 \\ 7 \\ 0 \end{bmatrix} \right\} $$
-    <p>Each choice of $(x, y)$ gives one reachable target. All of them together fill a <b>plane through the origin</b> in $\mathbb{R}^3$: more than a line (the columns point in different directions), but not all of $\mathbb{R}^3$ (only two directions).</p>
+    <h4>Step 1: one fund only: a line</h4>
+    <p>Suppose you may only use Nifty. One ₹ lakh of Nifty does $(1, 12, 1)$ to the rules (budget, return, exposure). Holding $t$ lakh does $t \times (1, 12, 1)$:</p>
+    <table>
+      <tr><th>₹ lakh in Nifty ($t$)</th><th>Target reached $t \times (1, 12, 1)$</th></tr>
+      <tr><td>1</td><td>$(1, 12, 1)$</td></tr>
+      <tr><td>5</td><td>$(5, 60, 5)$</td></tr>
+      <tr><td>$-2$ (short)</td><td>$(-2, -24, -2)$</td></tr>
+      <tr><td>0</td><td>$(0, 0, 0)$</td></tr>
+    </table>
+    <p>All of these are multiples of one arrow, so they lie on <b>a line through the origin</b>. With one fund you can only reach targets on that line, like "₹5 lakh, ₹60 thousand, exposure 5", and nothing off it.</p>
 
-    <h4>Which targets are in it?</h4>
-    <p>Look at the exposure row: $1 \cdot x + 0 \cdot y = E$. With only Nifty (beta 1) and bonds (beta 0), <b>the exposure always equals the Nifty amount</b>. That one fact decides everything:</p>
+    <h4>Step 2: two funds: a plane</h4>
+    <p>Now allow Nifty <b>and</b> bonds, still with all three rules. The fund matrix has two columns:</p>
+    $$ A = \begin{bmatrix} 1 & 1 \\ 12 & 7 \\ 1 & 0 \end{bmatrix} \;\begin{matrix} \leftarrow \text{budget} \\ \leftarrow \text{return} \\ \leftarrow \text{exposure} \end{matrix} \qquad x \text{ lakh Nifty} + y \text{ lakh bonds reaches } x\begin{bmatrix} 1 \\ 12 \\ 1 \end{bmatrix} + y\begin{bmatrix} 1 \\ 7 \\ 0 \end{bmatrix}. $$
+    <table>
+      <tr><th>Mix $(x, y)$</th><th>Target reached</th><th>Arithmetic</th></tr>
+      <tr><td>$(1, 1)$</td><td>$(2, 19, 1)$</td><td>$(1 + 1,\ 12 + 7,\ 1 + 0)$</td></tr>
+      <tr><td>$(7, 3)$</td><td>$(10, 105, 7)$</td><td>$(7 + 3,\ 84 + 21,\ 7 + 0)$</td></tr>
+      <tr><td>$(3, -1)$</td><td>$(2, 29, 3)$</td><td>$(3 - 1,\ 36 - 7,\ 3 - 0)$</td></tr>
+    </table>
+    <p>The bond arrow points in a different direction from the Nifty arrow, so mixing them sweeps out more than a line: a flat <b>plane through the origin</b>. But two directions can't fill all of 3D space, so it is <b>only</b> a plane.</p>
+    <figure class="fig plot3d">
+      <div id="csPlane" class="plot3d-box"></div>
+      <figcaption><b>$C(A)$ for Nifty + bonds: a plane through the origin (drag to rotate).</b> 7 Nifty steps plus 3 bond steps reach $(10, 105, 7)$ on the plane. The target $(10, 105, 5)$ floats off it.</figcaption>
+    </figure>
+
+    <h4>Step 3: why only a plane: the return is forced</h4>
+    <p>Here is the plain reason. With only Nifty (beta 1) and bonds (beta 0):</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Exposure</span> Only Nifty adds exposure, 1 per lakh, so <b>exposure $E$ = the Nifty amount $x$</b>.</p>
+        <p class="k"><span class="kl">Budget</span> $B = x + y$, so the bond amount is $y = B - E$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Return</span> $R = 12x + 7y = 12E + 7(B - E) = 12E + 7B - 7E = 7B + 5E$.</p>
+        <p class="k"><span class="kl">What it means</span> Once you choose the budget and the exposure, <b>the return is already decided</b>: it has to be $7B + 5E$. You can't pick all three freely.</p>
+      </li>
+    </ol>
+    <div class="box theorem"><span class="label">The reachable targets</span>
+      <p>With Nifty and bonds, a target $(B, R, E)$ is reachable <b>exactly when $R = 7B + 5E$</b>. That single condition is the plane. (Written as $-7B + R - 5E = 0$, it's the same plane drawn above.)</p>
+    </div>
+    <p>Check it on the mixes from step 2: $(2, 19, 1)$: $7 \times 2 + 5 \times 1 = 19$ ✓. $\;(10, 105, 7)$: $70 + 35 = 105$ ✓. $\;(2, 29, 3)$: $14 + 15 = 29$ ✓. Every one obeys the rule.</p>
+
+    <h4>Step 4: is my target reachable?</h4>
     <ol class="step-list kid-step">
       <li>
         <p class="k"><span class="kl">Target</span> $(10, 105, 7)$: ₹10 lakh, ₹105 thousand, exposure 7.</p>
-        <p class="k"><span class="kl">How</span> Exposure row: $x = 7$. Budget row: $7 + y = 10$, so $y = 3$. Return row (the check): $12(7) + 7(3) = 84 + 21 = 105$ ✓.</p>
-        <p class="k"><span class="kl">Verdict</span> <b>In $C(A)$</b>: $7 \times (1, 12, 1) + 3 \times (1, 7, 0) = (10, 105, 7)$.</p>
+        <p class="k"><span class="kl">Test</span> Forced return $= 7 \times 10 + 5 \times 7 = 70 + 35 = 105$. Wanted: 105. They match ✓.</p>
+        <p class="k"><span class="kl">The mix</span> $x = E = 7$, $y = B - E = 3$: ₹7 lakh Nifty, ₹3 lakh bonds. <b>In $C(A)$.</b></p>
       </li>
       <li>
-        <p class="k"><span class="kl">Target</span> $(10, 105, 5)$: the same budget and return, exposure 5.</p>
-        <p class="k"><span class="kl">How</span> Exposure row: $x = 5$. Budget row: $y = 5$. Return row: $12(5) + 7(5) = 60 + 35 = 95 \ne 105$ ✗.</p>
-        <p class="k"><span class="kl">Verdict</span> <b>Not in $C(A)$</b>: no mix of Nifty and bonds gives ₹105 thousand with exposure only 5. (You would need a third fund, such as midcap.)</p>
+        <p class="k"><span class="kl">Target</span> $(10, 105, 5)$: the same budget and return, but exposure only 5.</p>
+        <p class="k"><span class="kl">Test</span> Forced return $= 70 + 5 \times 5 = 95$. Wanted: 105. Short by 10 ✗.</p>
+        <p class="k"><span class="kl">Verdict</span> <b>Not in $C(A)$.</b> With exposure 5 you must hold ₹5 lakh Nifty and ₹5 lakh bonds, and that earns only ₹95 thousand. No mix of these two funds does better.</p>
       </li>
     </ol>
-    <p><b>The plane's equation.</b> Every reachable $(B, R, E)$ satisfies one equation: $-7B + R - 5E = 0$. Check it on both columns: Nifty $-7 + 12 - 5 = 0$ ✓, bonds $-7 + 7 - 0 = 0$ ✓. Then the targets: $(10, 105, 7)$ gives $-70 + 105 - 35 = 0$ (in), while $(10, 105, 5)$ gives $-70 + 105 - 25 = 10$ (out by 10). (The numbers $(-7, 1, -5)$ come from the <i>cross product</i> of the two columns, a 3D tool from the calculus course.)</p>
-    <figure class="fig plot3d">
-      <div id="csPlane" class="plot3d-box"></div>
-      <figcaption><b>The column space $C(A)$: a plane through the origin (drag to rotate).</b> 7 Nifty steps plus 3 bond steps reach $(10, 105, 7)$ on the plane. The target $(10, 105, 5)$ sits off it: no mix of these two funds reaches it.</figcaption>
-    </figure>
 
-    <h4>Three funds: the whole space</h4>
-    <p>Add the midcap column $(1, 15, 1.2)$. The three columns point in three independent directions (the matrix is invertible, Lesson 3), so $C(A)$ is <b>all of $\mathbb{R}^3$</b>: every (budget, return, exposure) target is reachable, which is why every client so far had an answer. With the balanced fund instead, the three columns lie in one plane and $C(A)$ is only that plane (Lesson 1).</p>
+    <h4>Step 5: a third fund: does it add a new direction?</h4>
+    <p>Add a third column. The test is simple: <b>does the new fund obey $R = 7B + 5E$</b> (then it's already on the plane and adds nothing), or not (then it points off the plane and the reach grows to all of $\mathbb{R}^3$)?</p>
+    <table>
+      <tr><th>Third fund</th><th>Column $(B, R, E)$</th><th>$7B + 5E$</th><th>On the plane?</th><th>$C(A)$ becomes</th></tr>
+      <tr><td>Midcap</td><td>$(1, 15, 1.2)$</td><td>$7 + 6 = 13 \ne 15$</td><td>no: a new direction</td><td><b>all of $\mathbb{R}^3$</b>: every target reachable</td></tr>
+      <tr><td>Balanced (½ Nifty + ½ bonds)</td><td>$(1, 9.5, 0.5)$</td><td>$7 + 2.5 = 9.5$</td><td>yes: nothing new</td><td>still the same plane</td></tr>
+    </table>
+    <p>That's why every client in Lessons 1–4 had an answer (the midcap fund made $C(A)$ the whole space), and why the balanced fund was "singular" in Lesson 1: it lay in the plane the other two already covered.</p>
+
+    <h4>Step 6: why C(A) is always a subspace</h4>
+    <p>Run topic 4's test on "all mixes of the columns". Adding two mixes, $(x_1N + y_1B) + (x_2N + y_2B) = (x_1 + x_2)N + (y_1 + y_2)B$, is again a mix ✓. Scaling a mix, $c(xN + yB) = (cx)N + (cy)B$, is again a mix ✓. And the "zero mix" $0N + 0B = 0$ is inside ✓. So $C(A)$ is always a subspace: a point, a line, a plane, or the whole space.</p>
+    <table>
+      <tr><th>Columns pointing in…</th><th>$C(A)$ in $\mathbb{R}^3$ is</th><th>Example</th></tr>
+      <tr><td>1 direction</td><td>a line</td><td>Nifty only (or two identical Nifty funds)</td></tr>
+      <tr><td>2 directions</td><td>a plane</td><td>Nifty + bonds; Nifty + bonds + balanced</td></tr>
+      <tr><td>3 directions</td><td>all of $\mathbb{R}^3$</td><td>Nifty + bonds + midcap</td></tr>
+    </table>
+
     <div class="box theorem"><span class="label">What's next</span>
-      <p>$Ax = b$ has a solution <b>exactly when $b$ is in $C(A)$</b>. The next lesson turns this into the full story of when, and how many, solutions exist.</p>
+      <p>$Ax = b$ has a solution <b>exactly when $b$ is in $C(A)$</b>: "is there a portfolio for this target?" is the same as "is the target reachable?". The next lesson builds the full story of when, and how many, solutions exist. To test your own instruments and targets, use the <b>column-space explorer</b> in the Examples tab.</p>
     </div>
-    <div class="box intuition"><span class="label">In one line</span><p>$C(A)$ = all combinations of the columns = every target the funds can reach; it is a line, a plane or the whole space.</p></div>
+    <div class="box intuition"><span class="label">In one line</span><p>$C(A)$ = everything the columns can build = the targets your funds can reach; each new column either adds a direction or adds nothing.</p></div>
 
     <details class="check"><summary>Check yourself (Strang's example): what is the column space of $\left[\begin{smallmatrix} 1 & 3 \\ 2 & 3 \\ 4 & 1 \end{smallmatrix}\right]$? Is $(4, 5, 5)$ in it?</summary>
-      <p>The plane through the origin containing $(1, 2, 4)$ and $(3, 3, 1)$ (they point in different directions, so it is a plane, not a line). And $(4, 5, 5) = 1 \times (1, 2, 4) + 1 \times (3, 3, 1)$, so yes: it is the sum of the two columns.</p>
+      <p>The two columns $(1, 2, 4)$ and $(3, 3, 1)$ point in different directions, so their mixes fill a plane through the origin. And $(4, 5, 5) = 1 \times (1, 2, 4) + 1 \times (3, 3, 1)$, so yes, it's in the plane: it is simply the sum of the two columns.</p>
     </details>
 
     <!-- ====================================================== -->
