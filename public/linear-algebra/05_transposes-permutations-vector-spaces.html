@@ -298,26 +298,77 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t4">4. Vector spaces</h3>
-    <p>Strang calls this "the beginning of real linear algebra": instead of single vectors, we look at whole <b>spaces</b> of vectors. What do we do with vectors? Two things: <b>add</b> them and <b>multiply them by numbers</b>. A space is a collection where those two operations never take you outside it.</p>
-    <div class="box method" id="m-space"><span class="label">Rule · Vector space test (closure)</span>
-      <p>A collection $V$ of vectors is a <b>vector space</b> if, for any $v, w$ in $V$ and any real number $c$: (1) $v + w$ is in $V$ (closed under addition), and (2) $c\,v$ is in $V$ (closed under multiplication by scalars). Together: every <b>linear combination</b> $c\,v + d\,w$ stays in $V$. (There are eight more rules about how addition behaves, such as $v + w = w + v$; for vectors of numbers they hold automatically.)</p>
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>A <b>vector space</b> is a set of vectors you <b>can't escape by adding or scaling</b>: whatever you build from members of the set, by adding them or multiplying them by numbers, is again a member.</p>
     </div>
+    <p>Strang calls this "the beginning of real linear algebra". Until now we looked at single vectors (one portfolio, one target). From here on we look at <b>whole collections</b> of vectors, and ask whether a collection is "closed". Here's what that means, step by step.</p>
 
-    <h4>The big examples: Rⁿ</h4>
-    <p>$\mathbb{R}^2$ is all vectors with 2 real components: the whole $xy$-plane. In portfolio terms, think of $(x, y)$ as "₹ lakh in Nifty, ₹ lakh in bonds", where negative numbers mean selling short. Check the two rules on real portfolios:</p>
+    <h4>Step 1: the two moves</h4>
+    <p>There are only two things we ever do with vectors. With portfolios $(x, y)$ = (₹ lakh in Nifty, ₹ lakh in bonds):</p>
+    <table>
+      <tr><th>Move</th><th>How</th><th>Example</th><th>In portfolio terms</th></tr>
+      <tr><td><b>Add</b> two vectors</td><td>add matching components</td><td>$(7, 3) + (4, 6) = (7 + 4,\ 3 + 6) = (11, 9)$</td><td>merge two clients' books into one</td></tr>
+      <tr><td><b>Scale</b> a vector by a number $c$</td><td>multiply every component by $c$</td><td>$2 \times (7, 3) = (14, 6)$</td><td>double the position</td></tr>
+      <tr><td></td><td></td><td>$0.5 \times (7, 3) = (3.5, 1.5)$</td><td>halve it</td></tr>
+      <tr><td></td><td></td><td>$-1 \times (7, 3) = (-7, -3)$</td><td>flip it: sell short instead of buy</td></tr>
+      <tr><td></td><td></td><td>$0 \times (7, 3) = (0, 0)$</td><td>close everything: the empty portfolio</td></tr>
+    </table>
+    <p>Doing both at once, "scale some vectors and add", is a <b>linear combination</b> (Lesson 1), like $2(7, 3) + 1(4, 6) = (18, 12)$.</p>
+
+    <h4>Step 2: a warm-up on the number line</h4>
+    <p>Before vectors, think of plain numbers, and ask: "if I start inside this set, can adding or multiplying take me outside it?"</p>
     <ol class="step-list kid-step">
       <li>
-        <p class="k"><span class="kl">Add</span> Client 1 $(7, 3)$ plus client 2 $(4, 6)$, component by component: $(7 + 4,\ 3 + 6) = (11, 9)$. Merging two books gives another pair of numbers: still in $\mathbb{R}^2$ ✓.</p>
+        <p class="k"><span class="kl">All real numbers</span> Add any two: $3 + 5 = 8$, a real number. Multiply by any number: $-2 \times 3 = -6$, a real number. You can never leave.</p>
+        <p class="k"><span class="kl">Verdict</span> <b>Closed</b>: this is the simplest vector space, $\mathbb{R}$ (the number line).</p>
       </li>
       <li>
-        <p class="k"><span class="kl">Scale</span> Double client 1: $2(7, 3) = (14, 6)$. Reverse it: $-1 \times (7, 3) = (-7, -3)$ (short both). Scale by zero: $0 \times (7, 3) = (0, 0)$, the empty portfolio. All still in $\mathbb{R}^2$ ✓.</p>
+        <p class="k"><span class="kl">Positive numbers only</span> Adding is fine: $3 + 5 = 8$ is positive. But multiplying by $-1$: $-1 \times 3 = -3$, <b>not positive</b>. You escaped.</p>
+        <p class="k"><span class="kl">Verdict</span> <b>Not closed</b>: one escape is enough to fail.</p>
       </li>
     </ol>
-    <p>$\mathbb{R}^3$ is all vectors with 3 components, for example three-fund portfolios $(5, 3, 2)$, and $\mathbb{R}^n$ is all vectors with $n$ components. Careful: $(3, 2, 0)$ is in $\mathbb{R}^3$, not $\mathbb{R}^2$. It has three components; one of them happens to be zero.</p>
-    <div class="box pitfall"><span class="label">Watch out: the zero vector is essential</span>
-      <p>Every vector space contains $0$, because you must be allowed to multiply any vector by the number 0. Strang: "Every vector space has got that zero vector in it." A plane with the origin removed is <b>not</b> a space.</p>
+    <p>That is the entire test. For vectors it's exactly the same, just with pairs or triples of numbers.</p>
+
+    <div class="box method" id="m-space"><span class="label">Rule · Vector space test (closure)</span>
+      <p>A set $V$ of vectors is a <b>vector space</b> when both moves keep you inside, for every choice:</p>
+      <ol>
+        <li><b>Adding:</b> if $v$ and $w$ are in $V$, then $v + w$ is in $V$.</li>
+        <li><b>Scaling:</b> if $v$ is in $V$ and $c$ is <i>any</i> real number (positive, negative or zero), then $c\,v$ is in $V$.</li>
+      </ol>
+      <p>Together these say every linear combination $c\,v + d\,w$ stays in $V$. (Textbooks also list eight "good behaviour" rules, such as $v + w = w + v$. For lists of numbers they always hold, so in practice only the two above need checking.)</p>
     </div>
-    <div class="box intuition"><span class="label">In one line</span><p>A vector space is closed under adding and scaling, so under all linear combinations, and always contains $0$.</p></div>
+
+    <h4>Step 3: the portfolio plane passes</h4>
+    <p>Take the set of <b>all</b> portfolios $(x, y)$ of Nifty and bonds, long or short, any real amounts. That is $\mathbb{R}^2$, the whole $xy$-plane.</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Adding</span> $(7, 3) + (4, 6) = (11, 9)$. Adding two real numbers always gives a real number, so the sum of any two pairs is again a pair of real numbers ✓.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Scaling</span> $2(7, 3) = (14, 6)$, $\;-1(7, 3) = (-7, -3)$, $\;0(7, 3) = (0, 0)$: all pairs of real numbers ✓. Shorting is allowed here, so negative amounts are fine.</p>
+        <p class="k"><span class="kl">Verdict</span> Nothing ever escapes: <b>$\mathbb{R}^2$ is a vector space</b>.</p>
+      </li>
+    </ol>
+
+    <h4>Step 4: zero is always inside: a quick first test</h4>
+    <p>Scaling by $c = 0$ is always allowed. So if $v$ is in a vector space, $0 \times v = (0, 0)$ must be too. That gives a very fast check:</p>
+    <div class="box pitfall"><span class="label">The zero test</span>
+      <p><b>Every vector space contains the zero vector.</b> If a set doesn't contain $0$, it fails immediately, with no other checking needed. (Strang: "Every vector space has got that zero vector in it.") For example, "all portfolios with a ₹10 lakh budget" doesn't contain $(0, 0)$, whose budget is 0, so it is not a vector space. The plane with the origin removed fails too.</p>
+    </div>
+    <p>The converse doesn't hold: containing $0$ is necessary, not enough. Long-only portfolios contain $(0, 0)$ but still fail (topic 5).</p>
+
+    <h4>Step 5: more funds, more components: R³ and Rⁿ</h4>
+    <p>$\mathbb{R}^3$ is all vectors with 3 real components, such as three-fund portfolios $(5, 3, 2)$ = (Nifty, bonds, midcap). $\mathbb{R}^n$ is all vectors with $n$ components: a portfolio of $n$ funds. Each passes the test for the same reason $\mathbb{R}^2$ does: adding and scaling real numbers gives real numbers.</p>
+    <p class="note-soft">Careful: $(3, 2, 0)$ is in $\mathbb{R}^3$, not $\mathbb{R}^2$. It has three components (no midcap, but the slot exists). The number of components decides which space a vector lives in.</p>
+
+    <h4>Try it: the space tester</h4>
+    <p>Pick a set of portfolios, two members $v$ and $w$, and a number $c$. The tester computes $v + w$ and $c\,v$ and tells you whether each stayed inside. Try to make the "not a space" sets fail; try to make "all portfolios" fail (you can't).</p>
+    <div id="spacetest" class="mixer"></div>
+    <figure class="fig" style="max-width:520px;margin:12px auto 20px">
+      <div id="spaceplot" class="plot3d-box" style="height:380px"></div>
+      <figcaption>Shaded or drawn in purple: the set. Blue: $v$ and $w$. Green or red: $v + w$ and $c\,v$ (red means it escaped).</figcaption>
+    </figure>
+    <div class="box intuition"><span class="label">In one line</span><p>A vector space is closed under adding and scaling (so under every linear combination); it always contains $0$, and one escape is enough to fail.</p></div>
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t5">5. When a set is not a space</h3>
@@ -801,6 +852,61 @@ window.addEventListener("load", function () {
     }
     root.querySelectorAll(".sh-btn").forEach(function (b2) { b2.addEventListener("click", function () { show(+b2.dataset.i); }); });
     show(0);
+  })();
+
+  // ---- Notes, topic 4: space tester (closure under + and scaling) ----
+  (function () {
+    var root = document.getElementById("spacetest"), plot = document.getElementById("spaceplot"); if (!root || !plot) return;
+    var tol = 1e-9;
+    var sets = [
+      { label: "All portfolios (R²)", test: function () { return true; }, v: [7, 3], w: [4, 6], c: -1, draw: "all" },
+      { label: "Long-only: x ≥ 0, y ≥ 0", test: function (p) { return p[0] >= -tol && p[1] >= -tol; }, v: [7, 3], w: [6, 4], c: -1, draw: "quad" },
+      { label: "Budget exactly 10: x + y = 10", test: function (p) { return Math.abs(p[0] + p[1] - 10) < 1e-7; }, v: [7, 3], w: [6, 4], c: 2, draw: [1, 1, 10] },
+      { label: "Zero-cost trades: x + y = 0", test: function (p) { return Math.abs(p[0] + p[1]) < 1e-7; }, v: [2, -2], w: [1, -1], c: -3, draw: [1, 1, 0] },
+      { label: "All-Nifty: y = 0", test: function (p) { return Math.abs(p[1]) < 1e-7; }, v: [3, 0], w: [5, 0], c: -2, draw: [0, 1, 0] },
+      { label: "All-Nifty or all-bonds", test: function (p) { return Math.abs(p[0]) < 1e-7 || Math.abs(p[1]) < 1e-7; }, v: [1, 0], w: [0, 1], c: 3, draw: "axes" }
+    ];
+    function f(x) { var r = Math.round(x * 1e4) / 1e4; if (Math.abs(r) < 1e-9) r = 0; return (r < 0 ? "−" : "") + Math.abs(r); }
+    function pt(p) { return "(" + f(p[0]) + ", " + f(p[1]) + ")"; }
+    root.innerHTML = '<div class="lab-row"><label>Set <select class="st-pick">' + sets.map(function (s2, i) { return '<option value="' + i + '">' + s2.label + "</option>"; }).join("") + '</select></label></div>' +
+      '<div class="lab-row"><label>v = (<input type="number" step="any" class="st-in" data-k="v0" style="width:5em">, <input type="number" step="any" class="st-in" data-k="v1" style="width:5em">)</label>' +
+      '<label>w = (<input type="number" step="any" class="st-in" data-k="w0" style="width:5em">, <input type="number" step="any" class="st-in" data-k="w1" style="width:5em">)</label>' +
+      '<label>c = <input type="number" step="any" class="st-in" data-k="c" style="width:5em"></label></div><div class="st-out mixer-out"></div>';
+    var pick = root.querySelector(".st-pick"), out = root.querySelector(".st-out"), ins = {};
+    root.querySelectorAll(".st-in").forEach(function (el) { ins[el.dataset.k] = el; });
+    function load() { var S = sets[+pick.value]; ins.v0.value = S.v[0]; ins.v1.value = S.v[1]; ins.w0.value = S.w[0]; ins.w1.value = S.w[1]; ins.c.value = S.c; update(); }
+    function num(el) { var x = parseFloat(el.value); return isFinite(x) ? x : 0; }
+    function update() {
+      var S = sets[+pick.value], v = [num(ins.v0), num(ins.v1)], w = [num(ins.w0), num(ins.w1)], k = num(ins.c);
+      var sum = [v[0] + w[0], v[1] + w[1]], sc = [k * v[0], k * v[1]];
+      var vin = S.test(v), win = S.test(w), sin = S.test(sum), cin = S.test(sc), zin = S.test([0, 0]);
+      var mark = function (ok) { return ok ? '<b style="color:var(--ex-b)">inside ✓</b>' : '<b style="color:var(--warn-b)">outside ✗</b>'; };
+      var h = "";
+      if (!vin || !win) h += '<p class="lab-warn">Pick $v$ and $w$ that are <b>in</b> the set first (' + (!vin ? "$v$" : "$w$") + " isn't).</p>";
+      h += "<p>Zero vector $(0, 0)$: " + mark(zin) + "</p>";
+      h += "<p>Add: $v + w = " + pt(v).replace(/−/g, "-") + " + " + pt(w).replace(/−/g, "-") + " = " + pt(sum).replace(/−/g, "-") + "$ → " + mark(sin) + "</p>";
+      h += "<p>Scale: $c\\,v = " + f(k).replace("−", "-") + " \\times " + pt(v).replace(/−/g, "-") + " = " + pt(sc).replace(/−/g, "-") + "$ → " + mark(cin) + "</p>";
+      if (vin && win) h += (sin && cin && zin) ? '<p class="answer">No escape with these numbers. A vector space must pass for <i>every</i> choice, so try others: all portfolios, zero-cost trades and all-Nifty never fail.</p>'
+                                              : '<p class="lab-warn"><b>Escaped</b>, so this set is <b>not</b> a vector space.</p>';
+      out.innerHTML = h;
+      if (window.renderMathInElement) renderMathInElement(out, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
+      // picture
+      var R = Math.max(12, Math.ceil(Math.max.apply(null, [v, w, sum, sc].map(function (p) { return Math.max(Math.abs(p[0]), Math.abs(p[1])); })) * 1.15));
+      var purple = c("--thm-b"), tr = [];
+      if (S.draw === "all") tr.push({ x: [-R, R, R, -R, -R], y: [-R, -R, R, R, -R], fill: "toself", mode: "lines", line: { width: 0 }, fillcolor: purple, opacity: 0.18, name: "the set: whole plane", hoverinfo: "skip" });
+      else if (S.draw === "quad") tr.push({ x: [0, R, R, 0, 0], y: [0, 0, R, R, 0], fill: "toself", mode: "lines", line: { width: 0 }, fillcolor: purple, opacity: 0.22, name: "the set: long-only", hoverinfo: "skip" });
+      else if (S.draw === "axes") { tr.push({ x: [-R, R], y: [0, 0], mode: "lines", line: { color: purple, width: 5 }, name: "the set: the two axes" }); tr.push({ x: [0, 0], y: [-R, R], mode: "lines", line: { color: purple, width: 5 }, showlegend: false }); }
+      else { var a1 = S.draw[0], b1 = S.draw[1], d1 = S.draw[2];
+        if (Math.abs(b1) > tol) tr.push({ x: [-R, R], y: [(d1 - a1 * -R) / b1, (d1 - a1 * R) / b1], mode: "lines", line: { color: purple, width: 5 }, name: "the set" });
+        else tr.push({ x: [d1 / a1, d1 / a1], y: [-R, R], mode: "lines", line: { color: purple, width: 5 }, name: "the set" }); }
+      function dot(p, col, name, sym) { tr.push({ x: [p[0]], y: [p[1]], mode: "markers+text", text: [name], textposition: "top right", marker: { color: col, size: 11, symbol: sym || "circle" }, textfont: { color: col }, name: name + " " + pt(p) }); }
+      dot(v, blue, "v"); dot(w, blue, "w"); dot(sum, sin ? green : red, "v + w", "diamond"); dot(sc, cin ? green : red, "c·v", "square"); dot([0, 0], ink, "0", "x");
+      Plotly.react(plot, tr, { margin: { l: 40, r: 10, t: 10, b: 40 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)", font: { color: ink }, showlegend: false,
+        xaxis: { range: [-R, R], title: { text: "x: Nifty (₹ lakh)" }, gridcolor: rule, zerolinecolor: soft, color: soft },
+        yaxis: { range: [-R, R], title: { text: "y: bonds (₹ lakh)" }, gridcolor: rule, zerolinecolor: soft, color: soft, scaleanchor: "x" } }, config);
+    }
+    pick.addEventListener("change", load); root.addEventListener("input", function (e) { if (e.target.classList.contains("st-in")) update(); });
+    load();
   })();
 
   // Plots drawn while their tab was hidden need a resize once the tab is shown.
