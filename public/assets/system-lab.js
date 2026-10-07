@@ -1,6 +1,7 @@
 // System lab: edit a 2 × 2 or 3 × 3 system Ax = b and see the solution, the row picture and the column picture.
 // Usage: SystemLab.mount(element, presets, { steps: true, lu: true }) once Plotly has loaded.
-// steps: true lists the elimination steps; lu: true shows PA = LU and the two triangular solves.
+// steps: true lists the elimination steps; lu: true shows PA = LU and the two triangular solves;
+// inv: true runs Gauss–Jordan on [A | I] and shows the inverse (or, if singular, a vector with Ax = 0).
 // A preset: { label, cols: [names], rows: [names], A: [[...]], b: [...], meaning: [what each unknown is], neg: "what a negative means" }.
 (function () {
   "use strict";
@@ -97,6 +98,56 @@
   }
   function texMat(M) { return "\\begin{bmatrix}" + M.map(function (r) { return r.map(tex).join(" & "); }).join(" \\\\ ") + "\\end{bmatrix}"; }
 
+
+  // Gauss–Jordan as in lecture 3: forward elimination on [A | I] (swap only on a 0 pivot), then clear above each pivot, then divide by the pivots.
+  function gaussJordan(A) {
+    var n = A.length, M = A.map(function (r, i) { var row = r.slice(); for (var j = 0; j < n; j++) row.push(i === j ? 1 : 0); return row; });
+    var scale = Math.max(1, Math.max.apply(null, A.map(function (r) { return Math.max.apply(null, r.map(Math.abs)); })));
+    var zero = function (v) { return Math.abs(v) < TOL * scale; }, snap = function () { return M.map(function (r) { return r.slice(); }); };
+    var steps = [{ kind: "start", M: snap() }], i, j, k;
+    for (var c = 0; c < n; c++) {
+      if (zero(M[c][c])) {
+        for (k = c + 1; k < n && zero(M[k][c]); k++);
+        if (k === n) return { ok: false, steps: steps, col: c };
+        var t = M[c]; M[c] = M[k]; M[k] = t; steps.push({ kind: "swap", a: c, b: k, M: snap() });
+      }
+      for (i = c + 1; i < n; i++) if (!zero(M[i][c])) {
+        var l = M[i][c] / M[c][c]; for (j = 0; j < 2 * n; j++) M[i][j] -= l * M[c][j]; M[i][c] = 0;
+        steps.push({ kind: "down", row: i, prow: c, l: l, M: snap() });
+      }
+    }
+    steps.push({ kind: "gauss", M: snap() });
+    for (c = n - 1; c >= 0; c--) for (i = c - 1; i >= 0; i--) if (!zero(M[i][c])) {
+      var l2 = M[i][c] / M[c][c]; for (j = 0; j < 2 * n; j++) M[i][j] -= l2 * M[c][j]; M[i][c] = 0;
+      steps.push({ kind: "up", row: i, prow: c, l: l2, M: snap() });
+    }
+    for (i = 0; i < n; i++) { var p = M[i][i]; for (j = 0; j < 2 * n; j++) M[i][j] /= p; }
+    steps.push({ kind: "divide", M: snap() });
+    return { ok: true, steps: steps, inv: M.map(function (r) { return r.slice(n); }) };
+  }
+  // A non-zero x with Ax = 0 (for a singular A): reduce A, set the first free unknown to 1, solve for the pivot unknowns.
+  function nullVector(A) {
+    var n = A.length, R = A.map(function (r) { return r.slice(); }), piv = [], row = 0;
+    var scale = Math.max(1, Math.max.apply(null, A.map(function (r) { return Math.max.apply(null, r.map(Math.abs)); })));
+    for (var c = 0; c < n && row < n; c++) {
+      var k = row; for (var i = row + 1; i < n; i++) if (Math.abs(R[i][c]) > Math.abs(R[k][c])) k = i;
+      if (Math.abs(R[k][c]) < TOL * scale) continue;
+      var t = R[row]; R[row] = R[k]; R[k] = t; var d = R[row][c];
+      for (var j = 0; j < n; j++) R[row][j] /= d;
+      for (i = 0; i < n; i++) if (i !== row) { var f = R[i][c]; for (j = 0; j < n; j++) R[i][j] -= f * R[row][j]; }
+      piv.push(c); row++;
+    }
+    var free = -1; for (c = 0; c < n; c++) if (piv.indexOf(c) < 0) { free = c; break; }
+    if (free < 0) return null;
+    var x = new Array(n).fill(0); x[free] = 1;
+    piv.forEach(function (pc, r) { x[pc] = -R[r][free]; });
+    var m = Math.min.apply(null, x.filter(function (v) { return Math.abs(v) > 1e-9; }).map(Math.abs));   // scale to small whole numbers when possible
+    return x.map(function (v) { return v / m; });
+  }
+  function texWide(M, n) {
+    return "\\left[\\begin{array}{" + "c".repeat(n) + "|" + "c".repeat(n) + "}" + M.map(function (r) { return r.map(tex).join(" & "); }).join(" \\\\ ") + "\\end{array}\\right]";
+  }
+
   // The part of the plane n·p = d inside the box, as a flat polygon.
   function planeInBox(n, d, box, color, name) {
     var f = function (p) { return n[0] * p[0] + n[1] * p[1] + n[2] * p[2] - d; };
@@ -149,12 +200,13 @@
       '<div class="sl-out"></div>' +
       (opts.steps ? '<details class="check sl-steps-box" open><summary>Elimination, step by step</summary><div class="sl-steps"></div></details>' : "") +
       (opts.lu ? '<details class="check sl-lu-box" open><summary>A = LU, and solving with it</summary><div class="sl-lu"></div></details>' : "") +
+      (opts.inv ? '<details class="check sl-inv-box" open><summary>Gauss–Jordan: [A | I] → [I | A⁻¹]</summary><div class="sl-inv"></div></details>' : "") +
       '<div class="figs sl-plots">' +
         '<figure class="fig"><div class="plot3d-box sl-row"></div><figcaption>Row picture: one line (or plane) per rule.</figcaption></figure>' +
         '<figure class="fig"><div class="plot3d-box sl-col"></div><figcaption>Column picture: mix the columns to reach b.</figcaption></figure>' +
       "</div>";
     var pick = root.querySelector(".sl-pick"), grid = root.querySelector(".sl-grid"), out = root.querySelector(".sl-out");
-    var rowDiv = root.querySelector(".sl-row"), colDiv = root.querySelector(".sl-col"), stepsDiv = root.querySelector(".sl-steps"), luDiv = root.querySelector(".sl-lu");
+    var rowDiv = root.querySelector(".sl-row"), colDiv = root.querySelector(".sl-col"), stepsDiv = root.querySelector(".sl-steps"), luDiv = root.querySelector(".sl-lu"), invDiv = root.querySelector(".sl-inv");
     var P, lastN = 0;
 
     function build() {
@@ -250,6 +302,30 @@
         }
         luDiv.innerHTML = h2.replace(/\+ -/g, "- ");
         if (window.renderMathInElement) renderMathInElement(luDiv, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
+      }
+      if (invDiv) {
+        var G = gaussJordan(A), h3 = "<ol class=\"sl-steplist\">";
+        G.steps.forEach(function (st) {
+          var m = "$" + texWide(st.M, n) + "$";
+          if (st.kind === "start") h3 += "<li>Start with $[A \\mid I]$: " + m + "</li>";
+          else if (st.kind === "swap") h3 += "<li><b>Row exchange:</b> swap rows " + (st.a + 1) + " and " + (st.b + 1) + ". " + m + "</li>";
+          else if (st.kind === "down") h3 += "<li><b>Gauss (down):</b> row " + (st.row + 1) + " − (" + fmt(st.l) + ") × row " + (st.prow + 1) + ". " + m + "</li>";
+          else if (st.kind === "gauss") h3 += '<li class="note-soft">Left half is now upper triangular. Gauss would stop; Jordan keeps going upwards.</li>';
+          else if (st.kind === "up") h3 += "<li><b>Jordan (up):</b> row " + (st.row + 1) + " − (" + fmt(st.l) + ") × row " + (st.prow + 1) + ". " + m + "</li>";
+          else if (st.kind === "divide") h3 += "<li><b>Divide each row by its pivot</b>: the left half is $I$, so the right half is $A^{-1}$. " + m + "</li>";
+        });
+        h3 += "</ol>";
+        if (G.ok) {
+          var xi = G.inv.map(function (r) { return r.reduce(function (s2, v, j) { return s2 + v * b[j]; }, 0); });
+          h3 += "<p>$A^{-1} = " + texMat(G.inv) + "$, and $x = A^{-1}b = " + texMat(xi.map(function (v) { return [v]; })) + "$.</p>";
+          h3 += '<p class="note-soft">Column $j$ of $A^{-1}$ is the mix that changes rule $j$ by exactly 1 and leaves every other rule unchanged.</p>';
+        } else {
+          var z = nullVector(A);
+          h3 += '<p class="lab-warn"><b>No inverse.</b> Column ' + (G.col + 1) + " has a 0 in the pivot position with nothing below it, so the matrix is singular.</p>";
+          if (z) h3 += "<p>Here is why: $A " + texMat(z.map(function (v) { return [v]; })) + " = 0$. That mix changes nothing at all, so no matrix can undo $A$ (it would have to send $0$ back to this non-zero vector).</p>";
+        }
+        invDiv.innerHTML = h3.replace(/\+ -/g, "- ");
+        if (window.renderMathInElement) renderMathInElement(invDiv, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
       }
       if (n !== lastN) { Plotly.purge(rowDiv); Plotly.purge(colDiv); lastN = n; }   // 2D <-> 3D needs a fresh plot
       if (window.renderMathInElement) renderMathInElement(out, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false });
@@ -361,5 +437,5 @@
     build();
   }
 
-  window.SystemLab = { mount: mount, solve: solve, eliminate: eliminate, factor: factor };
+  window.SystemLab = { mount: mount, solve: solve, eliminate: eliminate, factor: factor, gaussJordan: gaussJordan, nullVector: nullVector };
 })();

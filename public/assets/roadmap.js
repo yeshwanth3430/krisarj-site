@@ -11,9 +11,9 @@
         { name: "Solving equations", topics: [
           ["Vectors & linear equations", "mixing products into a payoff", "live", "linear-algebra/topic-01.html"],
           ["Elimination, A = LU & permutations", "solving for the lots", "live", "linear-algebra/topic-02.html"],
-          ["Inverses & transposes", "one recipe for every payoff", "next"] ] },
+          ["Inverses & transposes", "one recipe for every payoff", "live", "linear-algebra/topic-03.html"] ] },
         { name: "The four subspaces", topics: [
-          ["Vector spaces, column space & nullspace", "what you can build, what is free", "soon"],
+          ["Vector spaces, column space & nullspace", "what you can build, what is free", "next"],
           ["Independence, rank & the four subspaces", "is the market complete?", "soon"],
           ["Graphs & networks", "price loops and arbitrage", "soon"] ] },
         { name: "Geometry & fitting", topics: [

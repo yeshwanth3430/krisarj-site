@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multiplication and Inverses · Slides</title>
+<meta name="description" content="Linear Algebra Lesson 3 as a slide carousel: five ways to multiply matrices, inverses and Gauss–Jordan on portfolio and options examples.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<style>
+  /* One slide = one 1080 × 1350 page (LinkedIn's portrait carousel size). Always light. */
+  @page { size: 1080px 1350px; margin: 0; }
+  html, body { margin: 0; background: #e9e5dc; }
+  body { font: 34px/1.5 var(--serif); color: var(--ink); }
+  .slide {
+    position: relative; overflow: hidden; box-sizing: border-box;
+    width: 1080px; height: 1350px; margin: 0 auto 24px; padding: 96px 84px 130px;
+    background: var(--paper); display: flex; flex-direction: column;
+    font-size: 38px; line-height: 1.45;   /* set here, so print styles for the notes don't shrink it */
+    break-after: page; page-break-after: always;
+  }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .kicker { font: 600 22px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .slide h1 { font: 700 82px/1.06 var(--sans); letter-spacing: -.02em; margin: 22px 0 30px; }
+  .slide h2 { font: 700 60px/1.12 var(--sans); letter-spacing: -.015em; margin: 14px 0 34px; padding: 0; border: 0; }
+  .slide p { margin: 0 0 26px; }
+  .slide ul, .slide ol { margin: 0 0 26px; padding-left: 40px; }
+  .slide li { margin: 0 0 14px; }
+  .lead { font-size: 44px; line-height: 1.38; }
+  .soft { color: var(--ink-soft); }
+  .slide table { display: table; width: 100%; font-size: 32px; margin: 10px 0 28px; }
+  .slide th { font-size: 24px; }
+  .slide th, .slide td { padding: 12px 16px; }
+  .slide .box { font-size: 34px; margin: 10px 0 26px; padding: 18px 24px; }
+  .slide .box > .label { font-size: 18px; }
+  .slide figure.fig { width: 100%; max-width: 660px; align-self: center; margin: 6px 0 0; padding: 18px; }
+  .slide .figs { width: 100%; }
+  .slide .figs figure.fig { max-width: none; }
+  .slide figure.fig figcaption { font-size: 26px; }
+  .slide .fig .tick { font-size: 12px; }
+  .slide .figs { gap: 22px; }
+  .slide img.plot { display: block; align-self: center; max-width: 100%; max-height: 440px; width: auto; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .slide .katex { font-size: 1.04em; }
+  .answer { font-size: 1em; }
+  .foot {
+    position: absolute; left: 84px; right: 84px; bottom: 48px;
+    display: flex; justify-content: space-between; gap: 20px;
+    padding-top: 18px; border-top: 2px solid var(--rule);
+    font: 500 21px/1 var(--sans); color: var(--ink-soft);
+  }
+  .cover { justify-content: center; }
+  .cover h1 { font-size: 104px; }
+  .cover .lead { font-size: 44px; }
+  .chip { display: inline-block; font: 600 24px/1 var(--sans); color: var(--accent); border: 2px solid var(--accent); border-radius: 999px; padding: 12px 20px; margin: 0 10px 12px 0; }
+  .center { text-align: center; }
+  .grow { flex: 1; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  @media screen and (max-width: 1100px) { .slide { zoom: .5; } }
+</style>
+</head>
+<body>
+
+<!-- 1. Cover -->
+<section class="slide cover">
+  <div class="kicker">Linear Algebra · Lesson 3</div>
+  <h1>Multiplication and Inverse Matrices</h1>
+  <p class="lead">Five ways to see a matrix product. Then the inverse: when it exists, and how <b>Gauss–Jordan</b> finds it.</p>
+  <p class="lead soft">Shown on real money questions: many portfolios, hedges and option payoffs.</p>
+  <div><span class="chip">AB five ways</span><span class="chip">Gauss–Jordan</span><span class="chip">MIT 18.06, Lecture 3</span></div>
+</section>
+
+<!-- 2. Problem -->
+<section class="slide">
+  <div class="kicker">The setup</div>
+  <h2>Many clients, one set of funds</h2>
+  <p>Stack each client's portfolio as a column of $X$. One product gives every client's budget and return:</p>
+  $$ \underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}}_{A:\ \text{funds}}\underbrace{\begin{bmatrix} 7 & 4 \\ 3 & 6 \end{bmatrix}}_{X:\ \text{clients}} = \begin{bmatrix} 10 & 10 \\ 105 & 90 \end{bmatrix} $$
+  <p>Then the reverse question: given the targets, which portfolios? That's the <b>inverse</b>.</p>
+</section>
+
+<!-- 3. Entry rule -->
+<section class="slide">
+  <div class="kicker">Way 1</div>
+  <h2>Row times column</h2>
+  <p>Entry $(i, j)$ = row $i$ of $A$ · column $j$ of $B$:</p>
+  $$ c_{22} = 12 \times 4 + 7 \times 6 = 90 $$
+  <p>Client 2's return: ₹4 lakh Nifty earns 48, ₹6 lakh bonds earns 42.</p>
+  <div class="box method"><span class="label">Rule · Shapes</span><p>$(m \times n)(n \times p) = m \times p$. Inner sizes must match.</p></div>
+</section>
+
+<!-- 4. Columns and rows -->
+<section class="slide">
+  <div class="kicker">Ways 2 and 3</div>
+  <h2>By columns, by rows</h2>
+  <p><b>Columns</b> of $AB$ combine columns of $A$: one column per client.</p>
+  $$ A\begin{bmatrix} 7 \\ 3 \end{bmatrix} = 7\begin{bmatrix} 1 \\ 12 \end{bmatrix} + 3\begin{bmatrix} 1 \\ 7 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix} $$
+  <p><b>Rows</b> of $AB$ combine rows of $B$: one row per rule.</p>
+  $$ 12\,(7, 4) + 7\,(3, 6) = (105, 90) $$
+</section>
+
+<!-- 5. Column x row -->
+<section class="slide">
+  <div class="kicker">Way 4</div>
+  <h2>Columns times rows</h2>
+  <p>A column times a row is a whole matrix. $AB$ is a sum of them, one per fund:</p>
+  $$ \underbrace{\begin{bmatrix} 7 & 4 \\ 84 & 48 \end{bmatrix}}_{\text{Nifty's part}} + \underbrace{\begin{bmatrix} 3 & 6 \\ 21 & 42 \end{bmatrix}}_{\text{bonds' part}} = \begin{bmatrix} 10 & 10 \\ 105 & 90 \end{bmatrix} $$
+  <div class="box intuition"><span class="label">In markets</span><p>Attribution by source: what each fund contributes to every client.</p></div>
+</section>
+
+<!-- 6. Blocks -->
+<section class="slide">
+  <div class="kicker">Way 5</div>
+  <h2>Block multiplication</h2>
+  <p>Cut the matrices into blocks that match, then multiply blocks like numbers:</p>
+  $$ \begin{bmatrix} A_1 & A_2 \\ A_3 & A_4 \end{bmatrix}\begin{bmatrix} B_1 & B_2 \\ B_3 & B_4 \end{bmatrix} \;\to\; \text{top-left} = A_1B_1 + A_2B_3 $$
+  <p>Three funds: "Nifty + bonds" part plus "midcap" part. Big computers multiply this way.</p>
+</section>
+
+<!-- 7. Inverse & singular -->
+<section class="slide">
+  <div class="kicker">Inverses</div>
+  <h2>When can A be undone?</h2>
+  <p>$A^{-1}A = I = AA^{-1}$. But two identical Nifty funds:</p>
+  $$ \begin{bmatrix} 1 & 1 \\ 12 & 12 \end{bmatrix}\begin{bmatrix} 1 \\ -1 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix} $$
+  <p>₹1 lakh more in one, ₹1 lakh less in the other: <b>a trade that changes nothing</b>.</p>
+  <div class="box method"><span class="label">Rule · Singular test</span><p>$Ax = 0$ with $x \ne 0$ ⇒ no inverse.</p></div>
+</section>
+
+<!-- 8. GJ 2x2 -->
+<section class="slide">
+  <div class="kicker">Gauss–Jordan · 2 × 2</div>
+  <h2>[A | I] → [I | A⁻¹]</h2>
+  $$ \left[\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 12 & 7 & 0 & 1 \end{array}\right] \to \left[\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 0 & -5 & -12 & 1 \end{array}\right] $$
+  <p><b>Gauss</b> goes down. <b>Jordan</b> goes up, then divide by the pivots:</p>
+  $$ \left[\begin{array}{cc|cc} 1 & 0 & -1.4 & 0.2 \\ 0 & 1 & 2.4 & -0.2 \end{array}\right] $$
+</section>
+
+<!-- 9. GJ 3x3 -->
+<section class="slide">
+  <div class="kicker">Gauss–Jordan · 3 × 3</div>
+  <h2>The three-fund portfolio</h2>
+  <p>After the downward half, the right side is Lesson 2's elimination matrix $E$, messy 1.4 and all. Then up, then divide:</p>
+  $$ A^{-1} = \begin{bmatrix} 4.2 & -0.6 & 4 \\ 0.3 & 0.1 & -1.5 \\ -3.5 & 0.5 & -2.5 \end{bmatrix} $$
+  <div class="box theorem"><span class="label">Why it works</span><p>$E[A \mid I] = [EA \mid E]$. When $EA = I$, $E$ must be $A^{-1}$.</p></div>
+</section>
+
+<!-- 10. Building blocks -->
+<section class="slide">
+  <div class="kicker">Reading A⁻¹</div>
+  <h2>Columns = building-block trades</h2>
+  <table>
+    <tr><th>Column</th><th>Trade (Nifty, bonds, midcap)</th><th>Effect</th></tr>
+    <tr><td>1</td><td>$(4.2, 0.3, -3.5)$</td><td>+₹1 lakh budget only</td></tr>
+    <tr><td>2</td><td>$(-0.6, 0.1, 0.5)$</td><td>+₹1k return only</td></tr>
+    <tr><td>3</td><td>$(4, -1.5, -2.5)$</td><td>+1 exposure only</td></tr>
+  </table>
+  <p>Want ₹5k more return, nothing else changed? Trade $5 \times$ column 2.</p>
+</section>
+
+<!-- 11. Arrow-Debreu -->
+<section class="slide">
+  <div class="kicker">Options</div>
+  <h2>Arrow–Debreu building blocks</h2>
+  <p>For futures + 19,900 call + 20,100 call, the columns of $A^{-1}$ give lot mixes that pay in <b>exactly one</b> expiry scenario:</p>
+  <ul>
+    <li>Sell 1 futures, buy 2 × 20,100 C: pays 200 only at 19,800</li>
+    <li>Buy 1 × 19,900 C, sell 3 × 20,100 C: pays 100 only at 20,000</li>
+    <li>Buy 1 × 20,100 C: pays 100 only at 20,200</li>
+  </ul>
+  <p class="soft">Any payoff over these three levels is a mix of these.</p>
+</section>
+
+<!-- 12. Takeaways -->
+<section class="slide">
+  <div class="kicker">Recap</div>
+  <h2>Key takeaways</h2>
+  <ol class="lead" style="font-size:36px">
+    <li>$AB$ by entries, columns, rows, column×row, or blocks: same answer.</li>
+    <li>No inverse if some trade changes nothing ($Ax = 0$).</li>
+    <li>Gauss–Jordan: $[A \mid I] \to [I \mid A^{-1}]$.</li>
+    <li>$X = A^{-1}B$ solves every target at once.</li>
+    <li>Columns of $A^{-1}$ are building blocks.</li>
+  </ol>
+</section>
+
+<!-- 13. Closing -->
+<section class="slide cover">
+  <div class="kicker">Quant from First Principles</div>
+  <h1 style="font-size:76px">The full interactive lesson is free</h1>
+  <p class="lead">A lab that runs Gauss–Jordan on your own matrix, step by step, plus worked hedging and options examples:</p>
+  <p class="lead"><b>learn.krisarj.com</b></p>
+  <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
+</section>
+
+<script>
+// Footer with page numbers on every slide.
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  slides.forEach(function (s, i) {
+    var f = document.createElement("div");
+    f.className = "foot";
+    f.innerHTML = "<span>Quant from First Principles · learn.krisarj.com</span><span>" + (i + 1) + " / " + slides.length + "</span>";
+    s.appendChild(f);
+  });
+})();
+window.addEventListener("load", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {
+    delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>

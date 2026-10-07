@@ -25,6 +25,13 @@ const LESSONS = [
     plots: { e3U: "linear-algebra/img/l2-planes-U.png" }
   },
   {
+    slug: "la-03-multiplication-and-inverse-matrices",
+    title: "Linear Algebra · Lesson 3 · Multiplication and Inverse Matrices",
+    page: "linear-algebra/03_multiplication-and-inverse-matrices.html",
+    slides: "linear-algebra/03_multiplication-and-inverse-matrices-slides.html",
+    plots: {}
+  },
+  {
     slug: "la-04-factorization-into-a-lu",
     title: "Linear Algebra · Lesson 4 · Factorization into A = LU",
     page: "linear-algebra/04_factorization-into-a-lu.html",

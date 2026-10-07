@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multiplication and Inverse Matrices · Topic 3 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 3, Lesson 3: Multiplication and Inverse Matrices, explained from zero: five ways to multiply, when an inverse exists, Gauss–Jordan, built on portfolio, hedging and options examples.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-03-1">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-03.html">Topic 3</a> / <b>Multiplication and Inverse Matrices</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 3</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 3 · Lesson 3 (MIT 18.06, Lecture 3)</p>
+  <h1>Multiplication and Inverse Matrices</h1>
+  <p class="subtitle">Five ways to see a matrix product, all giving the same numbers. Then the inverse: when it exists, and how Gauss–Jordan finds it.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-03-multiplication-and-inverse-matrices-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-03-multiplication-and-inverse-matrices-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F03_multiplication-and-inverse-matrices" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">The entry rule and shapes</a></li>
+        <li><a href="#t2">By columns and by rows</a></li>
+        <li><a href="#t3">Columns times rows</a></li>
+        <li><a href="#t4">Block multiplication</a></li>
+        <li><a href="#t5">The inverse, and when it exists</a></li>
+        <li><a href="#t6">Gauss–Jordan: 2 × 2</a></li>
+        <li><a href="#t7">Gauss–Jordan: 3 × 3, and why it works</a></li>
+        <li><a href="#t8">Using the inverse</a></li>
+        <li><a href="#t9">Summary</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">The entry rule and shapes</a><span>Each entry of $AB$ is a row of $A$ times a column of $B$. Which shapes can be multiplied.</span></li>
+      <li><a href="#t2">By columns and by rows</a><span>Columns of $AB$ mix the columns of $A$; rows of $AB$ mix the rows of $B$. Many portfolios at once.</span></li>
+      <li><a href="#t3">Columns times rows</a><span>$AB$ as a sum of simple pieces, one per fund.</span></li>
+      <li><a href="#t4">Block multiplication</a><span>Cut matrices into blocks and multiply the blocks.</span></li>
+      <li><a href="#t5">The inverse, and when it exists</a><span>$A^{-1}A = I$. No inverse when some trade changes nothing: $Ax = 0$ with $x \ne 0$.</span></li>
+      <li><a href="#t6">Gauss–Jordan: 2 × 2</a><span>Find $A^{-1}$ by eliminating $[A \mid I]$ until it becomes $[I \mid A^{-1}]$.</span></li>
+      <li><a href="#t7">Gauss–Jordan: 3 × 3, and why it works</a><span>The three-fund portfolio, step by step. $E[A \mid I] = [I \mid E]$, so $E = A^{-1}$.</span></li>
+      <li><a href="#t8">Using the inverse</a><span>Every target at once, building-block trades, the 2 × 2 formula, and when not to compute $A^{-1}$.</span></li>
+      <li class="no-print"><a href="#t9">Summary</a><span>The key ideas and words on one screen.</span></li>
+    </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-entry">Entry rule</a> <a href="#m-shape">Shapes rule</a> <a href="#m-colway">Column way</a> <a href="#m-rowway">Row way</a> <a href="#m-outer">Column × row (outer products)</a> <a href="#m-block">Block multiplication</a> <a href="#m-singtest">Singular test (Ax = 0)</a> <a href="#m-gj">Gauss–Jordan elimination</a> <a href="#m-2x2">2 × 2 inverse formula</a></p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="01_geometry-of-linear-equations.html#t3mv">Matrix × vector, two ways</a> (Lesson 1): $Ax$ mixes the columns of $A$.</li>
+      <li><a href="01_geometry-of-linear-equations.html#t8">Singular matrices</a> (Lesson 1): funds that add no new direction.</li>
+      <li><a href="02_elimination-with-matrices.html#t3">Elimination on the augmented matrix</a> (Lesson 2): the portfolio eliminated to $U$.</li>
+      <li><a href="02_elimination-with-matrices.html#t6">Elimination matrices and "row × matrix mixes rows"</a> (Lesson 2).</li>
+      <li><a href="02_elimination-with-matrices.html#t8">Undoing one step</a> (Lesson 2): the inverse of a single elimination matrix.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box finance"><span class="label">The running example: many clients, one set of funds</span>
+      <p>Same funds as always: Nifty (12%, beta 1.0), bonds (7%, beta 0), midcap (15%, beta 1.2). Up to now we multiplied the fund matrix $A$ by <b>one</b> portfolio at a time. A desk handles many at once, so we stack the portfolios side by side as the columns of a matrix $X$:</p>
+      $$ \underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}}_{A:\ \text{Nifty, bonds}} \qquad \underbrace{\begin{bmatrix} 7 & 4 \\ 3 & 6 \end{bmatrix}}_{X:\ \text{client 1, client 2}} \qquad \text{(₹ lakh in each fund)} $$
+      <p>Client 1 holds ₹7 lakh Nifty and ₹3 lakh bonds; client 2 holds ₹4 lakh and ₹6 lakh. The product $AX$ gives every client's (budget, return) at once. Then we turn it around: given the targets, the <b>inverse</b> $A^{-1}$ gives the portfolios.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. The entry rule and shapes</h3>
+    <div class="box method" id="m-entry"><span class="label">Method · Entry rule (row times column)</span>
+      <p>The entry in row $i$, column $j$ of $C = AB$ is the <b>dot product</b> of row $i$ of $A$ with column $j$ of $B$: $\;c_{ij} = \sum_k a_{ik}\,b_{kj}$.</p>
+    </div>
+    $$ \begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}\begin{bmatrix} 7 & 4 \\ 3 & 6 \end{bmatrix} = \begin{bmatrix} 10 & 10 \\ 105 & 90 \end{bmatrix} $$
+    <p>Take $c_{22}$, row 2, column 2: (row 2 of $A$) · (column 2 of $X$) $= 12 \times 4 + 7 \times 6 = 48 + 42 = 90$. That is client 2's return: ₹4 lakh in Nifty earns ₹48 thousand, ₹6 lakh in bonds earns ₹42 thousand.</p>
+    <div class="box method" id="m-shape"><span class="label">Rule · Shapes</span>
+      <p>An $m \times n$ matrix times an $n \times p$ matrix gives an $m \times p$ matrix. The inner sizes must match: <b>columns of $A$ = rows of $B$</b> (one entry of each portfolio per fund). Here $(2 \times 2)(2 \times 2) = 2 \times 2$; three funds and five clients would be $(3 \times 3)(3 \times 5) = 3 \times 5$.</p>
+    </div>
+    <p>Strang's point for this lecture: there are several ways to see the same product, they all give the same numbers, and each one is useful.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. By columns and by rows</h3>
+    <div class="box method" id="m-colway"><span class="label">Method · Column way</span>
+      <p>Column $j$ of $AB$ is $A$ times column $j$ of $B$. So <b>the columns of $AB$ are combinations of the columns of $A$</b>.</p>
+    </div>
+    <p>Each client's portfolio is one column of $X$, and $A$ turns it into that client's (budget, return):</p>
+    $$ A\begin{bmatrix} 7 \\ 3 \end{bmatrix} = 7\begin{bmatrix} 1 \\ 12 \end{bmatrix} + 3\begin{bmatrix} 1 \\ 7 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \end{bmatrix}, \qquad A\begin{bmatrix} 4 \\ 6 \end{bmatrix} = 4\begin{bmatrix} 1 \\ 12 \end{bmatrix} + 6\begin{bmatrix} 1 \\ 7 \end{bmatrix} = \begin{bmatrix} 10 \\ 90 \end{bmatrix}. $$
+    <p>This is Lesson 1's column picture, done for many clients side by side.</p>
+
+    <div class="box method" id="m-rowway"><span class="label">Method · Row way</span>
+      <p>Row $i$ of $AB$ is row $i$ of $A$ times $B$. So <b>the rows of $AB$ are combinations of the rows of $B$</b> (Lesson 2's "row × matrix mixes rows").</p>
+    </div>
+    <p>Rows of $X$ are "₹ in Nifty for each client" and "₹ in bonds for each client":</p>
+    $$ \text{row 1: } 1\,(7, 4) + 1\,(3, 6) = (10, 10) \quad\text{(every client's budget)}, \qquad \text{row 2: } 12\,(7, 4) + 7\,(3, 6) = (105, 90) \quad\text{(every client's return)}. $$
+    <p>Columns answer "what does each <b>client</b> get?"; rows answer "what is each <b>rule</b> across all clients?".</p>
+
+    <details class="check"><summary>Check yourself: a third client holds ₹5 lakh in each fund. What new column appears in $AX$?</summary>
+      <p>$5(1, 12) + 5(1, 7) = (10, 95)$: ₹10 lakh used, ₹95 thousand earned.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. Columns times rows</h3>
+    <p>A <b>column times a row</b> is not a number but a whole matrix:</p>
+    $$ \begin{bmatrix} 2 \\ 3 \\ 4 \end{bmatrix}\begin{bmatrix} 1 & 6 \end{bmatrix} = \begin{bmatrix} 2 & 12 \\ 3 & 18 \\ 4 & 24 \end{bmatrix} \qquad\text{(Strang's example)} $$
+    <p>Every column is a multiple of $(2, 3, 4)$ and every row is a multiple of $(1, 6)$. Strang calls this a "really minimal matrix": all its rows lie on one line, and so do all its columns.</p>
+    <div class="box method" id="m-outer"><span class="label">Method · Column-times-row (sum of outer products)</span>
+      <p>$AB = (\text{column 1 of } A)(\text{row 1 of } B) + (\text{column 2 of } A)(\text{row 2 of } B) + \cdots$. Each term, a column times a row, is called an <b>outer product</b>.</p>
+    </div>
+    <p>For the portfolios, this splits $AX$ <b>by fund</b>:</p>
+    $$ \underbrace{\begin{bmatrix} 1 \\ 12 \end{bmatrix}\begin{bmatrix} 7 & 4 \end{bmatrix}}_{\text{Nifty's part}} + \underbrace{\begin{bmatrix} 1 \\ 7 \end{bmatrix}\begin{bmatrix} 3 & 6 \end{bmatrix}}_{\text{bonds' part}} = \begin{bmatrix} 7 & 4 \\ 84 & 48 \end{bmatrix} + \begin{bmatrix} 3 & 6 \\ 21 & 42 \end{bmatrix} = \begin{bmatrix} 10 & 10 \\ 105 & 90 \end{bmatrix}. $$
+    <p>The first piece is "what the Nifty holdings contribute to every client's budget and return", the second is the bonds' contribution. This kind of <b>attribution by source</b> is everyday work in portfolio analysis, and it is just the column-times-row view of a matrix product.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. Block multiplication</h3>
+    <div class="box method" id="m-block"><span class="label">Method · Block multiplication</span>
+      <p>Cut $A$ and $B$ into blocks whose sizes match, then multiply the blocks as if they were numbers: $\begin{bmatrix} A_1 & A_2 \\ A_3 & A_4 \end{bmatrix}\begin{bmatrix} B_1 & B_2 \\ B_3 & B_4 \end{bmatrix}$ has top-left block $A_1B_1 + A_2B_3$.</p>
+    </div>
+    <p>With three funds and three clients, cut the fund matrix into "Nifty and bonds" | "midcap", and the client matrix the same way by rows:</p>
+    $$ \underbrace{\left[\begin{array}{cc|c} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{array}\right]}_{[\,A_{\text{left}} \;\mid\; A_{\text{right}}\,]} \underbrace{\left[\begin{array}{ccc} 5 & 4 & 6 \\ 3 & 5 & 6 \\ \hline 2 & 1 & 3 \end{array}\right]}_{\left[\begin{smallmatrix} X_{\text{top}} \\ X_{\text{bottom}} \end{smallmatrix}\right]} = A_{\text{left}}X_{\text{top}} + A_{\text{right}}X_{\text{bottom}} $$
+    <p>That is "the Nifty-and-bond part of every client" plus "the midcap part of every client". The total is</p>
+    $$ AX = \begin{bmatrix} 10 & 10 & 15 \\ 111 & 98 & 159 \\ 7.4 & 5.2 & 9.6 \end{bmatrix}, $$
+    <p>the three client targets from <a href="04_factorization-into-a-lu.html#t5">Lesson 4</a>, each column one client's (budget, return, exposure). Large systems are multiplied in blocks like this so they fit in a computer's fast memory.</p>
+
+    <details class="check"><summary>Check yourself (MIT problem 3.1): with $A = \left[\begin{smallmatrix} 1 & 2 \\ 3 & 4 \end{smallmatrix}\right]$, $B = \left[\begin{smallmatrix} 1 & 0 \\ 0 & 0 \end{smallmatrix}\right]$, $C = \left[\begin{smallmatrix} 0 & 0 \\ 5 & 6 \end{smallmatrix}\right]$, compare $AB + AC$ with $A(B + C)$.</summary>
+      <p>$AB = \left[\begin{smallmatrix} 1 & 0 \\ 3 & 0 \end{smallmatrix}\right]$, $AC = \left[\begin{smallmatrix} 10 & 12 \\ 20 & 24 \end{smallmatrix}\right]$, sum $\left[\begin{smallmatrix} 11 & 12 \\ 23 & 24 \end{smallmatrix}\right]$. And $A(B + C) = A\left[\begin{smallmatrix} 1 & 0 \\ 5 & 6 \end{smallmatrix}\right] = \left[\begin{smallmatrix} 11 & 12 \\ 23 & 24 \end{smallmatrix}\right]$. Equal: matrix multiplication is <b>distributive</b>.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. The inverse, and when it exists</h3>
+    <p>Multiplication turns portfolios into targets. The <b>inverse</b> goes the other way.</p>
+    <div class="box definition"><span class="label">Definition: inverse</span>
+      <p>A square matrix $A$ is <b>invertible</b> (non-singular) if there is a matrix $A^{-1}$ with $\;A^{-1}A = I = AA^{-1}$. For square matrices a left inverse is automatically a right inverse.</p>
+    </div>
+    <p>Strang: whether $A$ has an inverse is "the most important question you can ask about the matrix". Start with a matrix that doesn't.</p>
+
+    <h4>When there is no inverse</h4>
+    <p>The two-Nifty-funds matrix from Lesson 1, $A = \left[\begin{smallmatrix} 1 & 1 \\ 12 & 12 \end{smallmatrix}\right]$. Strang's favourite reason it can't be inverted:</p>
+    $$ \begin{bmatrix} 1 & 1 \\ 12 & 12 \end{bmatrix}\begin{bmatrix} 1 \\ -1 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}. $$
+    <p>The trade "₹1 lakh <b>more</b> in fund A, ₹1 lakh <b>less</b> in fund B" changes nothing: same budget, same return. Now suppose $A^{-1}$ existed. Multiply both sides by it: $A^{-1}Ax = A^{-1}0$, so $x = 0$. But $x = (1, -1)$ is not zero. Contradiction: no inverse.</p>
+    <div class="box method" id="m-singtest"><span class="label">Rule · Singular test: Ax = 0 with x ≠ 0</span>
+      <p>If some <b>non-zero</b> $x$ has $Ax = 0$, then $A$ has no inverse. In portfolio terms: if some trade changes nothing, the answer to "which portfolio hits this target?" can never be unique, so it can't be undone. Quick signs (from the recitation): a row or column of zeros, or two equal rows or columns.</p>
+    </div>
+    <p>Same with three funds: the <b>balanced fund</b> (half Nifty, half bonds) gives $A(1, 1, -2) = 0$. Buy ₹1 lakh each of Nifty and bonds and sell ₹2 lakh of the balanced fund, and nothing changes.</p>
+    <p>There's also a column reason: every column of $AX$ is a combination of $A$'s columns, which all lie on one line. The columns of $I$, $(1, 0)$ and $(0, 1)$, don't both lie on that line, so $AX = I$ is impossible.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. Gauss–Jordan: 2 × 2</h3>
+    <p>Now a matrix that <b>does</b> have an inverse, the two-fund matrix. Write $A^{-1}$'s columns as unknowns:</p>
+    $$ \underbrace{\begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix}}_{A}\underbrace{\begin{bmatrix} a & c \\ b & d \end{bmatrix}}_{A^{-1}} = \underbrace{\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}}_{I} $$
+    <p>By columns: $A(a, b) = (1, 0)$ and $A(c, d) = (0, 1)$. Finding the inverse is <b>solving two systems with the same $A$</b>. Jordan's idea: solve them together by augmenting with the whole identity.</p>
+    <div class="box method" id="m-gj"><span class="label">Method · Gauss–Jordan elimination</span>
+      <p>Start from $[A \mid I]$. <b>Gauss:</b> eliminate downward until the left half is upper triangular. <b>Jordan:</b> keep going upward to clear above each pivot. Finally divide each row by its pivot. When the left half is $I$, the right half is $A^{-1}$. Named after Carl Friedrich Gauss and Wilhelm Jordan, a 19th-century German geodesist who popularised the upward step.</p>
+    </div>
+    $$ \left[\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 12 & 7 & 0 & 1 \end{array}\right] \xrightarrow{\;R_2 - 12R_1\;} \left[\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 0 & -5 & -12 & 1 \end{array}\right] $$
+    <p><b>Gauss is done</b> (upper triangular). <b>Jordan:</b> clear the $1$ above the second pivot with $R_1 - (1/{-5})R_2 = R_1 + 0.2R_2$:</p>
+    $$ \left[\begin{array}{cc|cc} 1 & 0 & -1.4 & 0.2 \\ 0 & -5 & -12 & 1 \end{array}\right] \xrightarrow{\;R_2 \div (-5)\;} \left[\begin{array}{cc|cc} 1 & 0 & -1.4 & 0.2 \\ 0 & 1 & 2.4 & -0.2 \end{array}\right] $$
+    $$ A^{-1} = \begin{bmatrix} -1.4 & 0.2 \\ 2.4 & -0.2 \end{bmatrix}. $$
+    <p><b>Check</b> $A^{-1}A$: row 1 is $-1.4(1, 1) + 0.2(12, 7) = (-1.4 + 2.4,\ -1.4 + 1.4) = (1, 0)$ ✓; row 2 is $2.4(1, 1) - 0.2(12, 7) = (0, 1)$ ✓.</p>
+
+    <details class="check"><summary>Check yourself (Strang's example): invert $\left[\begin{smallmatrix} 1 & 3 \\ 2 & 7 \end{smallmatrix}\right]$ by Gauss–Jordan.</summary>
+      <p>$R_2 - 2R_1$ gives $\left[\begin{smallmatrix} 1 & 3 & 1 & 0 \\ 0 & 1 & -2 & 1 \end{smallmatrix}\right]$; $R_1 - 3R_2$ gives $\left[\begin{smallmatrix} 1 & 0 & 7 & -3 \\ 0 & 1 & -2 & 1 \end{smallmatrix}\right]$. So $A^{-1} = \left[\begin{smallmatrix} 7 & -3 \\ -2 & 1 \end{smallmatrix}\right]$.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t7">7. Gauss–Jordan: 3 × 3, and why it works</h3>
+    <p>The three-fund portfolio. Start from $[A \mid I]$:</p>
+    $$ \left[\begin{array}{ccc|ccc} 1 & 1 & 1 & 1 & 0 & 0 \\ 12 & 7 & 15 & 0 & 1 & 0 \\ 1 & 0 & 1.2 & 0 & 0 & 1 \end{array}\right] $$
+    <h4>Gauss: downward (the same steps as Lesson 2)</h4>
+    <p>$R_2 - 12R_1$, then $R_3 - R_1$, then $R_3 - 0.2R_2$:</p>
+    $$ \left[\begin{array}{ccc|ccc} 1 & 1 & 1 & 1 & 0 & 0 \\ 0 & -5 & 3 & -12 & 1 & 0 \\ 0 & 0 & -0.4 & 1.4 & -0.2 & 1 \end{array}\right] $$
+    <p>Look at the right half: it is exactly the elimination matrix $E = E_{32}E_{31}E_{21}$ from <a href="02_elimination-with-matrices.html#t6">Lesson 2</a>, messy $1.4$ and all. The identity has quietly recorded every step.</p>
+    <h4>Jordan: upward</h4>
+    <ul>
+      <li>Clear above the third pivot $-0.4$. Row 2: $R_2 - \tfrac{3}{-0.4}R_3 = R_2 + 7.5R_3$ gives $(0, -5, 0 \mid -1.5, -0.5, 7.5)$.</li>
+      <li>Row 1: $R_1 - \tfrac{1}{-0.4}R_3 = R_1 + 2.5R_3$ gives $(1, 1, 0 \mid 4.5, -0.5, 2.5)$.</li>
+      <li>Clear above the second pivot $-5$. Row 1: $R_1 + 0.2R_2$ gives $(1, 0, 0 \mid 4.2, -0.6, 4)$.</li>
+    </ul>
+    <h4>Divide by the pivots</h4>
+    <p>Row 2 ÷ $(-5)$ and row 3 ÷ $(-0.4)$:</p>
+    $$ \left[\begin{array}{ccc|ccc} 1 & 0 & 0 & 4.2 & -0.6 & 4 \\ 0 & 1 & 0 & 0.3 & 0.1 & -1.5 \\ 0 & 0 & 1 & -3.5 & 0.5 & -2.5 \end{array}\right] \qquad\Rightarrow\qquad A^{-1} = \begin{bmatrix} 4.2 & -0.6 & 4 \\ 0.3 & 0.1 & -1.5 \\ -3.5 & 0.5 & -2.5 \end{bmatrix}. $$
+    <p><b>Check one column:</b> $A \times (4.2, 0.3, -3.5)$: budget $4.2 + 0.3 - 3.5 = 1$; return $50.4 + 2.1 - 52.5 = 0$; exposure $4.2 + 0 - 4.2 = 0$. That is column 1 of $I$ ✓.</p>
+
+    <div class="box theorem"><span class="label">Why Gauss–Jordan works</span>
+      <p>All the row operations together are one matrix $E$, applied to both halves: $E\,[A \mid I] = [EA \mid E]$. We stopped when the left half was $I$, so $EA = I$, which means $E = A^{-1}$. And the right half is $EI = E$: <b>it has to be $A^{-1}$</b>.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t8">8. Using the inverse</h3>
+    <h4>Every client at once</h4>
+    <p>If $AX = B$ (portfolios $X$ hit targets $B$), then multiplying by $A^{-1}$ gives $X = A^{-1}B$. For the three Lesson 4 clients:</p>
+    $$ A^{-1}\begin{bmatrix} 10 & 10 & 15 \\ 111 & 98 & 159 \\ 7.4 & 5.2 & 9.6 \end{bmatrix} = \begin{bmatrix} 5 & 4 & 6 \\ 3 & 5 & 6 \\ 2 & 1 & 3 \end{bmatrix}: $$
+    <p>client 1 gets $(5, 3, 2)$, client 2 gets $(4, 5, 1)$, client 3 gets $(6, 6, 3)$, all in one product.</p>
+
+    <h4>The columns of A⁻¹ are building-block trades</h4>
+    <p>Since $AA^{-1} = I$, column $j$ of $A^{-1}$ is the trade that changes rule $j$ by exactly 1 and leaves the other rules unchanged:</p>
+    <table>
+      <tr><th>Column of $A^{-1}$</th><th>Trade (Nifty, bonds, midcap, ₹ lakh)</th><th>Effect</th></tr>
+      <tr><td>1</td><td>$(4.2,\ 0.3,\ -3.5)$</td><td>+₹1 lakh budget, same ₹ return, same exposure</td></tr>
+      <tr><td>2</td><td>$(-0.6,\ 0.1,\ 0.5)$</td><td>+₹1 thousand return, same budget, same exposure</td></tr>
+      <tr><td>3</td><td>$(4,\ -1.5,\ -2.5)$</td><td>+1 exposure, same budget, same return</td></tr>
+    </table>
+    <p>So a client who wants <b>₹5 thousand more return, nothing else changed</b> should trade $5 \times (-0.6, 0.1, 0.5) = (-3, 0.5, 2.5)$: move ₹3 lakh out of Nifty, ₹0.5 lakh into bonds and ₹2.5 lakh into midcap. Desks call such columns <b>sensitivities</b>: how much each position must move per unit change in a target.</p>
+
+    <div class="box method" id="m-2x2"><span class="label">Rule · 2 × 2 inverse formula</span>
+      <p>$\begin{bmatrix} a & b \\ c & d \end{bmatrix}^{-1} = \dfrac{1}{ad - bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}$, valid when $ad - bc \ne 0$. For the two funds: $ad - bc = 7 - 12 = -5$, giving $\tfrac{1}{-5}\left[\begin{smallmatrix} 7 & -1 \\ -12 & 1 \end{smallmatrix}\right]$, the same answer as Gauss–Jordan. The number $ad - bc$ is the <i>determinant</i> (much later in the course).</p>
+    </div>
+    <p>With it, Lesson 1's formula drops out: $x = -1.4B + 0.2R = (R - 7B)/5$ and $y = 2.4B - 0.2R = (12B - R)/5$ for any budget $B$ and return $R$.</p>
+
+    <div class="box pitfall"><span class="label">Watch out: you rarely need A⁻¹ itself</span>
+      <p>To solve $Ax = b$, don't compute $A^{-1}$ and multiply. Factor $A = LU$ once and do two triangular solves (<a href="04_factorization-into-a-lu.html#t5">Lesson 4</a>): it is cheaper and more accurate. Compute $A^{-1}$ when you want its entries themselves, such as the sensitivities above.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- Summary: website only (left out of the PDF report) -->
+    <div class="no-print">
+    <h3 class="topic" id="t9">9. Summary</h3>
+    <div class="summary">
+      <h3>Key ideas</h3>
+      <ol>
+        <li>$(AB)_{ij}$ = row $i$ of $A$ · column $j$ of $B$; shapes $(m \times n)(n \times p) = m \times p$. (<a href="#t1">topic 1</a>)</li>
+        <li>Columns of $AB$ combine columns of $A$ (each client's result); rows of $AB$ combine rows of $B$ (each rule across clients). (<a href="#t2">topic 2</a>)</li>
+        <li>$AB$ = sum of column-times-row pieces: attribution by fund. (<a href="#t3">topic 3</a>)</li>
+        <li>Blocks multiply like numbers when their sizes match. (<a href="#t4">topic 4</a>)</li>
+        <li>$A^{-1}A = I = AA^{-1}$. No inverse if $Ax = 0$ for some $x \ne 0$: a trade that changes nothing. (<a href="#t5">topic 5</a>)</li>
+        <li>Gauss–Jordan: $[A \mid I] \to [I \mid A^{-1}]$, because $E[A \mid I] = [I \mid E]$ forces $E = A^{-1}$. (<a href="#t6">topic 6</a>, <a href="#t7">topic 7</a>)</li>
+        <li>$X = A^{-1}B$ solves every target at once; columns of $A^{-1}$ are building-block trades. For solving, $LU$ is usually better. (<a href="#t8">topic 8</a>)</li>
+      </ol>
+    </div>
+    <h4>Words in this lesson</h4>
+    <dl class="vocab">
+      <dt>Entry rule</dt><dd>$c_{ij} = \sum_k a_{ik}b_{kj}$: row of $A$ · column of $B$.</dd>
+      <dt>Outer product</dt><dd>A column times a row: a full matrix whose rows are all multiples of one row.</dd>
+      <dt>Block multiplication</dt><dd>Multiplying matrices block by block.</dd>
+      <dt>Distributive law</dt><dd>$A(B + C) = AB + AC$.</dd>
+      <dt>Inverse $A^{-1}$</dt><dd>$A^{-1}A = I = AA^{-1}$.</dd>
+      <dt>Invertible / non-singular</dt><dd>Has an inverse.</dd>
+      <dt>Singular</dt><dd>No inverse; some $x \ne 0$ has $Ax = 0$.</dd>
+      <dt>Gauss–Jordan</dt><dd>Eliminate $[A \mid I]$ down and up to $[I \mid A^{-1}]$.</dd>
+      <dt>Sensitivity</dt><dd>A column of $A^{-1}$: the trade per unit change in one target.</dd>
+    </dl>
+    </div>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: the hedge-ratio matrix</a></li>
+        <li><a href="#ex2">Lot sizes: Arrow–Debreu building blocks</a></li>
+        <li><a href="#ex3">Try your own inputs</a></li>
+      </ol>
+    </nav>
+
+    <p>The other two running examples. In both, the inverse matrix turns out to be something traders actually use.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, the hedge-ratio matrix</h3>
+    <p>Hedges: Nifty futures $(1, 0, 0)$, Nifty IT futures $(1, 1, 0)$, Bank Nifty futures $(1, 0, 1)$ for (market, currency, rates).</p>
+    <h4>Invert it with Gauss–Jordan</h4>
+    <p>$A$ is already upper triangular with pivots 1, so Gauss has nothing to do. Jordan clears the two 1s above the diagonal in row 1: $R_1 - R_2$, then $R_1 - R_3$.</p>
+    $$ \left[\begin{array}{ccc|ccc} 1 & 1 & 1 & 1 & 0 & 0 \\ 0 & 1 & 0 & 0 & 1 & 0 \\ 0 & 0 & 1 & 0 & 0 & 1 \end{array}\right] \longrightarrow \left[\begin{array}{ccc|ccc} 1 & 0 & 0 & 1 & -1 & -1 \\ 0 & 1 & 0 & 0 & 1 & 0 \\ 0 & 0 & 1 & 0 & 0 & 1 \end{array}\right] \qquad A^{-1} = \begin{bmatrix} 1 & -1 & -1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} $$
+    <h4>Read the columns</h4>
+    <table>
+      <tr><th>To cancel 1 unit of…</th><th>Column of $A^{-1}$</th><th>Trade</th></tr>
+      <tr><td>market only</td><td>$(1, 0, 0)$</td><td>sell 1 Nifty future</td></tr>
+      <tr><td>currency only</td><td>$(-1, 1, 0)$</td><td>sell 1 Nifty IT future, buy back 1 Nifty future (IT also carried market risk)</td></tr>
+      <tr><td>rates only</td><td>$(-1, 0, 1)$</td><td>sell 1 Bank Nifty future, buy back 1 Nifty future</td></tr>
+    </table>
+    <p>A desk keeps this table as its <b>hedge-ratio matrix</b>: the hedge for any exposure is just $A^{-1}b$, a column combination.</p>
+    <h4>Three days in one multiplication</h4>
+    <p>Put the daily exposures side by side as the columns of $B$ (Monday, Tuesday, Wednesday from <a href="04_factorization-into-a-lu.html#ex1">Lesson 4</a>):</p>
+    $$ A^{-1}B = \begin{bmatrix} 1 & -1 & -1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}\begin{bmatrix} 10 & 12 & 9 \\ 3 & 4 & 2 \\ 2 & 1 & 3 \end{bmatrix} = \begin{bmatrix} 5 & 7 & 4 \\ 3 & 4 & 2 \\ 2 & 1 & 3 \end{bmatrix}. $$
+    <p>Each column is one day's hedge. Row 1 shows the rule clearly: Nifty futures = market − currency − rates.</p>
+    <h4>Singular: the Nifty ETF</h4>
+    <p>With a short Nifty ETF in place of IT futures, $A = \left[\begin{smallmatrix} 1 & 1 \\ 0 & 0 \end{smallmatrix}\right]$ and $A(1, -1) = 0$: sell one Nifty future and buy back one ETF, and the risk doesn't change at all. A trade that changes nothing means no inverse, and Gauss–Jordan gets stuck at the zero row.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, Arrow–Debreu building blocks</h3>
+    <p>Products: futures, the 19,900 call, the 20,100 call. Rows: Nifty at 19,800 / 20,000 / 20,200. Payoffs in points per lot.</p>
+    <h4>Invert it with Gauss–Jordan</h4>
+    <p><b>Gauss:</b> $R_3 + R_1$ gives $(0, 300, 100 \mid 1, 0, 1)$, then $R_3 - 3R_2$ gives $(0, 0, 100 \mid 1, -3, 1)$. Nothing lies above the pivots, so <b>Jordan</b> has no work. <b>Divide</b> by the pivots $-200, 100, 100$:</p>
+    $$ A^{-1} = \begin{bmatrix} -0.005 & 0 & 0 \\ 0 & 0.01 & 0 \\ 0.01 & -0.03 & 0.01 \end{bmatrix} $$
+    <div class="box method" id="m-ad"><span class="label">Model · Arrow–Debreu (pure) securities</span>
+      <p>A security that pays <b>1 in exactly one scenario and 0 in all others</b>. Any payoff is a combination of them, and when the products' payoff matrix is invertible, the columns of $A^{-1}$ tell you how to build each one. Named after economists Kenneth Arrow and Gérard Debreu (1950s); they are the base of state prices in option pricing.</p>
+    </div>
+    <p>Scale the columns to whole lots:</p>
+    <table>
+      <tr><th>Pays only if Nifty ends at…</th><th>Lots (futures, 19,900 C, 20,100 C)</th><th>Check: payoff at (19,800, 20,000, 20,200)</th></tr>
+      <tr><td>19,800</td><td>$200 \times$ column 1 $= (-1,\ 0,\ 2)$</td><td>$-1(-200, 0, 200) + 2(0, 0, 100) = (200, 0, 0)$</td></tr>
+      <tr><td>20,000</td><td>$100 \times$ column 2 $= (0,\ 1,\ -3)$</td><td>$(0, 100, 300) - 3(0, 0, 100) = (0, 100, 0)$</td></tr>
+      <tr><td>20,200</td><td>$100 \times$ column 3 $= (0,\ 0,\ 1)$</td><td>$(0, 0, 100)$</td></tr>
+    </table>
+    <p>"Sell 1 futures lot and buy 2 lots of the 20,100 call" pays 200 points if Nifty ends at 19,800 and nothing otherwise. With these three building blocks, any client payoff over these three levels can be assembled.</p>
+    <h4>All three clients at once</h4>
+    $$ A^{-1}\begin{bmatrix} -200 & 0 & -400 \\ 100 & 100 & 200 \\ 700 & 500 & 900 \end{bmatrix} = \begin{bmatrix} 1 & 0 & 2 \\ 1 & 1 & 2 \\ 2 & 2 & -1 \end{bmatrix} $$
+    <p>The same answers as Lesson 4: clients A, B, C get $(1, 1, 2)$, $(0, 1, 2)$ and $(2, 2, -1)$.</p>
+    <h4>Singular: futures, call and put at one strike</h4>
+    <div class="box method" id="m-pcp"><span class="label">Rule · Put–call parity (at expiry)</span>
+      <p>Futures = call − put at the same strike. So "buy 1 futures, sell 1 call, buy 1 put", the trade $x = (1, -1, 1)$, pays $0$ in every scenario: $Ax = 0$ with $x \ne 0$. That's why this matrix has no inverse. (Traders call this combination a <i>conversion</i>.)</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Try your own inputs</h3>
+    <p>Pick an example and the lab runs Gauss–Jordan on $[A \mid I]$: every downward (Gauss) and upward (Jordan) step, the division by pivots, and $A^{-1}$ with $x = A^{-1}b$. For a singular matrix it shows a trade with $Ax = 0$ instead.</p>
+    <div id="syslab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="02_elimination-with-matrices.html">← Lesson 2: Elimination with Matrices</a>
+    <a href="04_factorization-into-a-lu.html">Next: Lesson 4: Factorization into A = LU →</a>
+  </nav>
+  </div>
+</main>
+<script defer src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script defer src="../assets/system-lab.js?v=6"></script>
+<script>
+// Interactive figures: the Examples tab (system lab with Gauss–Jordan).
+window.addEventListener("load", function () {
+  if (!window.Plotly) return;
+  var css = getComputedStyle(document.documentElement);
+  function c(v) { return css.getPropertyValue(v).trim(); }
+  var blue = c("--def-b"), green = c("--ex-b"), orange = c("--int-b"), red = c("--warn-b"), ink = c("--ink"), soft = c("--ink-soft"), rule = c("--rule");
+
+  var paper2 = c("--paper-2");
+  // Fixed range + whole-number ticks, so the numbers never jump while rotating or zooming.
+  function axis(t, lo, hi) {
+    return { title: { text: t, font: { size: 15, color: ink } }, range: [lo, hi], autorange: false,
+      tickmode: "linear", tick0: 0, dtick: 1, tickfont: { size: 12, color: soft },
+      gridcolor: rule, gridwidth: 1, zeroline: true, zerolinecolor: soft, zerolinewidth: 3,
+      showbackground: true, backgroundcolor: paper2, showspikes: false, linecolor: soft, showline: true };
+  }
+  function scene(xr, yr, zr, eye) {
+    var span = function (r) { return r[1] - r[0]; }, m = Math.max(span(xr), span(yr), span(zr));
+    return { xaxis: axis("x", xr[0], xr[1]), yaxis: axis("y", yr[0], yr[1]), zaxis: axis("z", zr[0], zr[1]),
+      aspectmode: "manual", aspectratio: { x: span(xr) / m * 1.3, y: span(yr) / m * 1.3, z: span(zr) / m * 1.3 },
+      dragmode: "turntable", camera: { eye: eye, up: { x: 0, y: 0, z: 1 } } };
+  }
+  var layout = {
+    margin: { l: 0, r: 0, t: 0, b: 60 }, paper_bgcolor: "rgba(0,0,0,0)", showlegend: true, uirevision: "keep",
+    legend: { orientation: "h", x: 0, y: -0.02, yanchor: "top", font: { color: ink, size: 12 }, bgcolor: "rgba(0,0,0,0)" },
+    scene: scene([-2, 2], [-2, 2], [-2, 4], { x: 1.7, y: -1.5, z: 0.9 })
+  };
+  var config = { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["toImage"] };
+
+  // ---- Notes, topics 7 & 8: the portfolio-mix example in 3D ----
+  // The part of the plane n·p = d that lies inside the box, as a flat polygon (triangle fan).
+  function planeInBox(n, d, box, color, name) {
+    var f = function (p) { return n[0] * p[0] + n[1] * p[1] + n[2] * p[2] - d; };
+    var pts = [];
+    for (var m = 0; m < 8; m++) {
+      var p = [box[0][m & 1], box[1][(m >> 1) & 1], box[2][(m >> 2) & 1]];
+      for (var a = 0; a < 3; a++) {
+        if ((m >> a) & 1) continue;
+        var q = p.slice(); q[a] = box[a][1];
+        var fp = f(p), fq = f(q);
+        if (fp === fq || fp * fq > 0) continue;
+        var t = fp / (fp - fq), r = [p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1]), p[2] + t * (q[2] - p[2])];
+        if (!pts.some(function (s) { return Math.abs(s[0] - r[0]) + Math.abs(s[1] - r[1]) + Math.abs(s[2] - r[2]) < 1e-9; })) pts.push(r);
+      }
+    }
+    var c = [0, 1, 2].map(function (k) { return pts.reduce(function (s, p) { return s + p[k]; }, 0) / pts.length; });
+    var u = Math.abs(n[0]) < 0.9 * Math.hypot(n[0], n[1], n[2]) ? [0, -n[2], n[1]] : [-n[2], 0, n[0]];
+    var v = [n[1] * u[2] - n[2] * u[1], n[2] * u[0] - n[0] * u[2], n[0] * u[1] - n[1] * u[0]];
+    function dot(x, y) { return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]; }
+    pts.sort(function (p, q) {
+      var dp = [p[0] - c[0], p[1] - c[1], p[2] - c[2]], dq = [q[0] - c[0], q[1] - c[1], q[2] - c[2]];
+      return Math.atan2(dot(dp, v), dot(dp, u)) - Math.atan2(dot(dq, v), dot(dq, u));
+    });
+    var I = [], J = [], K = [];
+    for (var k = 1; k < pts.length - 1; k++) { I.push(0); J.push(k); K.push(k + 1); }
+    return { type: "mesh3d", name: name, showlegend: true, opacity: 0.45, color: color, flatshading: true, hoverinfo: "name",
+      x: pts.map(function (p) { return p[0]; }), y: pts.map(function (p) { return p[1]; }), z: pts.map(function (p) { return p[2]; }),
+      i: I, j: J, k: K };
+  }
+  function seg3(a, b, color, name, dash) {
+    return { type: "scatter3d", mode: "lines+markers", name: name, line: { color: color, width: dash ? 5 : 8, dash: dash ? "dash" : "solid" },
+      marker: { size: [2, 5], color: color }, x: [a[0], b[0]], y: [a[1], b[1]], z: [a[2], b[2]] };
+  }
+  function pfScene(r, ticks, titles, eye) {
+    var S = scene(r[0], r[1], r[2], eye);
+    ["xaxis", "yaxis", "zaxis"].forEach(function (k, i) { S[k].dtick = ticks[i]; S[k].title.text = titles[i]; });
+    return S;
+  }
+  var FUNDS = ["Nifty (₹ lakh)", "bonds (₹ lakh)", "midcap (₹ lakh)"];
+  var TARGETS = ["budget (₹ lakh)", "return (₹ thousand)", "exposure (₹ lakh)"];
+
+  if (window.SystemLab) SystemLab.mount(document.getElementById("syslab"), [
+    { label: "Portfolio mix · 2 × 2", cols: ["Nifty fund", "Bond fund"], rows: ["budget", "return"], A: [[1, 1], [12, 7]], b: [10, 105],
+      meaning: ["₹ lakh in the Nifty fund", "₹ lakh in the bond fund"], neg: "borrowing, or selling short" },
+    { label: "Portfolio mix · 3 × 3", cols: ["Nifty fund", "Bond fund", "Midcap fund"], rows: ["budget", "return", "exposure"], A: [[1, 1, 1], [12, 7, 15], [1, 0, 1.2]], b: [10, 111, 7.4],
+      meaning: ["₹ lakh in the Nifty fund", "₹ lakh in the bond fund", "₹ lakh in the midcap fund"], neg: "borrowing, or selling short" },
+    { label: "Portfolio mix · two Nifty funds (singular)", cols: ["Nifty fund A", "Nifty fund B"], rows: ["budget", "return"], A: [[1, 1], [12, 12]], b: [10, 105],
+      meaning: ["₹ lakh in Nifty fund A", "₹ lakh in Nifty fund B"], neg: "borrowing, or selling short" },
+    { label: "Hedging · 2 × 2", cols: ["Nifty fut", "Nifty IT fut"], rows: ["market", "currency"], A: [[1, 1], [0, 1]], b: [8, 3],
+      meaning: ["units of Nifty futures to sell", "units of Nifty IT futures to sell"], neg: "buy those futures instead of selling" },
+    { label: "Hedging · 3 × 3", cols: ["Nifty fut", "Nifty IT fut", "Bank Nifty fut"], rows: ["market", "currency", "rates"], A: [[1, 1, 1], [0, 1, 0], [0, 0, 1]], b: [10, 3, 2],
+      meaning: ["units of Nifty futures to sell", "units of Nifty IT futures to sell", "units of Bank Nifty futures to sell"], neg: "buy those futures instead of selling" },
+    { label: "Hedging · Nifty ETF + Nifty futures (singular)", cols: ["Nifty fut", "Nifty ETF short"], rows: ["market", "currency"], A: [[1, 1], [0, 0]], b: [8, 3],
+      meaning: ["units of Nifty futures to sell", "units of Nifty ETF to short"], neg: "buy instead of selling" },
+    { label: "Lot sizes · 2 × 2", cols: ["Futures", "20,000 call"], rows: ["Nifty at 19,800", "Nifty at 20,200"], A: [[-200, 0], [200, 200]], b: [-200, 600],
+      meaning: ["lots of futures to buy", "lots of the 20,000 call to buy"], neg: "sell (write) that many lots" },
+    { label: "Lot sizes · 3 × 3", cols: ["Futures", "19,900 call", "20,100 call"], rows: ["Nifty at 19,800", "Nifty at 20,000", "Nifty at 20,200"], A: [[-200, 0, 0], [0, 100, 0], [200, 300, 100]], b: [-200, 100, 700],
+      meaning: ["lots of futures to buy", "lots of the 19,900 call to buy", "lots of the 20,100 call to buy"], neg: "sell (write) that many lots" },
+    { label: "Lot sizes · futures, call, put (singular)", cols: ["Futures", "20,000 call", "20,000 put"], rows: ["Nifty at 19,800", "Nifty at 20,000", "Nifty at 20,200"], A: [[-200, 0, 200], [0, 0, 0], [200, 200, 0]], b: [-200, 100, 700],
+      meaning: ["lots of futures to buy", "lots of the 20,000 call to buy", "lots of the 20,000 put to buy"], neg: "sell (write) that many lots" }
+  ], { inv: true });
+
+  // Plots drawn while their tab was hidden need a resize once the tab is shown.
+  document.querySelectorAll(".tabs button[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      setTimeout(function () { document.querySelectorAll(".plot3d-box").forEach(function (el) { Plotly.Plots.resize(el); }); }, 0);
+    });
+  });
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=5"></script>
+</body>
+</html>

@@ -313,7 +313,7 @@
     <!-- ====================================================== -->
     <h3 class="topic" id="t8">8. Undoing a step: inverses</h3>
     <div class="box method" id="m-inv"><span class="label">Method · Inverse of an elimination step</span>
-      <p>Flip the sign of the multiplier: $E_{ij}^{-1}$ adds back what $E_{ij}$ subtracted. For a row exchange, swap again. Inverses of whole matrices use the <b>Gauss–Jordan method</b>, covered in Lesson 3.</p>
+      <p>Flip the sign of the multiplier: $E_{ij}^{-1}$ adds back what $E_{ij}$ subtracted. For a row exchange, swap again. Inverses of whole matrices use the <b>Gauss–Jordan method</b>, covered in <a href="03_multiplication-and-inverse-matrices.html#m-gj">Lesson 3</a>.</p>
     </div>
     <p>$E_{21}$ subtracted 12 × budget from return. To undo it, <b>add 12 × budget back</b>. That is the identity with $+12$ where $E_{21}$ had $-12$:</p>
     $$ E_{21}^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ 12 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}. $$
@@ -324,7 +324,7 @@
     <div class="box theorem"><span class="label">Why elimination gives the right answer</span>
       <p>Every step can be undone, so no information is lost or added. Any portfolio that satisfies the original rules $Ax = b$ also satisfies the new rules $Ux = c$, and the other way round. That's why the answer we read off $U$, ₹5 lakh, ₹3 lakh and ₹2 lakh, is the answer to the original question.</p>
     </div>
-    <p>Inverses of whole matrices (not just single steps), and when they exist, are the next lesson.</p>
+    <p>Inverses of whole matrices (not just single steps), and when they exist, are <a href="03_multiplication-and-inverse-matrices.html#t5">the next lesson</a>.</p>
 
     <details class="check"><summary>Check yourself: what is the inverse of $E_{32}$, which subtracts 0.2 × row 2 from row 3?</summary>
       <p>Add 0.2 × row 2 back to row 3: the identity with $+0.2$ in row 3, column 2.</p>
@@ -444,12 +444,12 @@
 
   <nav class="pager">
     <a href="01_geometry-of-linear-equations.html">← Lesson 1: The Geometry of Linear Equations</a>
-    <a href="04_factorization-into-a-lu.html">Next: Lesson 4: Factorization into A = LU →</a>
+    <a href="03_multiplication-and-inverse-matrices.html">Next: Lesson 3: Multiplication and Inverse Matrices →</a>
   </nav>
   </div>
 </main>
 <script defer src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
-<script defer src="../assets/system-lab.js?v=5"></script>
+<script defer src="../assets/system-lab.js?v=6"></script>
 <script>
 // Interactive figures: Notes topic 3 (planes before / after elimination) and the Examples tab (system lab with elimination steps).
 window.addEventListener("load", function () {
@@ -579,6 +579,6 @@ window.addEventListener("load", function () {
   <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
   <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
 </div></footer>
-<script src="../assets/tracker.js?v=4"></script>
+<script src="../assets/tracker.js?v=5"></script>
 </body>
 </html>
