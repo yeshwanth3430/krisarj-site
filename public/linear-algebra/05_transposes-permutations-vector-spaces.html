@@ -91,23 +91,100 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t1">1. Permutations and PA = LU</h3>
-    <p>Strang starts by finishing Chapter 2. Elimination sometimes meets a 0 in a pivot position and must exchange rows (Lesson 2). Lesson 4 wrote that as $PA = LU$; here we collect the facts about $P$.</p>
+    <p>Strang starts by finishing Chapter 2. Elimination sometimes meets a 0 in a pivot position and must exchange two rows (<a href="02_elimination-with-matrices.html#t5">Lesson 2</a>). <a href="04_factorization-into-a-lu.html#t7">Lesson 4</a> wrote that as $PA = LU$. Here we take it apart slowly: what a permutation matrix is, why we need one, how it fits into $PA = LU$, and how to solve with it.</p>
+
+    <h4>What a permutation matrix is</h4>
+    <p>A <dfn class="term" tabindex="0" data-def="The identity matrix with its rows reordered. Multiplying PA reorders the rows of A in the same way.">permutation matrix</dfn> $P$ is the identity matrix with its rows put in a different order. Multiplying $PA$ reorders the rows of $A$ in exactly that way. The easy way to read $P$: <b>each row of $P$ is an instruction</b>. A 1 in column $j$ means "take row $j$ of $A$".</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Build it</span> To swap rows 2 and 3, swap rows 2 and 3 of the identity: $I = \left[\begin{smallmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{smallmatrix}\right] \to P_{23} = \left[\begin{smallmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{smallmatrix}\right]$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Read it</span> Row 1 of $P_{23}$ is $(1, 0, 0)$: "take row 1". Row 2 is $(0, 0, 1)$: "take row 3". Row 3 is $(0, 1, 0)$: "take row 2".</p>
+        <p class="k"><span class="kl">Why that works</span> By the row way of multiplying (<a href="03_multiplication-and-inverse-matrices.html#t2">Lesson 3</a>), row $i$ of $PA$ = (row $i$ of $P$) × $A$ = a combination of the rows of $A$. A row like $(0, 0, 1)$ takes 0 of row 1, 0 of row 2 and 1 of row 3, which is just row 3.</p>
+      </li>
+    </ol>
+
+    <h4>Why we need one: the credit fund</h4>
+    <p>Lesson 2's <b>credit fund</b> earns 12% like Nifty but has beta 0. With Nifty, credit and midcap, the fund matrix and a target are</p>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 12 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} \;\begin{matrix} \leftarrow \text{budget} \\ \leftarrow \text{return} \\ \leftarrow \text{exposure} \end{matrix} \qquad b = \begin{bmatrix} 10 \\ 126 \\ 7.4 \end{bmatrix}. $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">What we do</span> Start elimination in the usual order.</p>
+        <p class="k"><span class="kl">How</span> $\ell_{21} = 12$: row 2 − 12 × row 1 $= (12 - 12,\ 12 - 12,\ 15 - 12) = (0, 0, 3)$. $\;\ell_{31} = 1$: row 3 − row 1 $= (1 - 1,\ 0 - 1,\ 1.2 - 1) = (0, -1, 0.2)$.</p>
+        <p class="k"><span class="kl">What we have now</span> $\left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & \mathbf{0} & 3 \\ 0 & -1 & 0.2 \end{smallmatrix}\right]$: a <b>0 in the second pivot position</b>.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Why it happened</span> Nifty and the credit fund both earn 12 per lakh. Removing Nifty from the return rule ("return − 12 × budget") removed the credit fund too.</p>
+        <p class="k"><span class="kl">The fix</span> Below that 0 sits $-1$, which is not zero, so exchange rows 2 and 3. If we had done the exchange <b>before</b> starting, elimination would never have stopped. That is the idea of $PA = LU$: reorder first, then eliminate without interruption.</p>
+      </li>
+    </ol>
+
     <div class="box method" id="m-plu"><span class="label">Rule · PA = LU</span>
-      <p>For every invertible $A$ there is a permutation $P$ that puts the rows in a workable order, and then $PA = LU$ with no further exchanges. When no exchange is needed, $P = I$ and this is $A = LU$.</p>
+      <p>For every invertible $A$ there is a permutation $P$ that puts the rows in a workable order, and then $PA = LU$ with no further exchanges: $L$ holds the multipliers, $U$ the pivots. When no exchange is needed, $P = I$ and this is the familiar $A = LU$.</p>
     </div>
-    <p>Lesson 2's <b>credit fund</b> (12% return like Nifty, beta 0) is the example: its matrix needs rows 2 and 3 swapped. Entry by entry, $P_{23}$ takes row 1, then row 3, then row 2:</p>
-    $$ P_{23}A_{\text{credit}} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}\begin{bmatrix} 1 & 1 & 1 \\ 12 & 12 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} = \begin{bmatrix} 1 & 1 & 1 \\ 1 & 0 & 1.2 \\ 12 & 12 & 15 \end{bmatrix} \;\begin{matrix} \leftarrow \text{budget} \\ \leftarrow \text{exposure} \\ \leftarrow \text{return} \end{matrix} $$
-    <p>Strang adds a practical note: software such as MATLAB also exchanges rows when a pivot is merely <i>small</i>, because tiny pivots magnify rounding errors. Algebra only <i>requires</i> an exchange when a pivot is exactly 0.</p>
+
+    <h4>PA = LU for the credit fund, entry by entry</h4>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Step 1: reorder</span> $P_{23}A$ takes row 1, then row 3, then row 2 of $A$:</p>
+        <p class="k"><span class="kl">Result</span> $P_{23}A = \left[\begin{smallmatrix} 1 & 1 & 1 \\ 1 & 0 & 1.2 \\ 12 & 12 & 15 \end{smallmatrix}\right]$: rows are now budget, exposure, return.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Step 2: column 1</span> $\ell_{21} = 1/1 = 1$: row 2 − row 1 $= (1 - 1,\ 0 - 1,\ 1.2 - 1) = (0, -1, 0.2)$. $\;\ell_{31} = 12/1 = 12$: row 3 − 12 × row 1 $= (12 - 12,\ 12 - 12,\ 15 - 12) = (0, 0, 3)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Step 3: column 2</span> The entry below the second pivot $-1$ is already 0, so $\ell_{32} = 0/(-1) = 0$: nothing to do.</p>
+        <p class="k"><span class="kl">What we have now</span> $U = \left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -1 & 0.2 \\ 0 & 0 & 3 \end{smallmatrix}\right]$ (pivots $1, -1, 3$) and, with the multipliers in place, $L = \left[\begin{smallmatrix} 1 & 0 & 0 \\ 1 & 1 & 0 \\ 12 & 0 & 1 \end{smallmatrix}\right]$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Step 4: check LU = PA</span> Row by row of $L$ (each row of $LU$ is a combination of the rows of $U$):</p>
+        <p class="k"><span class="kl">Row 1</span> $1 \times (1, 1, 1) = (1, 1, 1)$ ✓ (budget).</p>
+        <p class="k"><span class="kl">Row 2</span> $1 \times (1, 1, 1) + 1 \times (0, -1, 0.2) = (1,\ 1 - 1,\ 1 + 0.2) = (1, 0, 1.2)$ ✓ (exposure).</p>
+        <p class="k"><span class="kl">Row 3</span> $12 \times (1, 1, 1) + 0 \times (0, -1, 0.2) + 1 \times (0, 0, 3) = (12,\ 12,\ 12 + 3) = (12, 12, 15)$ ✓ (return).</p>
+      </li>
+    </ol>
+    $$ \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}}_{P_{23}}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 12 & 12 & 15 \\ 1 & 0 & 1.2 \end{bmatrix}}_{A} = \underbrace{\begin{bmatrix} 1 & 0 & 0 \\ 1 & 1 & 0 \\ 12 & 0 & 1 \end{bmatrix}}_{L}\underbrace{\begin{bmatrix} 1 & 1 & 1 \\ 0 & -1 & 0.2 \\ 0 & 0 & 3 \end{bmatrix}}_{U} $$
+
+    <h4>Solving with PA = LU: reorder b too</h4>
+    <p>$Ax = b$ and $PAx = Pb$ are the same equations listed in a different order. So <b>apply the same reordering to $b$</b>, then do the two triangular solves of Lesson 4.</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Reorder b</span> $Pb$ takes entry 1, then entry 3, then entry 2: $(10, 126, 7.4) \to (10, 7.4, 126)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Forward: Lc = Pb</span> $c_1 = 10$. $\;1 \cdot c_1 + c_2 = 7.4$, so $c_2 = 7.4 - 10 = -2.6$. $\;12 \cdot c_1 + 0 \cdot c_2 + c_3 = 126$, so $c_3 = 126 - 120 = 6$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Back: Ux = c</span> Row 3: $3z = 6$, so $z = 2$. Row 2: $-y + 0.2(2) = -2.6$, so $-y = -3$ and $y = 3$. Row 1: $x + 3 + 2 = 10$, so $x = 5$.</p>
+        <p class="k"><span class="kl">Answer</span> ₹5 lakh Nifty, ₹3 lakh credit fund, ₹2 lakh midcap, the same as Lesson 2. Check in the original rules: budget $5 + 3 + 2 = 10$ ✓; return $60 + 36 + 30 = 126$ ✓; exposure $5 + 0 + 2.4 = 7.4$ ✓.</p>
+      </li>
+    </ol>
+    <p>Since $P^{-1} = P^T$ (below), the factorization can also be written with $A$ alone: $A = P^TLU$.</p>
+
+    <h4>Strang's practical note: small pivots</h4>
+    <p>Algebra only <b>requires</b> an exchange when a pivot is exactly 0. Software such as MATLAB also exchanges when a pivot is merely <b>small</b>, because a tiny pivot means a huge multiplier, and a huge multiplier blows up rounding errors. A two-line example: $0.0001x + y = 1$ and $x + y = 2$, whose true solution is $x \approx 1.0001$, $y \approx 0.9999$.</p>
+    <table>
+      <tr><th></th><th>No exchange (pivot 0.0001)</th><th>Exchange first (pivot 1)</th></tr>
+      <tr><td>Multiplier</td><td>$1 / 0.0001 = 10{,}000$</td><td>$0.0001 / 1 = 0.0001$</td></tr>
+      <tr><td>$y$, rounded to 3 decimals</td><td>$1.000$</td><td>$1.000$</td></tr>
+      <tr><td>Back-substitute for $x$</td><td>$x = (1 - y)/0.0001 = 0/0.0001 = 0$ ✗</td><td>$x = 2 - y = 1.000$ ✓</td></tr>
+    </table>
+    <p>The same rounding of $y$ is harmless in one order and destroys $x$ in the other. Choosing the largest available pivot in each column is called <b>partial pivoting</b>; it is why software may swap rows even when the algebra doesn't need it.</p>
 
     <h4>How many permutation matrices are there?</h4>
-    <p>A permutation matrix is the identity with its rows reordered (leaving them alone counts). Count the reorderings of $n$ rows: $n$ choices for the top row, then $n - 1$ for the next, and so on: $n! = n(n-1)\cdots 2 \cdot 1$.</p>
+    <p>Count the ways to reorder 3 rows. The new top row can be any of the 3 rows; the next can be either of the 2 left; the last is whatever remains: $3 \times 2 \times 1 = 6$. In general there are $n! = n(n-1)\cdots 2 \cdot 1$ permutation matrices of size $n$ (leaving the order alone counts as one).</p>
     <table>
-      <tr><th>Size</th><th>Count</th><th>The permutation matrices</th></tr>
-      <tr><td>2 × 2</td><td>$2! = 2$</td><td>$\left[\begin{smallmatrix} 1 & 0 \\ 0 & 1 \end{smallmatrix}\right]$ (no change), $\left[\begin{smallmatrix} 0 & 1 \\ 1 & 0 \end{smallmatrix}\right]$ (swap)</td></tr>
-      <tr><td>3 × 3</td><td>$3! = 6$</td><td>identity, three single swaps, two cycles (listed in <a href="04_factorization-into-a-lu.html#t7">Lesson 4</a>)</td></tr>
-      <tr><td>4 × 4</td><td>$4! = 24$</td><td>too many to list</td></tr>
-      <tr><td>5 × 5</td><td>$5! = 120$</td><td>"not so much fun" (Strang)</td></tr>
+      <tr><th>Matrix</th><th>Rows of $PA$ are rows… of $A$</th><th>What it does</th><th>Its inverse</th></tr>
+      <tr><td>$\left[\begin{smallmatrix} 1&0&0\\0&1&0\\0&0&1 \end{smallmatrix}\right] = I$</td><td>1, 2, 3</td><td>nothing</td><td>itself</td></tr>
+      <tr><td>$\left[\begin{smallmatrix} 0&1&0\\1&0&0\\0&0&1 \end{smallmatrix}\right] = P_{12}$</td><td>2, 1, 3</td><td>swap rows 1 and 2</td><td>itself</td></tr>
+      <tr><td>$\left[\begin{smallmatrix} 0&0&1\\0&1&0\\1&0&0 \end{smallmatrix}\right] = P_{13}$</td><td>3, 2, 1</td><td>swap rows 1 and 3</td><td>itself</td></tr>
+      <tr><td>$\left[\begin{smallmatrix} 1&0&0\\0&0&1\\0&1&0 \end{smallmatrix}\right] = P_{23}$</td><td>1, 3, 2</td><td>swap rows 2 and 3</td><td>itself</td></tr>
+      <tr><td>$\left[\begin{smallmatrix} 0&1&0\\0&0&1\\1&0&0 \end{smallmatrix}\right]$</td><td>2, 3, 1</td><td>cycle: every row moves up one, the top goes to the bottom</td><td>the cycle below</td></tr>
+      <tr><td>$\left[\begin{smallmatrix} 0&0&1\\1&0&0\\0&1&0 \end{smallmatrix}\right]$</td><td>3, 1, 2</td><td>cycle the other way</td><td>the cycle above</td></tr>
     </table>
+    <p>For larger sizes the count explodes: $4! = 24$ and $5! = 120$ ("listing all the five by five permutations would be not so much fun", Strang).</p>
+    <p><b>A closed family.</b> Reordering twice is still a reordering, so the product of two permutations is again on the list. Example, $P_{12}P_{23}$: first $P_{23}$ swaps rows 2 and 3, then $P_{12}$ swaps rows 1 and 2. Multiplying out gives $\left[\begin{smallmatrix} 0&0&1\\1&0&0\\0&1&0 \end{smallmatrix}\right]$, the second cycle. In the other order, $P_{23}P_{12} = \left[\begin{smallmatrix} 0&1&0\\0&0&1\\1&0&0 \end{smallmatrix}\right]$, the first cycle. Different again: even permutations don't commute. A family closed under multiplication and inverses is what mathematicians call a <i>group</i>.</p>
 
     <h4>Why P⁻¹ = Pᵀ, worked for a cycle</h4>
     <div class="box method" id="m-pinv"><span class="label">Rule · P⁻¹ = Pᵀ</span>
