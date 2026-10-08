@@ -58,7 +58,7 @@
     <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
     <p>What this lesson covers, in order. Click a topic to jump to it.</p>
     <ol class="index-list">
-      <li><a href="#t1">Elimination keeps the nullspace</a><span>Row operations recombine the rules, so a do-nothing trade stays do-nothing. The column space does change.</span></li>
+      <li><a href="#t1">Elimination keeps the nullspace</a><span>Elimination rewrites the rules ("return beyond 12%"), not the trades: do-nothing trades survive, other answers change.</span></li>
       <li><a href="#t2">Warm-up: one rule, three funds</a><span>Zero-cost trades: one pivot, two free amounts, two special solutions.</span></li>
       <li><a href="#t3">Pivots, free variables and rank</a><span>The 2 × 2 twins and the 3 × 3 funds: which amounts you choose, which are forced, and the rank.</span></li>
       <li><a href="#t4">The full recipe: four funds, three rules</a><span>A 3 × 4 matrix to a staircase, two special solutions, every do-nothing trade, with a try-it box.</span></li>
@@ -101,24 +101,61 @@
     <!-- ====================================================== -->
     <h3 class="topic" id="t1">1. Elimination keeps the nullspace</h3>
     <div class="box intuition"><span class="label">The whole idea in one line</span>
-      <p>Elimination only <b>recombines the rules</b> ("return minus 12 × budget"). A trade that leaves every rule at zero also leaves every combination of rules at zero. So $Ax = 0$ and $Ux = 0$ have exactly the same solutions.</p>
+      <p>Elimination doesn't touch the trades. It only <b>rewrites the rules</b> in a simpler form. A trade that changes none of the old rules changes none of the new ones, and the other way round. So the do-nothing trades stay exactly the same.</p>
     </div>
-    <div class="box method" id="m-keep"><span class="label">Rule · Row operations keep the nullspace (not the column space)</span>
-      <p>Subtracting a multiple of one row from another, swapping rows, or scaling a row by a non-zero number never changes which $x$ solve $Ax = 0$. It <b>does</b> change the columns, so the column space can change.</p>
-    </div>
-    <p>Take Lesson 6's Nifty, bonds, balanced matrix and its staircase $U$:</p>
+    <p>Take Lesson 6's funds: Nifty, bonds, balanced. Elimination turned $A$ into the staircase $U$:</p>
     $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 9.5 \\ 1 & 0 & 0.5 \end{bmatrix} \;\longrightarrow\; U = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & 0 \end{bmatrix} $$
+    <p>Before we trust $U$ to find the do-nothing trades, let's see what it really is.</p>
+
+    <h4>Step 1: each row is a rule, a question you ask about a trade</h4>
+    <p>Each row of $A$ asks one question about a trade $(x, y, z)$ = (₹ lakh into Nifty, bonds, balanced):</p>
+    <table>
+      <tr><th>Row of $A$</th><th>The question</th><th>Formula</th></tr>
+      <tr><td>1</td><td>How much does the <b>budget</b> change?</td><td>$x + y + z$</td></tr>
+      <tr><td>2</td><td>How much does the <b>return</b> change?</td><td>$12x + 7y + 9.5z$</td></tr>
+      <tr><td>3</td><td>How much does the <b>exposure</b> change?</td><td>$x + 0y + 0.5z$</td></tr>
+    </table>
+    <p>A do-nothing trade is one where <b>all three answers are 0</b>.</p>
+
+    <h4>Step 2: what elimination does to a rule</h4>
+    <p>The first step was "row 2 $-\ 12 \times$ row 1". In words, it replaces the return question with a new one:</p>
+    <div class="box finance"><span class="label">The new rule 2: "return minus 12 × budget"</span>
+      <p>How much return does the trade make <b>beyond</b> what the same money would earn in Nifty at 12%? Per lakh: Nifty $12 - 12 = 0$, bonds $7 - 12 = -5$, balanced $9.5 - 12 = -2.5$. That's exactly row 2 of $U$: $(0, -5, -2.5)$.</p>
+    </div>
+    <p>Row 3 of $U$ is built the same way, from (exposure) $-$ (budget) $-\ 0.2 \times$ (new rule 2). For these funds it comes out $(0, 0, 0)$: it asks a question whose answer is <b>always</b> 0, so it carries no information. (That's because exposure was already fixed by budget and return, $R = 7B + 5E$.)</p>
+
+    <h4>Step 3: a do-nothing trade passes the new rules too</h4>
     <ol class="step-list kid-step">
       <li>
-        <p class="k"><span class="kl">Same nullspace</span> The do-nothing trade $(1, 1, -2)$: in $A$, $1 + 1 - 2 = 0$, $12 + 7 - 19 = 0$, $1 + 0 - 1 = 0$. In $U$, $1 + 1 - 2 = 0$, $0 - 5 + 5 = 0$, $0 = 0$ ✓. Both send it to zero.</p>
-        <p class="k"><span class="kl">Why</span> Row 2 of $U$ is (row 2 of $A$) $-\ 12 \times$ (row 1 of $A$). If both rows give 0 for this trade, then $0 - 12 \times 0 = 0$ too.</p>
+        <p class="k"><span class="kl">The trade</span> $(1, 1, -2)$: buy ₹1 lakh Nifty and ₹1 lakh bonds, sell ₹2 lakh balanced.</p>
+        <p class="k"><span class="kl">Old rules</span> Budget $1 + 1 - 2 = 0$. Return $12 + 7 - 19 = 0$. Exposure $1 + 0 - 1 = 0$. All zero.</p>
       </li>
       <li>
-        <p class="k"><span class="kl">Different column space</span> Every column of $U$ ends in 0, so $C(U)$ is the plane "third entry = 0". But $C(A)$ is the plane $R = 7B + 5E$ (Lesson 5), which contains $(1, 12, 1)$, whose third entry is 1.</p>
-        <p class="k"><span class="kl">So</span> Use $U$ to find the <b>nullspace</b>. Never read the column space off $U$.</p>
+        <p class="k"><span class="kl">New rule 2</span> "Return minus 12 × budget" $= 0 - 12 \times 0 = 0$. If both old answers are 0, a combination of them must be 0.</p>
+        <p class="k"><span class="kl">Check in $U$</span> Row 1: $1 + 1 - 2 = 0$. Row 2: $0(1) - 5(1) - 2.5(-2) = -5 + 5 = 0$. Row 3: $0$. All zero ✓.</p>
       </li>
     </ol>
-    <div class="box intuition"><span class="label">In one line</span><p>Elimination is safe for $Ax = 0$: same trades, simpler matrix.</p></div>
+
+    <h4>Step 4: and no new trade sneaks in</h4>
+    <p>Could $U$ have <b>extra</b> do-nothing trades that $A$ doesn't? No, because the old rules can be rebuilt from the new ones: return $=$ (new rule 2) $+\ 12 \times$ budget. If a trade gives 0 for the new rules, it gives $0 + 12 \times 0 = 0$ for the old return rule too. Nothing is lost and nothing is added.</p>
+    <div class="box method" id="m-keep"><span class="label">Rule · Row operations keep the nullspace</span>
+      <p>Subtracting a multiple of one row from another, swapping two rows, or scaling a row by a non-zero number can always be undone. So $Ax = 0$ and $Ux = 0$ (and later $Rx = 0$) have exactly the same solutions.</p>
+    </div>
+
+    <h4>Step 5: but the answers for other trades do change</h4>
+    <p>Feed in trades that <b>aren't</b> do-nothing and compare what $A$ and $U$ report:</p>
+    <table>
+      <tr><th>Trade</th><th>$A$ reports (budget, return, exposure)</th><th>$U$ reports (budget, return beyond 12%, always-0)</th></tr>
+      <tr><td>Buy ₹1L Nifty $(1, 0, 0)$</td><td>$(1, 12, 1)$</td><td>$(1, 0, 0)$</td></tr>
+      <tr><td>Buy ₹1L bonds $(0, 1, 0)$</td><td>$(1, 7, 0)$</td><td>$(1, -5, 0)$</td></tr>
+      <tr><td>₹7L Nifty + ₹3L bonds $(7, 3, 0)$</td><td>$(10, 105, 7)$</td><td>$(10, -15, 0)$</td></tr>
+      <tr><td>Do-nothing $(1, 1, -2)$</td><td>$(0, 0, 0)$</td><td>$(0, 0, 0)$</td></tr>
+    </table>
+    <p>Different questions give different answers, so the <b>targets</b> $U$ can reach are not the targets $A$ can reach. Everything $U$ produces has third entry 0. But $A$ reaches $(10, 105, 7)$, whose third entry is 7. So $C(U) \ne C(A)$. Only the last row of the table, all zeros, is the same for both.</p>
+    <div class="box pitfall"><span class="label">Careful</span>
+      <p>Use $U$ (or $R$) to find the <b>nullspace</b>. To test whether a target is reachable, never look at $U$'s columns. Carry the target along through elimination instead (Lesson 8).</p>
+    </div>
+    <div class="box intuition"><span class="label">In one line</span><p>Elimination rewrites the questions, not the trades: "all answers are zero" survives the rewrite, but the other answers (and so the column space) don't.</p></div>
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t2">2. Warm-up: one rule, three funds</h3>
