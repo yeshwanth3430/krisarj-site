@@ -44,259 +44,268 @@
       <ol>
         <li><a href="#index">Index</a></li>
         <li><a href="#prereq">Prerequisites</a></li>
-        <li><a href="#t1">The question, and the plan</a></li>
-        <li><a href="#t2">Step 1: from [A | b] to [R | d]</a></li>
-        <li><a href="#t3">Step 2: what does the zero row tell us?</a></li>
-        <li><a href="#t4">Step 3: one answer</a></li>
-        <li><a href="#t5">Step 4: every answer</a></li>
-        <li><a href="#t6">The same four steps on smaller menus</a></li>
-        <li><a href="#t7">How many answers? The rank tells you</a></li>
-        <li><a href="#t8">Summary</a></li>
+        <li><a href="#t1">Conditions and important concepts</a></li>
+        <li><a href="#t2">Procedure for Ax = b</a></li>
+        <li><a href="#t3">2 × 2 examples</a></li>
+        <li><a href="#t4">3 × 3 examples</a></li>
+        <li><a href="#t5">Final decision tree</a></li>
+        <li><a href="#t6">Connection between Ax = 0 and Ax = b</a></li>
+        <li><a href="#t7">Final memory table</a></li>
       </ol>
     </nav>
 
     <!-- ====================================================== -->
     <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
-    <p>One question: <b>which portfolios hit a client's target?</b> Four short steps, all done on one simplified matrix $[R \mid d]$.</p>
+    <p>Note 2 of the pair: $Ax = b$, solving for a specific target. (Note 1 is Lesson 7, $Ax = 0$.)</p>
     <ol class="index-list">
-      <li><a href="#t1">The question, and the plan</a><span>The four-fund menu, a target, and the four steps.</span></li>
-      <li><a href="#t2">Step 1: from [A | b] to [R | d]</a><span>Lesson 7's row operations, also applied to the target column.</span></li>
-      <li><a href="#t3">Step 2: what does the zero row tell us?</a><span>"0 = 0" is fine; "0 = −2" means no portfolio can hit the target.</span></li>
-      <li><a href="#t4">Step 3: one answer</a><span>Free amounts = 0; the pivot amounts are the last column.</span></li>
-      <li><a href="#t5">Step 4: every answer</a><span>Pick any free amounts and $R$ gives the rest: one answer + any do-nothing trade. With a target tester.</span></li>
-      <li><a href="#t6">The same four steps on smaller menus</a><span>Three 2 × 2s (one, none, infinitely many) and two 3 × 3s.</span></li>
-      <li><a href="#t7">How many answers? The rank tells you</a><span>No zero rows ⇒ always reachable. No free columns ⇒ never more than one.</span></li>
-      <li class="no-print"><a href="#t8">Summary</a><span>The four steps on one screen.</span></li>
+      <li><a href="#t1">Conditions and important concepts</a><span>12 short definitions: [A | b], [R | d], zero rows, contradiction, free variables, the three possibilities, particular and complete solutions, rank conditions.</span></li>
+      <li><a href="#t2">Procedure for Ax = b</a><span>The 7 steps, in order.</span></li>
+      <li><a href="#t3">2 × 2 examples</a><span>Exactly one, infinitely many, none.</span></li>
+      <li><a href="#t4">3 × 3 examples</a><span>Exactly one, infinitely many, none.</span></li>
+      <li><a href="#t5">Final decision tree</a><span>Contradiction? Free variables? The answer.</span></li>
+      <li><a href="#t6">Connection between Ax = 0 and Ax = b</a><span>Every solution = one solution + a null space solution. With a target tester.</span></li>
+      <li><a href="#t7">Final memory table</a><span>Ax = 0 and Ax = b side by side.</span></li>
     </ol>
-    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-aug">Augmented matrix [A | b]</a> <a href="#m-rd">Reduce to [R | d]</a> <a href="#m-solv">Zero-row test</a> <a href="#m-xp">Particular solution</a> <a href="#m-complete">Complete solution xₚ + xₙ</a> <a href="#m-cases">Rank cases</a></p>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-aug">Augmented matrix [A | b]</a> <a href="#m-rd">[A | b] → [R | d]</a> <a href="#m-solv">Contradiction test</a> <a href="#m-xp">Particular solution</a> <a href="#m-complete">Complete solution xₚ + xₙ</a> <a href="#m-cases">Rank conditions</a></p>
 
     <!-- ====================================================== -->
     <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
     <p>Click any link to review it, then come back.</p>
     <ul>
-      <li><a href="07_solving-ax-0-pivot-variables-special-solutions.html#t3">From U to R</a>, <a href="07_solving-ax-0-pivot-variables-special-solutions.html#t5">pivot and free variables</a> and <a href="07_solving-ax-0-pivot-variables-special-solutions.html#t7">special solutions</a> (Lesson 7).</li>
+      <li><a href="07_solving-ax-0-pivot-variables-special-solutions.html#t1">Note 1: Ax = 0</a> (Lesson 7): R, pivots, free variables, special solutions, N.</li>
       <li><a href="06_column-space-and-nullspace.html#t1">Ax = b is solvable exactly when b is in C(A)</a> (Lesson 6).</li>
-      <li><a href="02_elimination-with-matrices.html#t2">Elimination with the right side</a> (Lesson 2).</li>
     </ul>
 
     <!-- ====================================================== -->
     <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
 
-    <div class="box intuition"><span class="label">The whole lesson in one line</span>
-      <p>Simplify $[A \mid b]$ to $[R \mid d]$. A zero row with a non-zero end means <b>no answer</b>. Otherwise set the free amounts to 0 and read <b>one answer</b> off $d$. Add any do-nothing trade to get <b>every answer</b>.</p>
+    <div class="box finance"><span class="label">The funds used in the examples</span>
+      <p>Nifty $(1, 12, 1)$, Nifty ETF $(1, 12, 1)$, bonds $(1, 7, 0)$, balanced $(1, 9.5, 0.5)$, midcap $(1, 15, 1.2)$: what ₹1 lakh of each does to (budget, return, exposure). A target asks for a budget (₹ lakh), a return (₹ thousand) and an exposure.</p>
     </div>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t1">1. The question, and the plan</h3>
-    <p>Lesson 7 asked which trades change <b>nothing</b> ($Ax = 0$). Now a client wants something specific: a target $b$. Same menu as Lesson 7:</p>
-    <div class="box finance"><span class="label">The menu and the target</span>
-      <p>Funds: Nifty $(1, 12, 1)$, Nifty ETF $(1, 12, 1)$, bonds $(1, 7, 0)$, balanced $(1, 9.5, 0.5)$. Amounts $x = (x_1, x_2, x_3, x_4)$ in ₹ lakh.</p>
-      <p>The client wants budget ₹10 lakh, return ₹105 thousand, exposure 7: $b = (10, 105, 7)$.</p>
-      $$ \begin{bmatrix} 1 & 1 & 1 & 1 \\ 12 & 12 & 7 & 9.5 \\ 1 & 1 & 0 & 0.5 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \\ x_4 \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \\ 7 \end{bmatrix} $$
+    <h3 class="topic" id="t1">1. Conditions and important concepts</h3>
+
+    <h4>1. What is Ax = b?</h4>
+    <p>$Ax = b$ means:</p>
+    $$ \boxed{\text{Find the portfolio } x \text{ that produces the specific target } b.} $$
+
+    <h4>2. What is b?</h4>
+    <p>$b$ is the <b>target</b>. For example:</p>
+    $$ b = \begin{bmatrix} B \\ R \\ E \end{bmatrix} = \begin{bmatrix} 10 \\ 105 \\ 7 \end{bmatrix} \qquad \begin{aligned} &B = \text{budget ₹10 lakh} \\ &R = \text{return ₹105 thousand} \\ &E = \text{exposure } 7 \end{aligned} $$
+
+    <h4>3. Augmented matrix [A | b]</h4>
+    <div class="box method" id="m-aug"><span class="label">Method · Augmented matrix [A | b]</span>
+      <p>Attach the target $b$ to $A$ as an extra column. The vertical line separates the matrix (left) from the target (right).</p>
     </div>
-    <p>Three things can happen: the target is <b>impossible</b>, there is <b>exactly one</b> portfolio, or there are <b>infinitely many</b>. The plan finds out which, and gives every portfolio:</p>
+    <p>For Nifty, bonds, balanced and the target above:</p>
+    $$ [\,A \mid b\,] = \left[\begin{array}{ccc|c} 1 & 1 & 1 & 10 \\ 12 & 7 & 9.5 & 105 \\ 1 & 0 & 0.5 & 7 \end{array}\right] $$
+
+    <h4>4. What happens to [A | b]?</h4>
+    <div class="box method" id="m-rd"><span class="label">Method · Row reduce [A | b] → [R | d]</span>
+      <p>Row reduce the <b>entire</b> augmented matrix. The same row operations are applied to $A$ <b>and</b> to $b$. The left part becomes $R$, exactly as in Note 1.</p>
+    </div>
+    <p>The row operations are Note 1's (3 × 3 example). Here is what each one does to the target column:</p>
     <table>
-      <tr><th>Step</th><th>What you do</th><th>What it tells you</th></tr>
-      <tr><td>1</td><td>Simplify $[A \mid b]$ to $[R \mid d]$</td><td>the simplest form of the rules and the target</td></tr>
-      <tr><td>2</td><td>Look at the zero rows</td><td>is the target possible?</td></tr>
-      <tr><td>3</td><td>Set free amounts to 0, read $d$</td><td>one portfolio that works</td></tr>
-      <tr><td>4</td><td>Add the do-nothing trades</td><td>every portfolio that works</td></tr>
+      <tr><th>Row operation</th><th>Target column</th></tr>
+      <tr><td>Row 2 $-\ 12 \times$ row 1</td><td>$105 - 12(10) = -15$</td></tr>
+      <tr><td>Row 3 $-\ 1 \times$ row 1</td><td>$7 - 10 = -3$</td></tr>
+      <tr><td>Row 3 $-\ 0.2 \times$ row 2</td><td>$-3 - 0.2(-15) = -3 + 3 = 0$</td></tr>
+      <tr><td>Row 2 $\div (-5)$</td><td>$-15 / (-5) = 3$</td></tr>
+      <tr><td>Row 1 $-\ 1 \times$ row 2</td><td>$10 - 3 = 7$</td></tr>
+    </table>
+
+    <h4>5. What is d?</h4>
+    <p>After row reduction, the original target $b$ becomes a simplified target column called $d$:</p>
+    $$ [\,R \mid d\,] = \left[\begin{array}{ccc|c} 1 & 0 & 0.5 & 7 \\ 0 & 1 & 0.5 & 3 \\ 0 & 0 & 0 & 0 \end{array}\right] \qquad d = \begin{bmatrix} 7 \\ 3 \\ 0 \end{bmatrix} $$
+
+    <h4>6. Zero row</h4>
+    <p>A zero row looks like $[\,0 \;\; 0 \;\; 0 \mid \text{something}\,]$. There are <b>two</b> possibilities.</p>
+    <p><b>Condition 1:</b> $[\,0 \;\; 0 \;\; 0 \mid 0\,]$. This means</p>
+    $$ \boxed{0 = 0} $$
+    <p>This is fine. There is <b>no contradiction</b>.</p>
+    <p><b>Condition 2:</b> $[\,0 \;\; 0 \;\; 0 \mid \text{non-zero}\,]$. For example (target $(10, 105, 5)$, see the 3 × 3 examples):</p>
+    $$ \boxed{0 = -2} $$
+    <p>This is impossible: whatever $x_1, x_2, x_3$ are, the left side is always zero. Therefore <b>no solution</b>.</p>
+
+    <h4>7. Contradiction condition</h4>
+    <div class="box method" id="m-solv"><span class="label">Rule · Contradiction test</span>
+      <p>If after row reduction we get a row saying $0 = \text{non-zero}$, then there is <b>no solution</b>.</p>
+    </div>
+
+    <h4>8. Free variable condition</h4>
+    <p>If there are <b>no contradictions</b>:</p>
+    $$ \text{No free variables} \;\rightarrow\; \text{exactly ONE solution} \qquad\qquad \text{At least one free variable} \;\rightarrow\; \text{INFINITELY MANY solutions} $$
+
+    <h4>9. The three possibilities</h4>
+    $$ \boxed{\begin{array}{c} \text{Contradiction} \;\rightarrow\; \text{NO SOLUTION} \\[6pt] \text{No contradiction} + \text{no free variables} \;\rightarrow\; \text{EXACTLY ONE SOLUTION} \\[6pt] \text{No contradiction} + \text{free variables} \;\rightarrow\; \text{INFINITELY MANY SOLUTIONS} \end{array}} $$
+
+    <h4>10. Particular solution</h4>
+    <div class="box method" id="m-xp"><span class="label">Method · Particular solution x_p</span>
+      <p>A particular solution is simply <b>one</b> solution that satisfies $Ax = b$. To find an easy one: set all free variables $= 0$, then solve for the pivot variables (each pivot variable $=$ its row's $d$).</p>
+    </div>
+    <p>For the $[R \mid d]$ above: free $x_3 = 0$, so $x_1 = 7$, $x_2 = 3$: $\;x_p = (7, 3, 0)$, ₹7 lakh Nifty and ₹3 lakh bonds.</p>
+
+    <h4>11. Complete solution</h4>
+    <p>Once we have one particular solution $x_p$, we can add any null space solution $x_n$:</p>
+    $$ \boxed{x = x_p + x_n} $$
+    <p><b>Why?</b> Because $Ax_p = b$ and $Ax_n = 0$. Therefore</p>
+    $$ A(x_p + x_n) = Ax_p + Ax_n = b + 0 = b. $$
+    <div class="box method" id="m-complete"><span class="label">Rule · Complete solution</span>
+      <p>Every solution $=$ one solution $+$ a null space solution. (And nothing else: if $x$ is any solution, $x - x_p$ gives $b - b = 0$, so it is a null space solution.)</p>
+    </div>
+    <p>For the example: $x_n = t\,(-0.5, -0.5, 1)$ from Note 1, so $x = (7, 3, 0) + t\,(-0.5, -0.5, 1)$.</p>
+
+    <h4>12. Rank conditions</h4>
+    <p>Suppose $A$ has $m$ rows, $n$ columns and rank $r$. Then:</p>
+    $$ \text{number of zero rows} = m - r \qquad\qquad \text{number of free variables} = n - r $$
+    <div class="box method" id="m-cases"><span class="label">Rule · Rank conditions</span>
+      <p><b>If $r = m$:</b> no zero rows, so never a contradiction: every target is reachable.<br>
+      <b>If $r = n$:</b> no free variables: at most one solution.<br>
+      <b>If $r = m = n$:</b> no zero rows <b>and</b> no free variables: exactly one solution for every target.</p>
+    </div>
+    <table>
+      <tr><th>Funds (3 rules)</th><th>$m$</th><th>$n$</th><th>$r$</th><th>What it means</th></tr>
+      <tr><td>Nifty, bonds, midcap</td><td>3</td><td>3</td><td>3</td><td>$r = m = n$: exactly one solution for every target</td></tr>
+      <tr><td>Nifty, bonds</td><td>3</td><td>2</td><td>2</td><td>$r = n$: at most one solution</td></tr>
+      <tr><td>Nifty, bonds, midcap, balanced</td><td>3</td><td>4</td><td>3</td><td>$r = m$: every target reachable (infinitely many ways)</td></tr>
+      <tr><td>Nifty, bonds, balanced</td><td>3</td><td>3</td><td>2</td><td>neither: none or infinitely many</td></tr>
     </table>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t2">2. Step 1: from [A | b] to [R | d]</h3>
-    <div class="box method" id="m-aug"><span class="label">Method · The augmented matrix [A | b]</span>
-      <p>Write the target as an extra column on the right. Every row operation is applied to the whole row, including that last entry. Each row still means one rule: "these amounts give this number".</p>
-    </div>
-    $$ [\,A \mid b\,] = \left[\begin{array}{cccc|c} 1 & 1 & 1 & 1 & 10 \\ 12 & 12 & 7 & 9.5 & 105 \\ 1 & 1 & 0 & 0.5 & 7 \end{array}\right] $$
-    <p>Now do <b>exactly the five row operations of Lesson 7</b>. The first four columns change exactly as they did there; the only new work is the last column.</p>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">Row 2 − 12 × row 1</span> $(0, 0, -5, -2.5 \mid 105 - 12(10))$ $= (0, 0, -5, -2.5 \mid -15)$.</p>
-        <p class="k"><span class="kl">Meaning</span> "Return beyond 12%" must be $-15$: the client wants ₹15 thousand less than an all-Nifty ₹10 lakh would earn.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Row 3 − row 1</span> $(0, 0, -1, -0.5 \mid 7 - 10) = (0, 0, -1, -0.5 \mid -3)$.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Row 3 − 0.2 × row 2</span> $(0, 0, 0, 0 \mid -3 - 0.2(-15)) = (0, 0, 0, 0 \mid -3 + 3) = (0, 0, 0, 0 \mid 0)$.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Row 2 ÷ (−5)</span> $(0, 0, 1, 0.5 \mid -15 / -5) = (0, 0, 1, 0.5 \mid 3)$.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Row 1 − row 2</span> $(1, 1, 0, 0.5 \mid 10 - 3) = (1, 1, 0, 0.5 \mid 7)$.</p>
-      </li>
-    </ol>
-    <div class="box method" id="m-rd"><span class="label">Method · Reduce [A | b] to [R | d]</span>
-      <p>Clear below the pivots ($A \to U$), then make each pivot 1 and clear above it ($U \to R$), all on the full rows. The left part becomes $R$ (the same $R$ as for $Ax = 0$); the last column becomes $d$.</p>
-    </div>
-    $$ [\,R \mid d\,] = \left[\begin{array}{cccc|c} \boxed{1} & 1 & 0 & 0.5 & 7 \\ 0 & 0 & \boxed{1} & 0.5 & 3 \\ 0 & 0 & 0 & 0 & 0 \end{array}\right] \qquad \begin{aligned} \text{row 1: } & x_1 + x_2 + 0.5x_4 = 7 \\ \text{row 2: } & x_3 + 0.5x_4 = 3 \\ \text{row 3: } & 0 = 0 \end{aligned} $$
-    <p>Everything we need is in this one matrix.</p>
-    <div class="box intuition"><span class="label">In one line</span><p>Same row operations as Lesson 7, carried through the target column too.</p></div>
+    <h3 class="topic" id="t2">2. Procedure for Ax = b</h3>
+    <table>
+      <tr><th>Step</th><th>What to do</th></tr>
+      <tr><td>1</td><td>Build $[A \mid b]$.</td></tr>
+      <tr><td>2</td><td>Row reduce: $[A \mid b] \to [R \mid d]$.</td></tr>
+      <tr><td>3</td><td>Check the zero rows. $0 = \text{non-zero}$ → <b>no solution</b> (stop). $0 = 0$ → continue.</td></tr>
+      <tr><td>4</td><td>Find the pivot and free variables.</td></tr>
+      <tr><td>5</td><td>No free variables → <b>exactly one</b> solution. Free variables → <b>infinitely many</b>.</td></tr>
+      <tr><td>6</td><td>To find <b>one</b> solution: set all free variables $= 0$ and solve for the pivot variables.</td></tr>
+      <tr><td>7</td><td>To find <b>every</b> solution: keep the free variables arbitrary (equivalently, add the null space solutions).</td></tr>
+    </table>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t3">3. Step 2: what does the zero row tell us?</h3>
-    <p>We reached:</p>
-    $$ [\,R \mid d\,] = \left[\begin{array}{cccc|c} 1 & 1 & 0 & 0.5 & 7 \\ 0 & 0 & 1 & 0.5 & 3 \\ 0 & 0 & 0 & 0 & 0 \end{array}\right] $$
-    <p>Look only at the last row:</p>
-    $$ 0 \quad 0 \quad 0 \quad 0 \;\mid\; 0 $$
-    <p>It says $0x_1 + 0x_2 + 0x_3 + 0x_4 = 0$. That means:</p>
-    $$ \boxed{0 = 0} $$
-    <p>That's perfectly fine. It doesn't give us any new restriction.</p>
-    <p>But imagine instead we got:</p>
-    $$ 0 \quad 0 \quad 0 \quad 0 \;\mid\; -2 $$
-    <p>That would mean:</p>
+    <h3 class="topic" id="t3">3. 2 × 2 examples</h3>
+    <p>Budget and return only.</p>
+
+    <h4>Example A: exactly one solution</h4>
+    <p>Nifty and bonds, target $(10, 105)$:</p>
+    $$ \left[\begin{array}{cc|c} 1 & 1 & 10 \\ 12 & 7 & 105 \end{array}\right] $$
+    <ul>
+      <li>Row 2 $-\ 12 \times$ row 1: $(0, \;7 - 12 = -5 \mid 105 - 120 = -15)$.</li>
+      <li>Row 2 $\div (-5)$: $(0, 1 \mid 3)$.</li>
+      <li>Row 1 $-$ row 2: $(1, 0 \mid 10 - 3 = 7)$.</li>
+    </ul>
+    $$ [\,R \mid d\,] = \left[\begin{array}{cc|c} 1 & 0 & 7 \\ 0 & 1 & 3 \end{array}\right] $$
+    <p>No contradictions. No free variables. Therefore <b>exactly one solution</b>:</p>
+    $$ \boxed{x_1 = 7, \;\; x_2 = 3} \qquad x = \begin{bmatrix} 7 \\ 3 \end{bmatrix} $$
+    <p>Check: $7 + 3 = 10$ ✓, $84 + 21 = 105$ ✓.</p>
+
+    <h4>Example B: infinitely many solutions</h4>
+    <p>Nifty and its twin ETF, target $(10, 120)$:</p>
+    $$ \left[\begin{array}{cc|c} 1 & 1 & 10 \\ 12 & 12 & 120 \end{array}\right] \;\xrightarrow{\text{row 2} - 12 \times \text{row 1}}\; \left[\begin{array}{cc|c} 1 & 1 & 10 \\ 0 & 0 & 0 \end{array}\right] $$
+    <p>(Row 2: $12 - 12 = 0$, $12 - 12 = 0$, $120 - 120 = 0$.) There is no contradiction ($0 = 0$). But $x_2$ is free. Therefore <b>infinitely many solutions</b>.</p>
+    <p>Let $x_2 = c$. Then $x_1 + c = 10$, so $x_1 = 10 - c$:</p>
+    $$ \boxed{x = \begin{bmatrix} 10 - c \\ c \end{bmatrix}} \qquad \text{any split of ₹10 lakh between the twins} $$
+
+    <h4>Example C: no solution</h4>
+    <p>The twins again, but target $(10, 105)$:</p>
+    $$ \left[\begin{array}{cc|c} 1 & 1 & 10 \\ 12 & 12 & 105 \end{array}\right] \;\xrightarrow{\text{row 2} - 12 \times \text{row 1}}\; \left[\begin{array}{cc|c} 1 & 1 & 10 \\ 0 & 0 & -15 \end{array}\right] $$
+    <p>The second row says</p>
+    $$ \boxed{0 = -15} $$
+    <p>Impossible. Therefore <b>no solution</b>. (Two copies of a 12% fund can't earn 10.5%.)</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. 3 × 3 examples</h3>
+
+    <h4>Example A: exactly one solution</h4>
+    <p>Nifty, bonds, midcap, target $(10, 111, 7.4)$:</p>
+    $$ \left[\begin{array}{ccc|c} 1 & 1 & 1 & 10 \\ 12 & 7 & 15 & 111 \\ 1 & 0 & 1.2 & 7.4 \end{array}\right] $$
+    <ul>
+      <li>Row 2 $-\ 12 \times$ row 1: $(0, -5, 3 \mid 111 - 120 = -9)$.</li>
+      <li>Row 3 $-\ 1 \times$ row 1: $(0, -1, 0.2 \mid 7.4 - 10 = -2.6)$.</li>
+      <li>Row 3 $-\ 0.2 \times$ row 2: $(0, 0, 0.2 - 0.6 = -0.4 \mid -2.6 + 1.8 = -0.8)$.</li>
+      <li>Row 3 $\div (-0.4)$: $(0, 0, 1 \mid 2)$.</li>
+      <li>Row 2 $-\ 3 \times$ row 3: $(0, -5, 0 \mid -9 - 6 = -15)$; then $\div (-5)$: $(0, 1, 0 \mid 3)$.</li>
+      <li>Row 1 $-$ row 2 $-$ row 3: $(1, 0, 0 \mid 10 - 3 - 2 = 5)$.</li>
+    </ul>
+    $$ [\,R \mid d\,] = \left[\begin{array}{ccc|c} 1 & 0 & 0 & 5 \\ 0 & 1 & 0 & 3 \\ 0 & 0 & 1 & 2 \end{array}\right] $$
+    <p>3 pivots, 0 free variables, no contradiction. Therefore <b>exactly one solution</b>:</p>
+    $$ \boxed{x = \begin{bmatrix} 5 \\ 3 \\ 2 \end{bmatrix}} \qquad \text{₹5L Nifty, ₹3L bonds, ₹2L midcap} $$
+    <p>Check: $5 + 3 + 2 = 10$ ✓, $60 + 21 + 30 = 111$ ✓, $5 + 0 + 2.4 = 7.4$ ✓.</p>
+
+    <h4>Example B: infinitely many solutions</h4>
+    <p>Nifty, bonds, balanced, target $(10, 105, 7)$. Concepts 4 and 5 above already reduced it:</p>
+    $$ [\,R \mid d\,] = \left[\begin{array}{ccc|c} 1 & 0 & 0.5 & 7 \\ 0 & 1 & 0.5 & 3 \\ 0 & 0 & 0 & 0 \end{array}\right] $$
+    <p>No contradiction ($0 = 0$). But $x_3$ is free. Therefore <b>infinitely many solutions</b>.</p>
+    <p>Let $x_3 = t$. Then $x_1 + 0.5t = 7$, so $x_1 = 7 - 0.5t$; and $x_2 + 0.5t = 3$, so $x_2 = 3 - 0.5t$:</p>
+    $$ \boxed{x = \begin{bmatrix} 7 - 0.5t \\ 3 - 0.5t \\ t \end{bmatrix}} $$
+    <p>Check $t = 2$: $(6, 2, 2)$. Budget $6 + 2 + 2 = 10$ ✓, return $72 + 14 + 19 = 105$ ✓, exposure $6 + 0 + 1 = 7$ ✓.</p>
+
+    <h4>Example C: no solution</h4>
+    <p>The same funds, but target $(10, 105, 5)$. The same row operations act on the new target column: $105 - 120 = -15$; $5 - 10 = -5$; $-5 - 0.2(-15) = -5 + 3 = -2$; $-15/(-5) = 3$; $10 - 3 = 7$.</p>
+    $$ [\,R \mid d\,] = \left[\begin{array}{ccc|c} 1 & 0 & 0.5 & 7 \\ 0 & 1 & 0.5 & 3 \\ 0 & 0 & 0 & -2 \end{array}\right] $$
+    <p>The last row says</p>
     $$ \boxed{0 = -2} $$
-    <p>That's impossible. No matter what values we choose for $x_1, x_2, x_3, x_4$, the left side will always be zero. Therefore:</p>
-    $$ \boxed{\text{No portfolio can hit the target.}} $$
-    <p>This really happens. Ask for exposure 5 instead of 7, target $(10, 105, 5)$, and the same row operations end the last row with $(5 - 10) - 0.2(105 - 120) = -5 + 3 = -2$. The last row is exactly $0 \;\, 0 \;\, 0 \;\, 0 \mid -2$.</p>
-    <div class="box method" id="m-solv"><span class="label">Rule · The zero-row test</span>
-      <p>Every all-zero row of $R$ must end in 0. If one ends in a non-zero number, the target is impossible. (If $R$ has no zero rows at all, every target passes.)</p>
-    </div>
-    <p>So remember just this:</p>
-    $$ \boxed{0 = 0 \;\;\Rightarrow\;\; \text{target is possible}} $$
-    $$ \boxed{0 = \text{non-zero number} \;\;\Rightarrow\;\; \text{target is impossible}} $$
-    <p>For our target $(10, 105, 7)$ we have $0 = 0$, so the target is possible.</p>
-    <details class="more"><summary>For the curious: why exposure 5 is impossible, and the test for any target</summary>
-      <p>The zero row came from the exposure rule. For these four funds, exposure is already decided once budget and return are fixed: ₹10 lakh earning ₹105 thousand forces exposure 7. Asking for 5 is asking for two different things at once.</p>
-      <p>With letters $b = (B, R, E)$, the last row ends in $\tfrac15(7B + 5E - R)$. So a target is possible exactly when $R = 7B + 5E$, the plane $C(A)$ from Lesson 5.</p>
-    </details>
+    <p>Impossible. Therefore <b>no solution</b>. (For these funds, ₹10 lakh earning ₹105 thousand forces exposure 7; asking for 5 contradicts it.)</p>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t4">4. Step 3: one answer</h3>
-    <p>The target passed. Now look at the two rows that are left:</p>
-    $$ \begin{aligned} x_1 + x_2 + 0.5x_4 &= 7 \\ x_3 + 0.5x_4 &= 3 \end{aligned} $$
-    <p>No row decides the ETF ($x_2$) or balanced ($x_4$): they are the <b>free</b> amounts (Lesson 7). The simplest choice is to put zero in them:</p>
-    $$ \boxed{x_2 = 0, \quad x_4 = 0} $$
-    <p>Then the rows give the other two amounts straight away:</p>
-    $$ \boxed{x_1 = 7} \qquad \boxed{x_3 = 3} $$
-    <p>So one portfolio is:</p>
-    $$ \boxed{x_p = (7, 0, 3, 0)} \qquad \text{₹7 lakh Nifty, ₹3 lakh bonds} $$
-    <p>Check in $A$: budget $7 + 0 + 3 + 0 = 10$ ✓, return $84 + 0 + 21 + 0 = 105$ ✓, exposure $7 + 0 + 0 + 0 = 7$ ✓.</p>
-    <div class="box method" id="m-xp"><span class="label">Method · Particular solution x_p</span>
-      <p>Put 0 in every free amount. Each pivot amount is then simply the last number $d$ of its row.</p>
-    </div>
-    <p>So remember just this:</p>
-    $$ \boxed{\text{free amounts} = 0 \;\;\Rightarrow\;\; \text{pivot amounts} = d} $$
+    <h3 class="topic" id="t5">5. Final decision tree</h3>
+    $$ \begin{array}{c}
+      \text{Start with } [A \mid b] \\[2pt]
+      \big\downarrow \;\text{row reduce} \\[2pt]
+      [R \mid d] \\[2pt]
+      \big\downarrow \\[2pt]
+      \text{Is there a row saying } 0 = \text{non-zero?} \\[4pt]
+      \begin{array}{ccc}
+        \textbf{YES} & \qquad & \textbf{NO} \\
+        \downarrow & & \downarrow \\
+        \boxed{\text{NO SOLUTION}} & & \text{Are there free variables?} \\[4pt]
+        & & \begin{array}{ccc} \textbf{NO} & \qquad & \textbf{YES} \\ \downarrow & & \downarrow \\ \boxed{\text{EXACTLY ONE}} & & \boxed{\text{INFINITELY MANY}} \end{array}
+      \end{array}
+    \end{array} $$
+    <table>
+      <tr><th>Contradiction?</th><th>Free variables?</th><th>Answer</th><th>Examples above</th></tr>
+      <tr><td>yes</td><td>(doesn't matter)</td><td>no solution</td><td>2 × 2 C, 3 × 3 C</td></tr>
+      <tr><td>no</td><td>no</td><td>exactly one</td><td>2 × 2 A, 3 × 3 A</td></tr>
+      <tr><td>no</td><td>yes</td><td>infinitely many</td><td>2 × 2 B, 3 × 3 B</td></tr>
+    </table>
+    <p>Always check for a contradiction <b>first</b>: 2 × 2 B and C use the same funds (with a free variable), but in C the contradiction wins.</p>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t5">5. Step 4: every answer</h3>
-    <p>Zero was only the simplest choice. The free amounts can be anything. Try ETF $x_2 = 3$ and balanced $x_4 = 2$:</p>
-    $$ \begin{aligned} x_3 + 0.5(2) &= 3 &&\Rightarrow\; \boxed{x_3 = 2} \\ x_1 + 3 + 0.5(2) &= 7 &&\Rightarrow\; \boxed{x_1 = 3} \end{aligned} $$
-    <p>So another portfolio is:</p>
-    $$ \boxed{(3, 3, 2, 2)} \qquad \text{₹3L Nifty, ₹3L ETF, ₹2L bonds, ₹2L balanced} $$
-    <p>Check in $A$: budget $3 + 3 + 2 + 2 = 10$ ✓, return $36 + 36 + 14 + 19 = 105$ ✓, exposure $3 + 3 + 0 + 1 = 7$ ✓.</p>
-    <p>Every choice of free amounts gives another portfolio. With ETF $= c$ and balanced $= d$, the rows give Nifty $= 7 - c - 0.5d$ and bonds $= 3 - 0.5d$. Split that up:</p>
-    $$ \begin{bmatrix} 7 - c - 0.5d \\ c \\ 3 - 0.5d \\ d \end{bmatrix} = \underbrace{\begin{bmatrix} 7 \\ 0 \\ 3 \\ 0 \end{bmatrix}}_{\text{one answer (Step 3)}} + \underbrace{c\begin{bmatrix} -1 \\ 1 \\ 0 \\ 0 \end{bmatrix} + d\begin{bmatrix} -0.5 \\ 0 \\ -0.5 \\ 1 \end{bmatrix}}_{\text{do-nothing trades (Lesson 7)}} $$
-    <div class="box method" id="m-complete"><span class="label">Rule · Every answer = one answer + a do-nothing trade</span>
-      <p>Adding a trade that changes nothing can't spoil a portfolio that hits the target: $A(x_p + x_n) = b + 0 = b$. And there's nothing else: if $x$ is any answer, then $x - x_p$ changes nothing, so it's a do-nothing trade.</p>
-    </div>
-    <p>In money terms: once one portfolio hits the target, you can swap Nifty for the ETF, or build balanced from Nifty and bonds, as much as you like. The target stays hit.</p>
-    <p>So remember just this:</p>
-    $$ \boxed{\text{every answer} = \text{one answer} + \text{any do-nothing trade}} $$
+    <h3 class="topic" id="t6">6. Connection between Ax = 0 and Ax = b</h3>
+    <table>
+      <tr><th></th><th>$Ax = 0$ (Note 1)</th><th>$Ax = b$ (Note 2)</th></tr>
+      <tr><td>Find</td><td>all inputs that produce ZERO</td><td>all inputs that produce a SPECIFIC TARGET</td></tr>
+      <tr><td>Main concepts</td><td>null space</td><td>particular solution + null space</td></tr>
+    </table>
+    <p>The complete solution is</p>
+    $$ \boxed{x = x_p + x_n} \qquad \begin{aligned} x_p &= \text{one solution that reaches } b \\ x_n &= \text{any null space solution} \end{aligned} $$
+    <p>because $Ax_p = b$ and $Ax_n = 0$, so $A(x_p + x_n) = b$.</p>
+
+    <h4>On the four-fund menu (Note 1's bigger example)</h4>
+    <p>Nifty, ETF, bonds, balanced, target $(10, 105, 7)$. The same five row operations as Note 1, applied to the target column too, give:</p>
+    $$ [\,R \mid d\,] = \left[\begin{array}{cccc|c} 1 & 1 & 0 & 0.5 & 7 \\ 0 & 0 & 1 & 0.5 & 3 \\ 0 & 0 & 0 & 0 & 0 \end{array}\right] $$
+    <p>No contradiction; free variables $x_2$ (ETF), $x_4$ (balanced). Free $= 0$ gives $x_p = (7, 0, 3, 0)$. Note 1 gave the null space: $x_n = c\,s_1 + d\,s_2$. So:</p>
+    $$ x = \underbrace{\begin{bmatrix} 7 \\ 0 \\ 3 \\ 0 \end{bmatrix}}_{x_p} + \underbrace{c\begin{bmatrix} -1 \\ 1 \\ 0 \\ 0 \end{bmatrix} + d\begin{bmatrix} -0.5 \\ 0 \\ -0.5 \\ 1 \end{bmatrix}}_{x_n} $$
+    <p>Check $c = 3$, $d = 2$: $(7 - 3 - 1,\ 3,\ 3 - 1,\ 2) = (3, 3, 2, 2)$. Budget $3 + 3 + 2 + 2 = 10$ ✓, return $36 + 36 + 14 + 19 = 105$ ✓, exposure $3 + 3 + 0 + 1 = 7$ ✓.</p>
+    <p>In money terms: once one portfolio hits the target, swapping Nifty for the ETF or building balanced from Nifty and bonds keeps it hit.</p>
     <h4>Try it: any target, any free amounts</h4>
     <div id="target" class="lab-controls"></div>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t6">6. The same four steps on smaller menus</h3>
-    <p>Same steps, smaller matrices. These show all three outcomes.</p>
-
-    <h4>2 × 2: Nifty and bonds, target (10, 105): exactly one answer</h4>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">Step 1</span> $\left[\begin{smallmatrix} 1 & 1 & | & 10 \\ 12 & 7 & | & 105 \end{smallmatrix}\right]$. Row 2 $-\ 12 \times$ row 1: $(0, -5 \mid 105 - 120 = -15)$. Row 2 $\div (-5)$: $(0, 1 \mid 3)$. Row 1 $-$ row 2: $(1, 0 \mid 7)$.</p>
-        <p class="k"><span class="kl">Step 2</span> No zero rows: possible.</p>
-        <p class="k"><span class="kl">Steps 3–4</span> No free columns, so nothing to choose: $x = (7, 3)$ is the <b>only</b> answer.</p>
-      </li>
-    </ol>
-    <h4>2 × 2: Nifty and its twin, target (10, 120): infinitely many</h4>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">Step 1</span> $\left[\begin{smallmatrix} 1 & 1 & | & 10 \\ 12 & 12 & | & 120 \end{smallmatrix}\right]$. Row 2 $-\ 12 \times$ row 1: $(0, 0 \mid 120 - 120 = 0)$.</p>
-        <p class="k"><span class="kl">Step 2</span> Zero row ends in 0: possible.</p>
-        <p class="k"><span class="kl">Step 3</span> ETF free $= 0$: Nifty $= 10$, so $x_p = (10, 0)$.</p>
-        <p class="k"><span class="kl">Step 4</span> $x = (10, 0) + c(-1, 1)$: any split of ₹10 lakh between the twins.</p>
-      </li>
-    </ol>
-    <h4>2 × 2: Nifty and its twin, target (10, 105): no answer</h4>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">Step 1</span> Row 2 $-\ 12 \times$ row 1: $(0, 0 \mid 105 - 120 = -15)$.</p>
-        <p class="k"><span class="kl">Step 2</span> The zero row says $0 = -15$: <b>impossible</b>. Two copies of a 12% fund can't earn 10.5%.</p>
-      </li>
-    </ol>
-    <h4>3 × 3: Nifty, bonds, midcap, target (10, 111, 7.4): exactly one answer</h4>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">Clear below</span> Row 2 $-\ 12 \times$ row 1: $(0, -5, 3 \mid 111 - 120 = -9)$. Row 3 $-$ row 1: $(0, -1, 0.2 \mid 7.4 - 10 = -2.6)$. Row 3 $-\ 0.2 \times$ row 2: $(0, 0, -0.4 \mid -2.6 + 1.8 = -0.8)$.</p>
-        <p class="k"><span class="kl">Clear above</span> Row 3 $\div (-0.4)$: $(0, 0, 1 \mid 2)$. Row 2 $-\ 3 \times$ row 3: $(0, -5, 0 \mid -9 - 6 = -15)$, then $\div (-5)$: $(0, 1, 0 \mid 3)$. Row 1 $-$ row 2 $-$ row 3: $(1, 0, 0 \mid 10 - 3 - 2 = 5)$.</p>
-        <p class="k"><span class="kl">Read</span> $R = I$: no zero rows, no free columns. The only answer is $(5, 3, 2)$. Check: $5 + 3 + 2 = 10$ ✓, $60 + 21 + 30 = 111$ ✓, $5 + 0 + 2.4 = 7.4$ ✓.</p>
-      </li>
-    </ol>
-    <h4>3 × 3: Nifty, bonds, balanced, target (10, 105, 7): infinitely many</h4>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">Step 1</span> As in topic 2 without the ETF column: $[R \mid d] = \left[\begin{smallmatrix} 1 & 0 & 0.5 & | & 7 \\ 0 & 1 & 0.5 & | & 3 \\ 0 & 0 & 0 & | & 0 \end{smallmatrix}\right]$.</p>
-        <p class="k"><span class="kl">Step 2</span> Zero row ends in 0: possible.</p>
-        <p class="k"><span class="kl">Steps 3–4</span> Balanced free $= 0$: $x_p = (7, 3, 0)$. Every answer: $(7, 3, 0) + t(-0.5, -0.5, 1)$, as in Lesson 6.</p>
-      </li>
-    </ol>
-    <details class="check"><summary>Check yourself (MIT lecture): solve $\left[\begin{smallmatrix} 1 & 2 & 2 & 2 \\ 2 & 4 & 6 & 8 \\ 3 & 6 & 8 & 10 \end{smallmatrix}\right]x = (1, 5, 6)$.</summary>
-      <p>Step 1: row 2 $-\ 2 \times$ row 1 $= (0, 0, 2, 4 \mid 3)$; row 3 $-\ 3 \times$ row 1 $= (0, 0, 2, 4 \mid 3)$; row 3 $-$ row 2 $= (0, 0, 0, 0 \mid 0)$; row 2 $\div 2 = (0, 0, 1, 2 \mid \tfrac32)$; row 1 $-\ 2 \times$ row 2 $= (1, 2, 0, -2 \mid -2)$. Step 2: zero row ends in 0 ✓. Step 3: $x_2 = x_4 = 0$ gives $x_p = (-2, 0, \tfrac32, 0)$. Step 4: add $c_1(-2, 1, 0, 0) + c_2(2, 0, -2, 1)$.</p>
-    </details>
-    <details class="check"><summary>Check yourself (MIT recitation): when can $x - 2y - 2z = b_1$, $2x - 5y - 4z = b_2$, $4x - 9y - 8z = b_3$ be solved?</summary>
-      <p>Row 2 $-\ 2 \times$ row 1: $(0, -1, 0 \mid b_2 - 2b_1)$. Row 3 $-\ 4 \times$ row 1: $(0, -1, 0 \mid b_3 - 4b_1)$. Row 3 $-$ row 2: $(0, 0, 0 \mid b_3 - b_2 - 2b_1)$. Zero-row test: solvable exactly when $b_3 - b_2 - 2b_1 = 0$. Finishing: $y = 2b_1 - b_2$, $x = 5b_1 - 2b_2 + 2z$, so every answer is $(5b_1 - 2b_2,\ 2b_1 - b_2,\ 0) + c(2, 0, 1)$. For $b = (1, 1, 3)$: $3 - 1 - 2 = 0$ ✓ and $x_p = (3, 1, 0)$.</p>
-    </details>
-    <div class="box intuition"><span class="label">In one line</span><p>Bad zero row ⇒ none. Otherwise: free column ⇒ infinitely many; no free column ⇒ exactly one.</p></div>
-
-    <!-- ====================================================== -->
-    <h3 class="topic" id="t7">7. How many answers? The rank tells you</h3>
-    <p>Topic 6 showed the outcome depends on two things in $R$: zero rows and free columns. Both are counted by the rank $r$ (the number of pivots), for a menu with $m$ rules and $n$ funds:</p>
-    <ul>
-      <li>Zero rows $= m - r$. If $r = m$ there are none, so <b>every target is possible</b>.</li>
-      <li>Free columns $= n - r$. If $r = n$ there are none, so there is <b>never more than one answer</b>.</li>
-    </ul>
-    <div class="box method" id="m-cases"><span class="label">Rule · The four rank cases</span>
-      <p>So the rank tells you what can happen before you even look at the target.</p>
-    </div>
+    <h3 class="topic" id="t7">7. Final memory table</h3>
     <table>
-      <tr><th>Rank</th><th>Zero rows?</th><th>Free columns?</th><th>Answers</th><th>Menu</th></tr>
-      <tr><td>$r = m = n$</td><td>no</td><td>no</td><td>exactly 1, for every target</td><td>Nifty, bonds, midcap</td></tr>
-      <tr><td>$r = n &lt; m$</td><td>yes</td><td>no</td><td>0 or 1</td><td>Nifty, bonds (3 rules)</td></tr>
-      <tr><td>$r = m &lt; n$</td><td>no</td><td>yes</td><td>infinitely many, for every target</td><td>Nifty, bonds, midcap, balanced</td></tr>
-      <tr><td>$r &lt; m$, $r &lt; n$</td><td>yes</td><td>yes</td><td>0 or infinitely many</td><td>Nifty, ETF, bonds, balanced</td></tr>
+      <tr><th></th><th>$Ax = 0$</th><th>$Ax = b$</th></tr>
+      <tr><td><b>Goal</b></td><td>Find inputs that give ZERO.</td><td>Find inputs that give TARGET $b$.</td></tr>
+      <tr><td><b>Row reduce</b></td><td>$A \to R$</td><td>$[A \mid b] \to [R \mid d]$</td></tr>
+      <tr><td><b>Free variables</b></td><td>Create special solutions.</td><td>Decide between one and infinitely many.</td></tr>
+      <tr><td><b>Key objects</b></td><td>Special solutions form the null space; nullspace matrix $N$.</td><td>Particular solution $x_p$ (free variables $= 0$).</td></tr>
+      <tr><td><b>Key relationship</b></td><td>$AN = 0$</td><td>$x = x_p + x_n$</td></tr>
+      <tr><td><b>Contradiction</b></td><td>never ($0 = 0$ always)</td><td>$0 = \text{non-zero}$ → no solution</td></tr>
+      <tr><td><b>Outcomes</b></td><td>No free variables → only $x = 0$. Free variables → infinitely many.</td><td>No contradiction + no free variables → exactly one. No contradiction + free variables → infinitely many.</td></tr>
     </table>
-    <p><b>An example of the third row.</b> Nifty, bonds, midcap, balanced has rank 3 = 3 rules: no zero rows. So even $(10, 105, 5)$, impossible for our main menu, is possible here, for example $(-1, 6, 5, 0)$ (short ₹1 lakh Nifty, ₹6 lakh bonds, ₹5 lakh midcap). Check: $-1 + 6 + 5 = 10$ ✓, $-12 + 42 + 75 = 105$ ✓, $-1 + 0 + 6 = 5$ ✓.</p>
-    <div class="box finance"><span class="label">Reading it as a trader</span>
-      <p>$r = m$: your products can hit every target you measure. $r = n$: no product is redundant, so every answer is unique. Real desks usually have more products than risks, and use the spare freedom to pick the cheapest or most liquid route.</p>
-    </div>
-    <div class="box intuition"><span class="label">In one line</span><p>$r = m$ ⇒ always possible; $r = n$ ⇒ at most one answer; both ⇒ exactly one.</p></div>
-
-    <!-- ====================================================== -->
-    <!-- Summary: website only (left out of the PDF report) -->
-    <div class="no-print">
-    <h3 class="topic" id="t8">8. Summary</h3>
-    <div class="summary">
-      <h3>Solving Ax = b in four steps</h3>
-      <ol>
-        <li><b>Simplify</b> $[A \mid b]$ to $[R \mid d]$ with the same row operations as Lesson 7. (<a href="#t2">topic 2</a>)</li>
-        <li><b>Zero rows:</b> any "$0 =$ not 0" means no answer. (<a href="#t3">topic 3</a>)</li>
-        <li><b>One answer:</b> free amounts $= 0$, pivot amounts $= d$. (<a href="#t4">topic 4</a>)</li>
-        <li><b>Every answer:</b> pick any free amounts and read the rest, i.e. one answer + any do-nothing trade. (<a href="#t5">topic 5</a>)</li>
-        <li>$r = m$: always possible. $r = n$: at most one answer. (<a href="#t7">topic 7</a>)</li>
-      </ol>
-    </div>
-    <h4>Words in this lesson</h4>
-    <dl class="vocab">
-      <dt>Augmented matrix $[A \mid b]$</dt><dd>$A$ with the target as an extra column; row operations act on the whole row.</dd>
-      <dt>$[R \mid d]$</dt><dd>The reduced form of $[A \mid b]$: $R$ on the left, the simplified target $d$ on the right.</dd>
-      <dt>Zero-row test</dt><dd>An all-zero row of $R$ must end in 0, or there is no answer.</dd>
-      <dt>Particular solution $x_p$</dt><dd>One answer; the easy one has every free amount $= 0$.</dd>
-      <dt>Complete solution</dt><dd>$x_p + x_n$ for every do-nothing trade $x_n$: every answer.</dd>
-      <dt>Full row rank / full column rank</dt><dd>$r = m$ (no zero rows) / $r = n$ (no free columns).</dd>
-    </dl>
-    </div>
 
   </div>
   </section>

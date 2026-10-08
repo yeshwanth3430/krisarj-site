@@ -131,15 +131,16 @@
 
 <!-- 7 -->
 <section class="slide">
-  <div class="kicker">Smaller menus</div>
-  <h2>All three outcomes</h2>
+  <div class="kicker">How many answers?</div>
+  <h2>Three rules</h2>
+  <p>Look at $[R \mid d]$ for two things: a <b>contradiction</b> (a zero row like $0 = -2$) and <b>free variables</b>.</p>
   <table>
-    <tr><th>Funds (budget, return)</th><th>Target</th><th>[R | d] says</th></tr>
-    <tr><td>Nifty + bonds</td><td>(10, 105)</td><td>one: (7, 3)</td></tr>
-    <tr><td>Nifty + twin</td><td>(10, 120)</td><td>∞: (10, 0) + c(−1, 1)</td></tr>
-    <tr><td>Nifty + twin</td><td>(10, 105)</td><td>none: 0 = −15</td></tr>
+    <tr><th>[R | d] shows</th><th>Answer</th><th>Example</th></tr>
+    <tr><td>contradiction</td><td>❌ none</td><td>twins, (10, 105): 0 = −15</td></tr>
+    <tr><td>no contradiction, no free</td><td>✅ one</td><td>Nifty + bonds: (7, 3)</td></tr>
+    <tr><td>no contradiction, free</td><td>∞ infinite</td><td>twins, (10, 120)</td></tr>
   </table>
-  <p>Bad zero row ⇒ none. Otherwise free column ⇒ ∞, no free column ⇒ one.</p>
+  <div class="box method"><span class="label">Memory trick</span><p>Contradiction → NONE. No contradiction + no free → ONE. No contradiction + free → INFINITE.</p></div>
 </section>
 
 <!-- 8 -->
@@ -171,10 +172,10 @@
   <h2>The four steps</h2>
   <ol class="lead" style="font-size:36px">
     <li>Simplify $[A \mid b]$ to $[R \mid d]$.</li>
-    <li>Zero row ending in non-zero ⇒ no answer.</li>
+    <li>Contradiction (0 = non-zero) ⇒ no answer.</li>
     <li>Free amounts 0 ⇒ pivot amounts $= d$.</li>
     <li>Every answer = that one + any do-nothing trade.</li>
-    <li>$r = m$ ⇒ always possible; $r = n$ ⇒ unique.</li>
+    <li>Contradiction → NONE; no free → ONE; free → INFINITE.</li>
   </ol>
 </section>
 
