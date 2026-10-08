@@ -70,98 +70,93 @@
 <section class="slide cover">
   <div class="kicker">Linear Algebra · Lesson 8</div>
   <h1>Solving Ax = b</h1>
-  <p class="lead">Can this target be hit? And if so, what is <b>every</b> portfolio that hits it?</p>
-  <p class="lead soft">The rank alone tells you: none, one, or infinitely many.</p>
-  <div><span class="chip">x = xₚ + xₙ</span><span class="chip">Rank cases</span><span class="chip">MIT 18.06, Lecture 8</span></div>
+  <p class="lead">Can a client's target be hit? Which portfolios hit it? <b>Four short steps</b> on one matrix.</p>
+  <p class="lead soft">None, one, or infinitely many answers.</p>
+  <div><span class="chip">[R | d]</span><span class="chip">x = xₚ + xₙ</span><span class="chip">MIT 18.06, Lecture 8</span></div>
 </section>
 
 <!-- 2 -->
 <section class="slide">
-  <div class="kicker">Three outcomes</div>
-  <h2>One, none, or infinitely many</h2>
-  <table>
-    <tr><th>Funds (budget, return)</th><th>Target</th><th>Outcome</th></tr>
-    <tr><td>Nifty + bonds</td><td>(10, 105)</td><td>one: (7, 3)</td></tr>
-    <tr><td>Nifty + its twin ETF</td><td>(10, 120)</td><td>infinitely many</td></tr>
-    <tr><td>Nifty + its twin ETF</td><td>(10, 105)</td><td>none: 0 = −15</td></tr>
-  </table>
-  <p>Never exactly two: if two portfolios work, their difference is a do-nothing trade, and every multiple of it works too.</p>
+  <div class="kicker">The question</div>
+  <h2>Hit ₹10L, ₹105K, exposure 7</h2>
+  <p>Funds: Nifty, Nifty ETF, bonds, balanced.</p>
+  $$ \left[\begin{array}{cccc|c} 1 & 1 & 1 & 1 & 10 \\ 12 & 12 & 7 & 9.5 & 105 \\ 1 & 1 & 0 & 0.5 & 7 \end{array}\right] $$
+  <ol style="font-size:34px">
+    <li>Simplify to $[R \mid d]$</li>
+    <li>Check the zero rows</li>
+    <li>One answer: free amounts = 0</li>
+    <li>Every answer: add do-nothing trades</li>
+  </ol>
 </section>
 
 <!-- 3 -->
 <section class="slide">
-  <div class="kicker">The setup</div>
-  <h2>Four funds, a target (B, R, E)</h2>
-  <p>Nifty, Nifty ETF, bonds, balanced:</p>
-  $$ \begin{bmatrix} 1 & 1 & 1 & 1 \\ 12 & 12 & 7 & 9.5 \\ 1 & 1 & 0 & 0.5 \end{bmatrix} x = \begin{bmatrix} B \\ R \\ E \end{bmatrix} $$
-  <p>Eliminate with the target <b>carried along as letters</b>.</p>
+  <div class="kicker">Step 1</div>
+  <h2>Simplify to [R | d]</h2>
+  <p>Same five row operations as Lesson 7, also on the last column:</p>
+  $$ [\,R \mid d\,] = \left[\begin{array}{cccc|c} 1 & 1 & 0 & 0.5 & 7 \\ 0 & 0 & 1 & 0.5 & 3 \\ 0 & 0 & 0 & 0 & 0 \end{array}\right] $$
+  <p class="soft" style="font-size:32px">Last column: $105 - 120 = -15$, $\;7 - 10 = -3$, $\;-3 + 3 = 0$, $\;-15/-5 = 3$, $\;10 - 3 = 7$.</p>
 </section>
 
 <!-- 4 -->
 <section class="slide">
-  <div class="kicker">Solvability</div>
-  <h2>A zero row becomes a condition</h2>
-  $$ \left[\begin{array}{cccc|c} 1 & 1 & 1 & 1 & B \\ 0 & 0 & -5 & -2.5 & R - 12B \\ 0 & 0 & 0 & 0 & \tfrac15(7B + 5E - R) \end{array}\right] $$
-  <p>Row 3 says $0 = \tfrac15(7B + 5E - R)$. So a solution exists exactly when</p>
-  $$ R = 7B + 5E $$
-  <p>The same plane $C(A)$ as Lesson 5: algebra and picture agree.</p>
+  <div class="kicker">Step 2</div>
+  <h2>Check the zero rows</h2>
+  <p>Row 3 reads $0 = d_3$. No trade can make 0 equal anything else.</p>
+  <table>
+    <tr><th>Target</th><th>Row 3 ends in</th><th></th></tr>
+    <tr><td>(10, 105, 7)</td><td>0</td><td>possible ✓</td></tr>
+    <tr><td>(10, 105, 5)</td><td>−2</td><td>impossible ✗</td></tr>
+  </table>
+  <p>Exposure is already decided by budget and return for these funds: asking for 5 is asking for two things at once.</p>
 </section>
 
 <!-- 5 -->
 <section class="slide">
-  <div class="kicker">Test it</div>
-  <h2>Which targets pass?</h2>
-  <table>
-    <tr><th>Target</th><th>7B + 5E − R</th><th></th></tr>
-    <tr><td>(10, 105, 7)</td><td>70 + 35 − 105 = 0</td><td>✓</td></tr>
-    <tr><td>(10, 120, 10)</td><td>70 + 50 − 120 = 0</td><td>✓</td></tr>
-    <tr><td>(10, 105, 5)</td><td>70 + 25 − 105 = −10</td><td>✗</td></tr>
-  </table>
-  <p>Each vanished row gives one condition. Meeting them all is the same as "$b$ is in $C(A)$".</p>
+  <div class="kicker">Step 3</div>
+  <h2>One answer: read it off</h2>
+  <p>Put 0 in the free funds (ETF, balanced). Each row of $[R \mid d]$ gives a pivot amount:</p>
+  <p>Nifty $= 7$, &nbsp; bonds $= 3$</p>
+  <div class="box finance"><span class="label">One portfolio</span><p>$x_p = (7, 0, 3, 0)$: ₹7L Nifty, ₹3L bonds. Budget 10 ✓, return $84 + 21 = 105$ ✓, exposure 7 ✓.</p></div>
 </section>
 
 <!-- 6 -->
 <section class="slide">
-  <div class="kicker">One answer</div>
-  <h2>The particular solution</h2>
-  <p>Set the free amounts (ETF, balanced) to 0 and back-substitute for $b = (10, 105, 7)$:</p>
-  <p>$-5x_3 = 105 - 120 = -15 \Rightarrow x_3 = 3$</p>
-  <p>$x_1 + 3 = 10 \Rightarrow x_1 = 7$</p>
-  <div class="box finance"><span class="label">So</span><p>$x_p = (7, 0, 3, 0)$: ₹7 lakh Nifty, ₹3 lakh bonds.</p></div>
+  <div class="kicker">Step 4</div>
+  <h2>Every answer</h2>
+  <p>Pick any free amounts, read the rest. ETF = 3, balanced = 2: bonds $= 3 - 1 = 2$, Nifty $= 7 - 3 - 1 = 3$.</p>
+  $$ x = \underbrace{(7, 0, 3, 0)}_{x_p} + \underbrace{c(-1, 1, 0, 0) + d(-0.5, 0, -0.5, 1)}_{\text{do-nothing trades}} $$
+  <p>One answer + any do-nothing trade = every answer.</p>
 </section>
 
 <!-- 7 -->
 <section class="slide">
-  <div class="kicker">All answers</div>
-  <h2>x = xₚ + xₙ</h2>
-  $$ x = \begin{bmatrix} 7 \\ 0 \\ 3 \\ 0 \end{bmatrix} + c\begin{bmatrix} -1 \\ 1 \\ 0 \\ 0 \end{bmatrix} + d\begin{bmatrix} -0.5 \\ 0 \\ -0.5 \\ 1 \end{bmatrix} $$
-  <p>$c = d = 2$: $(4, 2, 2, 2)$. Budget 10 ✓, return $48 + 24 + 14 + 19 = 105$ ✓, exposure 7 ✓.</p>
-  <p>One portfolio + any do-nothing trade = every portfolio.</p>
+  <div class="kicker">Smaller menus</div>
+  <h2>All three outcomes</h2>
+  <table>
+    <tr><th>Funds (budget, return)</th><th>Target</th><th>[R | d] says</th></tr>
+    <tr><td>Nifty + bonds</td><td>(10, 105)</td><td>one: (7, 3)</td></tr>
+    <tr><td>Nifty + twin</td><td>(10, 120)</td><td>∞: (10, 0) + c(−1, 1)</td></tr>
+    <tr><td>Nifty + twin</td><td>(10, 105)</td><td>none: 0 = −15</td></tr>
+  </table>
+  <p>Bad zero row ⇒ none. Otherwise free column ⇒ ∞, no free column ⇒ one.</p>
 </section>
 
 <!-- 8 -->
 <section class="slide">
-  <div class="kicker">The shortcut</div>
-  <h2>Read it off [R | d]</h2>
-  $$ [\,R \mid d\,] = \left[\begin{array}{cccc|c} 1 & 1 & 0 & 0.5 & 7 \\ 0 & 0 & 1 & 0.5 & 3 \\ 0 & 0 & 0 & 0 & 0 \end{array}\right] $$
-  <p>Free amounts 0 ⇒ pivot amounts $= d$: $x_1 = 7$, $x_3 = 3$. The free columns give the special solutions. One matrix, both halves of the answer.</p>
-</section>
-
-<!-- 9 -->
-<section class="slide">
   <div class="kicker">The rank decides</div>
   <h2>Four cases</h2>
   <table>
-    <tr><th>Rank</th><th>Solutions</th><th>Funds</th></tr>
+    <tr><th>Rank</th><th>Answers</th><th>Funds</th></tr>
     <tr><td>r = m = n</td><td>exactly 1</td><td>Nifty, bonds, midcap</td></tr>
     <tr><td>r = n &lt; m</td><td>0 or 1</td><td>Nifty, bonds, 3 rules</td></tr>
     <tr><td>r = m &lt; n</td><td>∞, always</td><td>Nifty, bonds, midcap, balanced</td></tr>
     <tr><td>r &lt; m, r &lt; n</td><td>0 or ∞</td><td>Nifty, ETF, bonds, balanced</td></tr>
   </table>
-  <p>$r = m$: always solvable. $r = n$: never more than one.</p>
+  <p>$r = m$: no zero rows, always possible. $r = n$: no free columns, at most one.</p>
 </section>
 
-<!-- 10 -->
+<!-- 9 -->
 <section class="slide">
   <div class="kicker">In markets</div>
   <h2>Every way to build a payoff</h2>
@@ -170,25 +165,24 @@
   <p>"1 fut + 2 calls + 1 × 19,900 C" = "3 fut + 2 puts + 1 × 19,900 C". Quote whichever is cheaper.</p>
 </section>
 
-<!-- 11 -->
+<!-- 10 -->
 <section class="slide">
   <div class="kicker">Recap</div>
-  <h2>Key takeaways</h2>
+  <h2>The four steps</h2>
   <ol class="lead" style="font-size:36px">
-    <li>One, none or infinitely many: never two.</li>
-    <li>Zero rows of $[U \mid c]$ give the conditions on $b$.</li>
-    <li>$x_p$: free amounts $= 0$.</li>
-    <li>All solutions: $x_p + x_n$.</li>
-    <li>$[R \mid d]$ gives $x_p$ directly.</li>
-    <li>$r = m$ ⇒ solvable; $r = n$ ⇒ unique.</li>
+    <li>Simplify $[A \mid b]$ to $[R \mid d]$.</li>
+    <li>Zero row ending in non-zero ⇒ no answer.</li>
+    <li>Free amounts 0 ⇒ pivot amounts $= d$.</li>
+    <li>Every answer = that one + any do-nothing trade.</li>
+    <li>$r = m$ ⇒ always possible; $r = n$ ⇒ unique.</li>
   </ol>
 </section>
 
-<!-- 12 -->
+<!-- 11 -->
 <section class="slide cover">
   <div class="kicker">Quant from First Principles</div>
   <h1 style="font-size:76px">The full interactive lesson is free</h1>
-  <p class="lead">A target tester, a complete-solution lab for any matrix up to 3 × 5, and worked hedging and options examples:</p>
+  <p class="lead">A target tester, a lab that solves any system up to 3 × 5 step by step, and worked hedging and options examples:</p>
   <p class="lead"><b>learn.krisarj.com</b></p>
   <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
 </section>
