@@ -46,7 +46,7 @@
         <li><a href="#prereq">Prerequisites</a></li>
         <li><a href="#t1">The question, and the plan</a></li>
         <li><a href="#t2">Step 1: from [A | b] to [R | d]</a></li>
-        <li><a href="#t3">Step 2: check the zero rows</a></li>
+        <li><a href="#t3">Step 2: what does the zero row tell us?</a></li>
         <li><a href="#t4">Step 3: one answer</a></li>
         <li><a href="#t5">Step 4: every answer</a></li>
         <li><a href="#t6">The same four steps on smaller menus</a></li>
@@ -61,7 +61,7 @@
     <ol class="index-list">
       <li><a href="#t1">The question, and the plan</a><span>The four-fund menu, a target, and the four steps.</span></li>
       <li><a href="#t2">Step 1: from [A | b] to [R | d]</a><span>Lesson 7's row operations, also applied to the target column.</span></li>
-      <li><a href="#t3">Step 2: check the zero rows</a><span>A row "0 = something not 0" means the target can't be hit.</span></li>
+      <li><a href="#t3">Step 2: what does the zero row tell us?</a><span>"0 = 0" is fine; "0 = −2" means no portfolio can hit the target.</span></li>
       <li><a href="#t4">Step 3: one answer</a><span>Free amounts = 0; the pivot amounts are the last column.</span></li>
       <li><a href="#t5">Step 4: every answer</a><span>Pick any free amounts and $R$ gives the rest: one answer + any do-nothing trade. With a target tester.</span></li>
       <li><a href="#t6">The same four steps on smaller menus</a><span>Three 2 × 2s (one, none, infinitely many) and two 3 × 3s.</span></li>
@@ -136,63 +136,67 @@
     <div class="box intuition"><span class="label">In one line</span><p>Same row operations as Lesson 7, carried through the target column too.</p></div>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t3">3. Step 2: check the zero rows</h3>
-    <p>Row 3 of $R$ is all zeros. It reads $0x_1 + 0x_2 + 0x_3 + 0x_4 = d_3$. Whatever amounts you choose, the left side is 0, so this row only works if $d_3 = 0$.</p>
+    <h3 class="topic" id="t3">3. Step 2: what does the zero row tell us?</h3>
+    <p>We reached:</p>
+    $$ [\,R \mid d\,] = \left[\begin{array}{cccc|c} 1 & 1 & 0 & 0.5 & 7 \\ 0 & 0 & 1 & 0.5 & 3 \\ 0 & 0 & 0 & 0 & 0 \end{array}\right] $$
+    <p>Look only at the last row:</p>
+    $$ 0 \quad 0 \quad 0 \quad 0 \;\mid\; 0 $$
+    <p>It says $0x_1 + 0x_2 + 0x_3 + 0x_4 = 0$. That means:</p>
+    $$ \boxed{0 = 0} $$
+    <p>That's perfectly fine. It doesn't give us any new restriction.</p>
+    <p>But imagine instead we got:</p>
+    $$ 0 \quad 0 \quad 0 \quad 0 \;\mid\; -2 $$
+    <p>That would mean:</p>
+    $$ \boxed{0 = -2} $$
+    <p>That's impossible. No matter what values we choose for $x_1, x_2, x_3, x_4$, the left side will always be zero. Therefore:</p>
+    $$ \boxed{\text{No portfolio can hit the target.}} $$
+    <p>This really happens. Ask for exposure 5 instead of 7, target $(10, 105, 5)$, and the same row operations end the last row with $(5 - 10) - 0.2(105 - 120) = -5 + 3 = -2$. The last row is exactly $0 \;\, 0 \;\, 0 \;\, 0 \mid -2$.</p>
     <div class="box method" id="m-solv"><span class="label">Rule · The zero-row test</span>
-      <p>Look at every all-zero row of $R$. If its last entry is <b>0</b>, it's fine ("$0 = 0$"). If its last entry is <b>not 0</b>, it says "$0 =$ something", which no trade can do: the target is <b>impossible</b>. If there are no zero rows at all, every target passes.</p>
+      <p>Every all-zero row of $R$ must end in 0. If one ends in a non-zero number, the target is impossible. (If $R$ has no zero rows at all, every target passes.)</p>
     </div>
-    <table>
-      <tr><th>Target $(B, R, E)$</th><th>Last entry of row 3 after Step 1</th><th>Verdict</th></tr>
-      <tr><td>$(10, 105, 7)$</td><td>$(7 - 10) - 0.2(105 - 120) = -3 + 3 = 0$</td><td>possible ✓</td></tr>
-      <tr><td>$(10, 105, 5)$</td><td>$(5 - 10) - 0.2(105 - 120) = -5 + 3 = -2$</td><td>row 3 says $0 = -2$: impossible ✗</td></tr>
-    </table>
-    <p><b>Why $(10, 105, 5)$ fails, in plain words.</b> The zero row came from exposure: for these funds, exposure is already decided once you fix budget and return. ₹10 lakh earning ₹105 thousand forces exposure 7, so asking for 5 is asking for two different things at once.</p>
-    <details class="more"><summary>For the curious: the test for any target</summary>
-      <p>With letters $b = (B, R, E)$ the same steps leave row 3 with last entry $(E - B) - 0.2(R - 12B) = \tfrac15(7B + 5E - R)$. So a target is possible exactly when $R = 7B + 5E$: the plane $C(A)$ from Lesson 5. For $(10, 105, 7)$: $70 + 35 = 105$ ✓. For $(10, 105, 5)$: $70 + 25 = 95 \ne 105$ ✗.</p>
+    <p>So remember just this:</p>
+    $$ \boxed{0 = 0 \;\;\Rightarrow\;\; \text{target is possible}} $$
+    $$ \boxed{0 = \text{non-zero number} \;\;\Rightarrow\;\; \text{target is impossible}} $$
+    <p>For our target $(10, 105, 7)$ we have $0 = 0$, so the target is possible.</p>
+    <details class="more"><summary>For the curious: why exposure 5 is impossible, and the test for any target</summary>
+      <p>The zero row came from the exposure rule. For these four funds, exposure is already decided once budget and return are fixed: ₹10 lakh earning ₹105 thousand forces exposure 7. Asking for 5 is asking for two different things at once.</p>
+      <p>With letters $b = (B, R, E)$, the last row ends in $\tfrac15(7B + 5E - R)$. So a target is possible exactly when $R = 7B + 5E$, the plane $C(A)$ from Lesson 5.</p>
     </details>
-    <div class="box intuition"><span class="label">In one line</span><p>A zero row ending in 0 is harmless; a zero row ending in anything else means no portfolio exists.</p></div>
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t4">4. Step 3: one answer</h3>
-    <p>The target $(10, 105, 7)$ passed. To get one portfolio, make the simplest choice: <b>put 0 in every free fund</b> (ETF $x_2 = 0$, balanced $x_4 = 0$). Then each row of $[R \mid d]$ just reads off a pivot amount:</p>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">Row 1</span> $x_1 + 0 + 0.5(0) = 7 \Rightarrow x_1 = 7$.</p>
-        <p class="k"><span class="kl">Row 2</span> $x_3 + 0.5(0) = 3 \Rightarrow x_3 = 3$.</p>
-        <p class="k"><span class="kl">Answer</span> $x_p = (7, 0, 3, 0)$: ₹7 lakh Nifty, ₹3 lakh bonds.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Check in A</span> Budget $7 + 0 + 3 + 0 = 10$ ✓. Return $84 + 0 + 21 + 0 = 105$ ✓. Exposure $7 + 0 + 0 + 0 = 7$ ✓.</p>
-      </li>
-    </ol>
+    <p>The target passed. Now look at the two rows that are left:</p>
+    $$ \begin{aligned} x_1 + x_2 + 0.5x_4 &= 7 \\ x_3 + 0.5x_4 &= 3 \end{aligned} $$
+    <p>No row decides the ETF ($x_2$) or balanced ($x_4$): they are the <b>free</b> amounts (Lesson 7). The simplest choice is to put zero in them:</p>
+    $$ \boxed{x_2 = 0, \quad x_4 = 0} $$
+    <p>Then the rows give the other two amounts straight away:</p>
+    $$ \boxed{x_1 = 7} \qquad \boxed{x_3 = 3} $$
+    <p>So one portfolio is:</p>
+    $$ \boxed{x_p = (7, 0, 3, 0)} \qquad \text{₹7 lakh Nifty, ₹3 lakh bonds} $$
+    <p>Check in $A$: budget $7 + 0 + 3 + 0 = 10$ ✓, return $84 + 0 + 21 + 0 = 105$ ✓, exposure $7 + 0 + 0 + 0 = 7$ ✓.</p>
     <div class="box method" id="m-xp"><span class="label">Method · Particular solution x_p</span>
-      <p>Free amounts $= 0$. Then each pivot amount equals the last entry $d$ of its row. No solving needed.</p>
+      <p>Put 0 in every free amount. Each pivot amount is then simply the last number $d$ of its row.</p>
     </div>
-    <div class="box intuition"><span class="label">In one line</span><p>Zero in the free funds, $d$ in the pivot funds: one portfolio, read straight off.</p></div>
+    <p>So remember just this:</p>
+    $$ \boxed{\text{free amounts} = 0 \;\;\Rightarrow\;\; \text{pivot amounts} = d} $$
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t5">5. Step 4: every answer</h3>
-    <p>Zero in the free funds was just one choice. Like in Lesson 7, you can pick <b>any</b> free amounts and $[R \mid d]$ gives the pivot amounts.</p>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">You pick</span> ETF $x_2 = 3$, balanced $x_4 = 2$.</p>
-        <p class="k"><span class="kl">Row 2</span> $x_3 + 0.5(2) = 3 \Rightarrow x_3 = 2$.</p>
-        <p class="k"><span class="kl">Row 1</span> $x_1 + 3 + 0.5(2) = 7 \Rightarrow x_1 = 3$.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Portfolio</span> $(3, 3, 2, 2)$: ₹3L Nifty, ₹3L ETF, ₹2L bonds, ₹2L balanced.</p>
-        <p class="k"><span class="kl">Check in A</span> Budget $3 + 3 + 2 + 2 = 10$ ✓. Return $36 + 36 + 14 + 19 = 105$ ✓. Exposure $3 + 3 + 0 + 1 = 7$ ✓.</p>
-      </li>
-    </ol>
-    <p>In general, with ETF $= c$ and balanced $= d$, the rows give Nifty $= 7 - c - 0.5d$ and bonds $= 3 - 0.5d$. Split that up:</p>
-    $$ \begin{bmatrix} 7 - c - 0.5d \\ c \\ 3 - 0.5d \\ d \end{bmatrix} = \underbrace{\begin{bmatrix} 7 \\ 0 \\ 3 \\ 0 \end{bmatrix}}_{x_p \text{ (Step 3)}} + \underbrace{c\begin{bmatrix} -1 \\ 1 \\ 0 \\ 0 \end{bmatrix} + d\begin{bmatrix} -0.5 \\ 0 \\ -0.5 \\ 1 \end{bmatrix}}_{\text{do-nothing trades (Lesson 7)}} $$
+    <p>Zero was only the simplest choice. The free amounts can be anything. Try ETF $x_2 = 3$ and balanced $x_4 = 2$:</p>
+    $$ \begin{aligned} x_3 + 0.5(2) &= 3 &&\Rightarrow\; \boxed{x_3 = 2} \\ x_1 + 3 + 0.5(2) &= 7 &&\Rightarrow\; \boxed{x_1 = 3} \end{aligned} $$
+    <p>So another portfolio is:</p>
+    $$ \boxed{(3, 3, 2, 2)} \qquad \text{₹3L Nifty, ₹3L ETF, ₹2L bonds, ₹2L balanced} $$
+    <p>Check in $A$: budget $3 + 3 + 2 + 2 = 10$ ✓, return $36 + 36 + 14 + 19 = 105$ ✓, exposure $3 + 3 + 0 + 1 = 7$ ✓.</p>
+    <p>Every choice of free amounts gives another portfolio. With ETF $= c$ and balanced $= d$, the rows give Nifty $= 7 - c - 0.5d$ and bonds $= 3 - 0.5d$. Split that up:</p>
+    $$ \begin{bmatrix} 7 - c - 0.5d \\ c \\ 3 - 0.5d \\ d \end{bmatrix} = \underbrace{\begin{bmatrix} 7 \\ 0 \\ 3 \\ 0 \end{bmatrix}}_{\text{one answer (Step 3)}} + \underbrace{c\begin{bmatrix} -1 \\ 1 \\ 0 \\ 0 \end{bmatrix} + d\begin{bmatrix} -0.5 \\ 0 \\ -0.5 \\ 1 \end{bmatrix}}_{\text{do-nothing trades (Lesson 7)}} $$
     <div class="box method" id="m-complete"><span class="label">Rule · Every answer = one answer + a do-nothing trade</span>
-      <p>$x = x_p + x_n$, with $x_n$ any do-nothing trade. It works because $A(x_p + x_n) = b + 0 = b$. And there's nothing else: if $x$ is any answer, then $x - x_p$ changes nothing ($b - b = 0$), so it's a do-nothing trade.</p>
+      <p>Adding a trade that changes nothing can't spoil a portfolio that hits the target: $A(x_p + x_n) = b + 0 = b$. And there's nothing else: if $x$ is any answer, then $x - x_p$ changes nothing, so it's a do-nothing trade.</p>
     </div>
-    <p>In money terms: once you have one portfolio that hits the target, you can swap Nifty for the ETF, or build balanced out of Nifty and bonds, as much as you like. The target stays hit. That's why there are infinitely many answers here.</p>
+    <p>In money terms: once one portfolio hits the target, you can swap Nifty for the ETF, or build balanced from Nifty and bonds, as much as you like. The target stays hit.</p>
+    <p>So remember just this:</p>
+    $$ \boxed{\text{every answer} = \text{one answer} + \text{any do-nothing trade}} $$
     <h4>Try it: any target, any free amounts</h4>
     <div id="target" class="lab-controls"></div>
-    <div class="box intuition"><span class="label">In one line</span><p>Pick any free amounts, read the pivot amounts off $[R \mid d]$: that's every answer, and it equals one answer plus a do-nothing trade.</p></div>
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t6">6. The same four steps on smaller menus</h3>
