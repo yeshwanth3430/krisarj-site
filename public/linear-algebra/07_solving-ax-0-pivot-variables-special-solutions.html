@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solving Ax = 0: Pivot Variables, Special Solutions · Topic 4 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 4, Lesson 7: how to compute the nullspace step by step: echelon form, pivot and free variables, rank, special solutions, the reduced row echelon form R and the nullspace matrix, on portfolio, hedging and options examples.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-04-2">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-04.html">Topic 4</a> / <b>Solving Ax = 0</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 7</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 4 · Lesson 7 (MIT 18.06, Lecture 7)</p>
+  <h1>Solving Ax = 0: Pivot Variables, Special Solutions</h1>
+  <p class="subtitle">Lesson 6 said what the nullspace is. This lesson is the recipe for finding all of it, for any matrix, even when there are more funds than rules: pivots, free variables, rank, special solutions and the reduced form $R$.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-07-solving-ax-0-pivot-variables-special-solutions-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-07-solving-ax-0-pivot-variables-special-solutions-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F07_solving-ax-0-pivot-variables-special-solutions" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">Elimination keeps the nullspace</a></li>
+        <li><a href="#t2">Warm-up: one rule, three funds</a></li>
+        <li><a href="#t3">Pivots, free variables and rank</a></li>
+        <li><a href="#t4">The full recipe: four funds, three rules</a></li>
+        <li><a href="#t5">Counting: n − r special solutions</a></li>
+        <li><a href="#t6">The reduced form R and the nullspace matrix</a></li>
+        <li><a href="#t7">Summary</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">Elimination keeps the nullspace</a><span>Row operations recombine the rules, so a do-nothing trade stays do-nothing. The column space does change.</span></li>
+      <li><a href="#t2">Warm-up: one rule, three funds</a><span>Zero-cost trades: one pivot, two free amounts, two special solutions.</span></li>
+      <li><a href="#t3">Pivots, free variables and rank</a><span>The 2 × 2 twins and the 3 × 3 funds: which amounts you choose, which are forced, and the rank.</span></li>
+      <li><a href="#t4">The full recipe: four funds, three rules</a><span>A 3 × 4 matrix to a staircase, two special solutions, every do-nothing trade, with a try-it box.</span></li>
+      <li><a href="#t5">Counting: n − r special solutions</a><span>More funds than rules always leaves a do-nothing trade.</span></li>
+      <li><a href="#t6">The reduced form R and the nullspace matrix</a><span>Clear above the pivots too: $R = [\,I \;\; F\,]$, and the special solutions are read off as $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</span></li>
+      <li class="no-print"><a href="#t7">Summary</a><span>The key ideas and words on one screen.</span></li>
+    </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-keep">Row operations keep N(A)</a> <a href="#m-echelon">Echelon form U</a> <a href="#m-pivfree">Pivot and free variables</a> <a href="#m-rank">Rank r</a> <a href="#m-special">Special solutions</a> <a href="#m-count">n − r rule</a> <a href="#m-rref">Reduced row echelon form R</a> <a href="#m-nmatrix">Nullspace matrix N</a></p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="06_column-space-and-nullspace.html#t2">The nullspace</a> and <a href="06_column-space-and-nullspace.html#m-elim0">elimination on Ax = 0</a> (Lesson 6): do-nothing trades, free columns.</li>
+      <li><a href="06_column-space-and-nullspace.html#t5">All solutions = one answer + the nullspace</a> (Lesson 6).</li>
+      <li><a href="02_elimination-with-matrices.html#t3">Elimination, 3 × 3</a> and <a href="02_elimination-with-matrices.html#t4">back substitution</a> (Lesson 2).</li>
+      <li><a href="03_multiplication-and-inverse-matrices.html#t7">Gauss–Jordan</a> (Lesson 3): clearing above the pivots as well as below.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>Eliminate until the matrix is a staircase. Columns with a pivot hold the amounts that are <b>forced</b>; columns without one hold amounts you can <b>choose freely</b>. Set one free amount to 1 and the rest to 0, solve: that's a <b>special solution</b>. All do-nothing trades are mixes of the special solutions.</p>
+    </div>
+
+    <div class="box finance"><span class="label">The running example: more funds than before</span>
+      <p>Rules (rows): budget (₹ lakh), return (₹ thousand), market exposure. Funds (columns), each showing what ₹1 lakh of it does:</p>
+      <table>
+        <tr><th>Fund</th><th>Column (budget, return, exposure)</th><th>Note</th></tr>
+        <tr><td>Nifty</td><td>$(1, 12, 1)$</td><td>12%, beta 1</td></tr>
+        <tr><td>Nifty ETF</td><td>$(1, 12, 1)$</td><td>a twin of Nifty from another fund house</td></tr>
+        <tr><td>Bonds</td><td>$(1, 7, 0)$</td><td>7%, beta 0</td></tr>
+        <tr><td>Balanced</td><td>$(1, 9.5, 0.5)$</td><td>half Nifty, half bonds</td></tr>
+        <tr><td>Midcap</td><td>$(1, 15, 1.2)$</td><td>15%, beta 1.2</td></tr>
+      </table>
+      <p>Real fund menus look like this: many products, a few things you care about, and plenty of overlap. This lesson finds every overlap systematically.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. Elimination keeps the nullspace</h3>
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>Elimination only <b>recombines the rules</b> ("return minus 12 × budget"). A trade that leaves every rule at zero also leaves every combination of rules at zero. So $Ax = 0$ and $Ux = 0$ have exactly the same solutions.</p>
+    </div>
+    <div class="box method" id="m-keep"><span class="label">Rule · Row operations keep the nullspace (not the column space)</span>
+      <p>Subtracting a multiple of one row from another, swapping rows, or scaling a row by a non-zero number never changes which $x$ solve $Ax = 0$. It <b>does</b> change the columns, so the column space can change.</p>
+    </div>
+    <p>Take Lesson 6's Nifty, bonds, balanced matrix and its staircase $U$:</p>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 9.5 \\ 1 & 0 & 0.5 \end{bmatrix} \;\longrightarrow\; U = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & 0 \end{bmatrix} $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Same nullspace</span> The do-nothing trade $(1, 1, -2)$: in $A$, $1 + 1 - 2 = 0$, $12 + 7 - 19 = 0$, $1 + 0 - 1 = 0$. In $U$, $1 + 1 - 2 = 0$, $0 - 5 + 5 = 0$, $0 = 0$ ✓. Both send it to zero.</p>
+        <p class="k"><span class="kl">Why</span> Row 2 of $U$ is (row 2 of $A$) $-\ 12 \times$ (row 1 of $A$). If both rows give 0 for this trade, then $0 - 12 \times 0 = 0$ too.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Different column space</span> Every column of $U$ ends in 0, so $C(U)$ is the plane "third entry = 0". But $C(A)$ is the plane $R = 7B + 5E$ (Lesson 5), which contains $(1, 12, 1)$, whose third entry is 1.</p>
+        <p class="k"><span class="kl">So</span> Use $U$ to find the <b>nullspace</b>. Never read the column space off $U$.</p>
+      </li>
+    </ol>
+    <div class="box intuition"><span class="label">In one line</span><p>Elimination is safe for $Ax = 0$: same trades, simpler matrix.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. Warm-up: one rule, three funds</h3>
+    <p>Start with the simplest possible case: a single rule. With Nifty, bonds and midcap, a <b>zero-cost</b> trade has $x + y + z = 0$, a $1 \times 3$ system $\begin{bmatrix} 1 & 1 & 1 \end{bmatrix} x = 0$.</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Pivot</span> The 1 in column 1 is the only pivot. Nothing to eliminate: one row is already a staircase.</p>
+        <p class="k"><span class="kl">Free</span> Columns 2 and 3 have no pivot, so the bond amount $y$ and the midcap amount $z$ are <b>free</b>: pick them however you like.</p>
+        <p class="k"><span class="kl">Forced</span> The Nifty amount is then forced: $x = -y - z$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Special 1</span> $y = 1$, $z = 0$: $x = -1 - 0 = -1$. So $s_1 = (-1, 1, 0)$: sell ₹1 lakh Nifty, buy ₹1 lakh bonds.</p>
+        <p class="k"><span class="kl">Special 2</span> $y = 0$, $z = 1$: $x = -0 - 1 = -1$. So $s_2 = (-1, 0, 1)$: sell ₹1 lakh Nifty, buy ₹1 lakh midcap.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Everything</span> Every zero-cost trade is $y\,s_1 + z\,s_2$. Example: Lesson 5's trade $(-6, 1, 5) = 1 \times (-1, 1, 0) + 5 \times (-1, 0, 1) = (-1 - 5,\ 1 + 0,\ 0 + 5)$ ✓.</p>
+        <p class="k"><span class="kl">Meaning</span> Any rebalancing that doesn't add or withdraw money is "switch some Nifty into bonds" plus "switch some Nifty into midcap". Two building blocks, because two amounts are free.</p>
+      </li>
+    </ol>
+    <p>MIT's recitation does the same with $x - 5y + 2z = 0$: pivot $x$, free $y$ and $z$, special solutions $(5, 1, 0)$ and $(-2, 0, 1)$. Check: $5 - 5(1) + 2(0) = 0$ ✓ and $-2 - 5(0) + 2(1) = 0$ ✓.</p>
+    <div class="box intuition"><span class="label">In one line</span><p>One rule on three funds: one forced amount, two free amounts, two special solutions, a <b>plane</b> of do-nothing trades.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. Pivots, free variables and rank</h3>
+    <div class="box method" id="m-pivfree"><span class="label">Rule · Pivot variables and free variables</span>
+      <p>After elimination, a <b>pivot column</b> has a pivot (the first non-zero entry of some row); its unknown is a <b>pivot variable</b>, forced by back substitution. A <b>free column</b> has no pivot; its unknown is a <b>free variable</b>, chosen freely.</p>
+    </div>
+    <div class="box method" id="m-rank"><span class="label">Definition · Rank r = the number of pivots</span>
+      <p>The <b>rank</b> of $A$ is how many pivots elimination finds. In money terms: how many genuinely different directions the funds give you.</p>
+    </div>
+
+    <h4>2 × 2: the twins</h4>
+    <p>$\left[\begin{smallmatrix} 1 & 1 \\ 12 & 12 \end{smallmatrix}\right]$ (budget and return of Nifty and its twin ETF). Row 2 $-\ 12 \times$ row 1: $12 - 12 = 0$, $12 - 12 = 0$. One pivot (column 1), one free column (column 2). <b>Rank 1.</b> Special solution: ETF $= 1$, then $x + 1 = 0$, so $(-1, 1)$: swap ₹1 lakh of Nifty for the ETF.</p>
+
+    <h4>3 × 3: three funds, three rules</h4>
+    <table>
+      <tr><th>Funds</th><th>Staircase $U$</th><th>Pivots in columns</th><th>Free</th><th>Rank</th><th>Special solutions</th></tr>
+      <tr><td>Nifty, bonds, balanced</td><td>$\left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & 0 \end{smallmatrix}\right]$</td><td>1, 2</td><td>3 (balanced)</td><td>2</td><td>$(-0.5, -0.5, 1)$</td></tr>
+      <tr><td>Nifty, bonds, midcap</td><td>$\left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{smallmatrix}\right]$</td><td>1, 2, 3</td><td>none</td><td>3</td><td>none: $N = \{0\}$</td></tr>
+    </table>
+    <p>The balanced row, entry by entry (from Lesson 6): free $z = 1$. Row 2: $-5y - 2.5(1) = 0 \Rightarrow y = -0.5$. Row 1: $x + (-0.5) + 1 = 0 \Rightarrow x = -0.5$. This is Lesson 6's $(1, 1, -2)$ scaled by $-\tfrac12$: by convention a special solution sets its free variable to exactly 1.</p>
+    <div class="box intuition"><span class="label">In one line</span><p>Pivot = forced, free = your choice; rank = number of pivots = number of truly different funds.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. The full recipe: four funds, three rules</h3>
+    <p>Now a menu with overlap in two places: Nifty, Nifty ETF, bonds, balanced. Four unknowns $(x_1, x_2, x_3, x_4)$ = ₹ lakh in each, three rules:</p>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 & 1 \\ 12 & 12 & 7 & 9.5 \\ 1 & 1 & 0 & 0.5 \end{bmatrix} \;\begin{matrix} \leftarrow \text{budget} \\ \leftarrow \text{return} \\ \leftarrow \text{exposure} \end{matrix} $$
+    <p>This has exactly the shape of Strang's lecture example $\left[\begin{smallmatrix} 1 & 2 & 2 & 2 \\ 2 & 4 & 6 & 8 \\ 3 & 6 & 8 & 10 \end{smallmatrix}\right]$: a $3 \times 4$ matrix whose free columns turn out to be 2 and 4.</p>
+
+    <h4>Step 1: eliminate to a staircase</h4>
+    <div class="box method" id="m-echelon"><span class="label">Method · Echelon form U (the staircase)</span>
+      <p>Eliminate column by column. If a column has no non-zero entry at or below the current row, <b>skip it</b> (it's free) and move right; the pivot steps down only when one is found. The result: each row starts further right than the one above, and zero rows sit at the bottom.</p>
+    </div>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">What we do</span> Clear column 1 below the pivot 1.</p>
+        <p class="k"><span class="kl">Row 2</span> Multiplier $12 / 1 = 12$. Row 2 $-\ 12 \times$ row 1: $12 - 12(1) = 0$, $\;12 - 12(1) = 0$, $\;7 - 12(1) = -5$, $\;9.5 - 12(1) = -2.5$. Now $(0, 0, -5, -2.5)$.</p>
+        <p class="k"><span class="kl">Row 3</span> Multiplier $1 / 1 = 1$. Row 3 $-$ row 1: $1 - 1 = 0$, $\;1 - 1 = 0$, $\;0 - 1 = -1$, $\;0.5 - 1 = -0.5$. Now $(0, 0, -1, -0.5)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Column 2</span> Look for the next pivot in row 2, column 2: it's 0, and so is row 3's entry. <b>No pivot</b>, so column 2 (the ETF) is free. Move right.</p>
+        <p class="k"><span class="kl">Why</span> The ETF column equals the Nifty column, so whatever cleared Nifty cleared the ETF too.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Column 3</span> Row 2, column 3 is $-5$: that's pivot 2. Row 3: multiplier $(-1)/(-5) = 0.2$. Row 3 $-\ 0.2 \times$ row 2: $0$, $\;0$, $\;-1 - 0.2(-5) = 0$, $\;-0.5 - 0.2(-2.5) = 0$. Row 3 is all zeros.</p>
+        <p class="k"><span class="kl">Column 4</span> No rows left below row 2 with a non-zero entry: column 4 (balanced) is free.</p>
+      </li>
+    </ol>
+    $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} \qquad \begin{aligned} &\text{pivot columns: } 1, 3 \;(\text{Nifty, bonds}) \\ &\text{free columns: } 2, 4 \;(\text{ETF, balanced}) \\ &\text{rank } r = 2 \end{aligned} $$
+    <p>Row 3 vanished because exposure was already a mix of the other two rules for these funds: it carried no new information.</p>
+
+    <h4>Step 2: one special solution per free column</h4>
+    <div class="box method" id="m-special"><span class="label">Method · Special solutions</span>
+      <p>For each free variable in turn: set it to <b>1</b>, set the other free variables to <b>0</b>, and back-substitute for the pivot variables. Each free column gives one special solution.</p>
+    </div>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Free choice</span> ETF $x_2 = 1$, balanced $x_4 = 0$.</p>
+        <p class="k"><span class="kl">Row 2</span> $-5x_3 - 2.5(0) = 0 \Rightarrow x_3 = 0$.</p>
+        <p class="k"><span class="kl">Row 1</span> $x_1 + 1 + 0 + 0 = 0 \Rightarrow x_1 = -1$.</p>
+        <p class="k"><span class="kl">Result</span> $s_1 = (-1, 1, 0, 0)$: sell ₹1 lakh Nifty, buy ₹1 lakh ETF.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Free choice</span> ETF $x_2 = 0$, balanced $x_4 = 1$.</p>
+        <p class="k"><span class="kl">Row 2</span> $-5x_3 - 2.5(1) = 0 \Rightarrow -5x_3 = 2.5 \Rightarrow x_3 = -0.5$.</p>
+        <p class="k"><span class="kl">Row 1</span> $x_1 + 0 + (-0.5) + 1 = 0 \Rightarrow x_1 = -0.5$.</p>
+        <p class="k"><span class="kl">Result</span> $s_2 = (-0.5, 0, -0.5, 1)$: buy ₹1 lakh balanced, sell ₹0.5 lakh each of Nifty and bonds.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Check $s_1$</span> Budget $-1 + 1 + 0 + 0 = 0$ ✓. Return $-12 + 12 + 0 + 0 = 0$ ✓. Exposure $-1 + 1 + 0 + 0 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Check $s_2$</span> Budget $-0.5 + 0 - 0.5 + 1 = 0$ ✓. Return $12(-0.5) + 12(0) + 7(-0.5) + 9.5(1) = -6 - 3.5 + 9.5 = 0$ ✓. Exposure $-0.5 + 0 + 0 + 0.5 = 0$ ✓.</p>
+      </li>
+    </ol>
+
+    <h4>Step 3: every do-nothing trade</h4>
+    <p>$N(A)$ is all mixes $c\,s_1 + d\,s_2$: a <b>plane</b> inside $\mathbb{R}^4$ (the space of four-fund trades). Choose the ETF amount $c$ and the balanced amount $d$; the Nifty and bond amounts are forced: $x_1 = -c - 0.5d$, $x_3 = -0.5d$.</p>
+    <h4>Try it: choose the free amounts</h4>
+    <div id="mixspecial" class="lab-controls"></div>
+    <div class="box intuition"><span class="label">In one line</span><p>Staircase → pivot and free columns → one special solution per free column → all their mixes are the nullspace.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. Counting: n − r special solutions</h3>
+    <div class="box method" id="m-count"><span class="label">Rule · n − r free variables, n − r special solutions</span>
+      <p>With $n$ columns and rank $r$: $r$ pivot variables and $n - r$ free variables, so $n - r$ special solutions. If $n > m$ (more unknowns than equations), then $r \le m < n$, so there is <b>at least one</b> free variable and a non-zero do-nothing trade <b>always</b> exists.</p>
+    </div>
+    <table>
+      <tr><th>Matrix</th><th>$m$ rules</th><th>$n$ funds</th><th>rank $r$</th><th>$n - r$</th><th>Nullspace</th></tr>
+      <tr><td>Zero-cost $[1\ 1\ 1]$</td><td>1</td><td>3</td><td>1</td><td>2</td><td>a plane</td></tr>
+      <tr><td>Twins (2 × 2)</td><td>2</td><td>2</td><td>1</td><td>1</td><td>a line</td></tr>
+      <tr><td>Nifty, bonds, balanced</td><td>3</td><td>3</td><td>2</td><td>1</td><td>a line</td></tr>
+      <tr><td>Nifty, bonds, midcap</td><td>3</td><td>3</td><td>3</td><td>0</td><td>only $0$</td></tr>
+      <tr><td>Nifty, ETF, bonds, balanced</td><td>3</td><td>4</td><td>2</td><td>2</td><td>a plane in $\mathbb{R}^4$</td></tr>
+      <tr><td>Nifty, bonds, midcap, balanced</td><td>3</td><td>4</td><td>3</td><td>1</td><td>a line in $\mathbb{R}^4$</td></tr>
+    </table>
+    <p><b>The last row, worked.</b> Nifty, bonds and midcap already give 3 pivots (topic 3), so balanced must be free. Set it to 1: the forced amounts come out as $(-0.5, -0.5, 0, 1)$, the same "build balanced yourself" trade. Check: budget $-0.5 - 0.5 + 0 + 1 = 0$ ✓; return $-6 - 3.5 + 0 + 9.5 = 0$ ✓; exposure $-0.5 + 0 + 0 + 0.5 = 0$ ✓.</p>
+    <div class="box finance"><span class="label">Why a desk cares</span>
+      <p>Three things you control (budget, return, exposure) and four or more products: there is <b>guaranteed</b> to be a way to switch between products that changes nothing you measure. That's exactly where a desk looks for the cheaper route, and where hidden risks (things you <i>don't</i> measure) can creep in unnoticed.</p>
+    </div>
+    <div class="box intuition"><span class="label">In one line</span><p>Free variables = funds − pivots. More funds than rules ⇒ at least one do-nothing trade.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. The reduced form R and the nullspace matrix</h3>
+    <div class="box intuition"><span class="label">The whole idea in one line</span>
+      <p>Keep going after $U$: make each pivot 1 and clear <b>above</b> it too. Then the special solutions can be read straight off the matrix, no back substitution needed.</p>
+    </div>
+    <div class="box method" id="m-rref"><span class="label">Method · Reduced row echelon form R (Gauss–Jordan on U)</span>
+      <p>From $U$: divide each pivot row by its pivot, then subtract multiples of it from the rows <b>above</b> so every pivot column is all zeros except its 1. The result $R = \text{rref}(A)$ has the same nullspace as $A$ and $U$.</p>
+    </div>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Pivot 2 → 1</span> Row 2 $\div (-5)$: $0, 0, \;-5/(-5) = 1, \;-2.5/(-5) = 0.5$. Now row 2 $= (0, 0, 1, 0.5)$.</p>
+        <p class="k"><span class="kl">Clear above</span> Row 1 has a 1 in column 3. Row 1 $-\ 1 \times$ row 2: $1 - 0 = 1$, $\;1 - 0 = 1$, $\;1 - 1 = 0$, $\;1 - 0.5 = 0.5$. Now row 1 $= (1, 1, 0, 0.5)$.</p>
+      </li>
+    </ol>
+    $$ R = \begin{bmatrix} \boxed{1} & 1 & 0 & 0.5 \\ 0 & 0 & \boxed{1} & 0.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} \qquad \begin{aligned} \text{row 1: } & x_1 + x_2 + 0.5x_4 = 0 \\ \text{row 2: } & x_3 + 0.5x_4 = 0 \end{aligned} $$
+    <p>Each row now says "pivot amount $= -$(free amounts × these numbers)": $x_1 = -x_2 - 0.5x_4$ and $x_3 = -0.5x_4$. That's the forced-amount rule from topic 4, with no work left.</p>
+
+    <h4>Pivot columns first: R = [ I  F ]</h4>
+    <p>List the pivot columns (1, 3) first and the free columns (2, 4) after. The pivot part becomes an identity $I$, and the free part is a block $F$:</p>
+    $$ \begin{array}{c|cc|cc} & x_1 & x_3 & x_2 & x_4 \\ \hline \text{row 1} & 1 & 0 & 1 & 0.5 \\ \text{row 2} & 0 & 1 & 0 & 0.5 \end{array} \qquad I = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}, \quad F = \begin{bmatrix} 1 & 0.5 \\ 0 & 0.5 \end{bmatrix} $$
+    <div class="box method" id="m-nmatrix"><span class="label">Method · Nullspace matrix N = [ −F ; I ]</span>
+      <p>Stack $-F$ (the pivot amounts) on top of an identity (the free amounts, each set to 1 in turn). Its columns are exactly the special solutions, and $RN = 0$. Rows of $N$ are in the order pivot variables, then free variables.</p>
+    </div>
+    $$ N = \begin{bmatrix} -F \\ I \end{bmatrix} = \begin{array}{c} x_1 \\ x_3 \\ x_2 \\ x_4 \end{array}\!\begin{bmatrix} -1 & -0.5 \\ 0 & -0.5 \\ 1 & 0 \\ 0 & 1 \end{bmatrix} \;\xrightarrow{\text{back to order } x_1, x_2, x_3, x_4}\; s_1 = (-1, 1, 0, 0), \;\; s_2 = (-0.5, 0, -0.5, 1) \;✓ $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Check $RN$</span> Row 1 · $s_1$: $1(-1) + 1(1) + 0(0) + 0.5(0) = 0$ ✓. Row 1 · $s_2$: $1(-0.5) + 1(0) + 0(-0.5) + 0.5(1) = 0$ ✓.</p>
+        <p class="k"><span class="kl"></span> Row 2 · $s_1$: $0 + 0 + 1(0) + 0.5(0) = 0$ ✓. Row 2 · $s_2$: $0 + 0 + 1(-0.5) + 0.5(1) = 0$ ✓. Row 3 is zero, so it gives 0 for both.</p>
+        <p class="k"><span class="kl">Why it works</span> $R$ times a trade = $I \times$ (pivot part) $+\ F \times$ (free part). With pivot part $-F$ and free part $I$: $I(-F) + FI = -F + F = 0$.</p>
+      </li>
+    </ol>
+    <details class="more"><summary>For the curious: MIT's own example, and its transpose</summary>
+      <p>Strang's $A = \left[\begin{smallmatrix} 1 & 2 & 2 & 2 \\ 2 & 4 & 6 & 8 \\ 3 & 6 & 8 & 10 \end{smallmatrix}\right]$ reduces to $R = \left[\begin{smallmatrix} 1 & 2 & 0 & -2 \\ 0 & 0 & 1 & 2 \\ 0 & 0 & 0 & 0 \end{smallmatrix}\right]$: pivots in columns 1 and 3, $F = \left[\begin{smallmatrix} 2 & -2 \\ 0 & 2 \end{smallmatrix}\right]$, special solutions $(-2, 1, 0, 0)$ and $(2, 0, -2, 1)$. Its transpose (a $4 \times 3$) also has rank 2, with one special solution $(-1, -1, 1)$: column 3 = column 1 + column 2. Rank is the same for $A$ and $A^T$, a fact Lesson 10 explains.</p>
+    </details>
+    <div class="box intuition"><span class="label">In one line</span><p>$R = [\,I \;\; F\,]$ (after moving pivot columns first), and the special solutions are the columns of $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</p></div>
+
+    <details class="check"><summary>Check yourself (MIT problem 7.1): find $R$, the rank and the special solutions of $\left[\begin{smallmatrix} 1 & 5 & 7 & 9 \\ 0 & 4 & 1 & 7 \\ 2 & -2 & 11 & -3 \end{smallmatrix}\right]$.</summary>
+      <p>Row 3 $-\ 2 \times$ row 1: $(0, -12, -3, -21)$. Row 2 $\div 4$: $(0, 1, \tfrac14, \tfrac74)$. Row 3 $+\ 12 \times$ row 2: $(0, 0, 0, 0)$. Row 1 $-\ 5 \times$ row 2: $(1, 0, 7 - \tfrac54, 9 - \tfrac{35}{4}) = (1, 0, \tfrac{23}{4}, \tfrac14)$. So $R = \left[\begin{smallmatrix} 1 & 0 & 23/4 & 1/4 \\ 0 & 1 & 1/4 & 7/4 \\ 0 & 0 & 0 & 0 \end{smallmatrix}\right]$, rank 2, free columns 3 and 4, and $N$'s columns are $(-\tfrac{23}{4}, -\tfrac14, 1, 0)$ and $(-\tfrac14, -\tfrac74, 0, 1)$. Try it in the lab on the Examples tab.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <!-- Summary: website only (left out of the PDF report) -->
+    <div class="no-print">
+    <h3 class="topic" id="t7">7. Summary</h3>
+    <div class="summary">
+      <h3>Key ideas</h3>
+      <ol>
+        <li>Row operations keep the nullspace (but can change the column space). (<a href="#t1">topic 1</a>)</li>
+        <li>After elimination: pivot columns give forced (pivot) variables, the rest give free variables. (<a href="#t2">topic 2</a>, <a href="#t3">topic 3</a>)</li>
+        <li>Rank $r$ = number of pivots. (<a href="#t3">topic 3</a>)</li>
+        <li>Special solution: one free variable = 1, the others 0, back-substitute. $N(A)$ = all their mixes. (<a href="#t4">topic 4</a>)</li>
+        <li>There are $n - r$ special solutions; more columns than rows guarantees a non-zero nullspace. (<a href="#t5">topic 5</a>)</li>
+        <li>$R = \text{rref}(A) = [\,I \;\; F\,]$ (pivot columns first); $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$ and $RN = 0$. (<a href="#t6">topic 6</a>)</li>
+      </ol>
+    </div>
+    <h4>Words in this lesson</h4>
+    <dl class="vocab">
+      <dt>Echelon form $U$</dt><dd>The staircase after elimination: each row starts further right; zero rows at the bottom.</dd>
+      <dt>Pivot column / variable</dt><dd>A column with a pivot; its unknown is forced by the free ones.</dd>
+      <dt>Free column / variable</dt><dd>A column with no pivot; its unknown can be any number.</dd>
+      <dt>Rank $r$</dt><dd>The number of pivots: the number of truly different columns.</dd>
+      <dt>Special solution</dt><dd>The solution of $Ax = 0$ with one free variable = 1 and the others 0.</dd>
+      <dt>Reduced row echelon form $R$</dt><dd>Pivots equal to 1 with zeros above and below them.</dd>
+      <dt>Nullspace matrix $N$</dt><dd>The matrix whose columns are the special solutions: $\left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</dd>
+    </dl>
+    </div>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: four hedges, three risks</a></li>
+        <li><a href="#ex2">Lot sizes: four products, three scenarios</a></li>
+        <li><a href="#ex3">Pivot and special-solution lab</a></li>
+      </ol>
+    </nav>
+
+    <p>The other two running examples, both with <b>more instruments than rules</b>, so the $n - r$ rule promises a do-nothing trade before we compute anything.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, four hedges, three risks</h3>
+    <p>Rows: (market, currency, rates). Columns: Nifty fut $(1, 0, 0)$, IT fut $(1, 1, 0)$, Bank Nifty fut $(1, 0, 1)$, IT-minus-Nifty spread $(0, 1, 0)$.</p>
+
+    <h4>2 × 2 first: Nifty and IT futures, market and currency</h4>
+    <p>$\left[\begin{smallmatrix} 1 & 1 \\ 0 & 1 \end{smallmatrix}\right]$ is already a staircase with pivots in both columns: rank 2, no free variable, $N = \{0\}$. Each (market, currency) target has exactly one hedge.</p>
+
+    <h4>3 × 4: all four</h4>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 & 0 \\ 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{bmatrix} \;\begin{matrix} \leftarrow \text{market} \\ \leftarrow \text{currency} \\ \leftarrow \text{rates} \end{matrix} $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Staircase</span> Already one: pivots in columns 1, 2, 3. Rank $r = 3$, $n - r = 4 - 3 = 1$ free column: the spread.</p>
+        <p class="k"><span class="kl">Reduce</span> Row 1 $-$ row 2: $(1, 0, 1, -1)$. Then row 1 $-$ row 3: $(1, 0, 0, -1)$. $R = \left[\begin{smallmatrix} 1 & 0 & 0 & -1 \\ 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{smallmatrix}\right] = [\,I \;\; F\,]$ with $F = (-1, 1, 0)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Special</span> $N = \left[\begin{smallmatrix} -F \\ 1 \end{smallmatrix}\right] = (1, -1, 0, 1)$: buy 1 Nifty fut, sell 1 IT fut, buy 1 spread.</p>
+        <p class="k"><span class="kl">Check</span> Market $1 - 1 + 0 + 0 = 0$ ✓. Currency $0 - 1 + 0 + 1 = 0$ ✓. Rates $0 + 0 + 0 + 0 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Meaning</span> The spread is a ready-made "IT fut minus Nifty fut". With it on the menu, every hedge can be done in a whole line of ways.</p>
+      </li>
+    </ol>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, four products, three scenarios</h3>
+    <p>Rows: Nifty ends at 19,800 / 20,000 / 20,200. Entries: payoff in points per lot. Columns: futures $(-200, 0, 200)$, 20,000 call $(0, 0, 200)$, 20,000 put $(200, 0, 0)$, 19,900 call $(0, 100, 300)$.</p>
+
+    <h4>2 × 2 first: futures and the 20,000 call</h4>
+    <p>Scenarios 19,800 and 20,200 only: $\left[\begin{smallmatrix} -200 & 0 \\ 200 & 200 \end{smallmatrix}\right]$. Row 2 $+$ row 1 (multiplier $200 / (-200) = -1$): $(0, 200)$. Pivots in both columns: rank 2, $N = \{0\}$.</p>
+
+    <h4>3 × 4: all four products</h4>
+    $$ A = \begin{bmatrix} -200 & 0 & 200 & 0 \\ 0 & 0 & 0 & 100 \\ 200 & 200 & 0 & 300 \end{bmatrix} \;\begin{matrix} \leftarrow 19{,}800 \\ \leftarrow 20{,}000 \\ \leftarrow 20{,}200 \end{matrix} $$
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Column 1</span> Pivot $-200$. Row 3: multiplier $200/(-200) = -1$, so row 3 $+$ row 1: $0$, $\;200 + 0 = 200$, $\;0 + 200 = 200$, $\;300 + 0 = 300$. Now $(0, 200, 200, 300)$.</p>
+        <p class="k"><span class="kl">Column 2</span> Row 2 has 0 here but row 3 has 200: swap rows 2 and 3. Pivot 200.</p>
+        <p class="k"><span class="kl">Column 3</span> Below the pivot row there's only the old row 2, $(0, 0, 0, 100)$: 0 in column 3. <b>No pivot</b>: the put is free.</p>
+        <p class="k"><span class="kl">Column 4</span> Pivot 100. Rank 3, one free column.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Staircase</span> $U = \left[\begin{smallmatrix} -200 & 0 & 200 & 0 \\ 0 & 200 & 200 & 300 \\ 0 & 0 & 0 & 100 \end{smallmatrix}\right]$.</p>
+        <p class="k"><span class="kl">Reduce</span> Row 1 $\div (-200)$: $(1, 0, -1, 0)$. Row 2 $\div 200$: $(0, 1, 1, 1.5)$. Row 3 $\div 100$: $(0, 0, 0, 1)$. Row 2 $-\ 1.5 \times$ row 3: $(0, 1, 1, 0)$.</p>
+        <p class="k"><span class="kl">R</span> $\left[\begin{smallmatrix} 1 & 0 & -1 & 0 \\ 0 & 1 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{smallmatrix}\right]$: pivot columns 1, 2, 4; free column 3 holds $F = (-1, 1, 0)$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Special</span> Put $= 1$: futures $= 1$, 20,000 call $= -1$, 19,900 call $= 0$. So $(1, -1, 1, 0)$.</p>
+        <p class="k"><span class="kl">Check</span> 19,800: $-200 + 0 + 200 + 0 = 0$ ✓. 20,000: $0 + 0 + 0 + 0 = 0$ ✓. 20,200: $200 - 200 + 0 + 0 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Meaning</span> Put–call parity again, now found by the recipe: the 19,900 call is <b>not</b> part of any do-nothing trade, because it's the only product that pays at 20,000.</p>
+      </li>
+    </ol>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Pivot and special-solution lab</h3>
+    <p>Pick an example or set your own size (up to 3 rules × 5 instruments) and numbers. The lab eliminates to $U$, reduces to $R$, marks pivot and free columns, gives the rank, builds every special solution and checks $As = 0$ row by row.</p>
+    <div id="rreflab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="06_column-space-and-nullspace.html">← Lesson 6: Column Space and Nullspace</a>
+    <span class="off">Next: Lesson 8 (coming soon)</span>
+  </nav>
+  </div>
+</main>
+<script>
+// Interactive pieces: Notes topic 4 (choose the free amounts) and the Examples tab (pivot and special-solution lab).
+window.addEventListener("load", function () {
+  function km(el) { if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false }); }
+  // Numbers as whole numbers, simple fractions or short decimals (KaTeX source).
+  function t(v) {
+    if (Math.abs(v) < 1e-9) return "0";
+    var r = Math.round(v);
+    if (Math.abs(v - r) < 1e-9) return String(r);
+    if (Math.abs(v * 1000 - Math.round(v * 1000)) < 1e-6) return String(Math.round(v * 1000) / 1000);   // short decimals stay decimals
+    for (var q = 2; q <= 64; q++) { var p = Math.round(v * q); if (Math.abs(v * q - p) < 1e-7) return (p < 0 ? "-" : "") + "\\tfrac{" + Math.abs(p) + "}{" + q + "}"; }
+    return String(Math.round(v * 1e4) / 1e4);
+  }
+  function d(v) { var r = Math.round(v * 1e4) / 1e4; if (Math.abs(r) < 1e-9) r = 0; return String(r); }
+  function vec(v, fmt) { return "(" + v.map(fmt || t).join(", ") + ")"; }
+
+  // ---- Notes, topic 4: choose the free amounts, the pivot amounts follow ----
+  (function () {
+    var root = document.getElementById("mixspecial"); if (!root) return;
+    root.innerHTML = '<div class="lab-row"><label>ETF amount $x_2 = c$ <input type="number" step="any" class="ms-c" value="2" style="width:5em"></label>' +
+      '<label>Balanced amount $x_4 = d$ <input type="number" step="any" class="ms-d" value="2" style="width:5em"></label></div><div class="ms-out mixer-out"></div>';
+    km(root.querySelector(".lab-row"));
+    var ci = root.querySelector(".ms-c"), di = root.querySelector(".ms-d"), out = root.querySelector(".ms-out");
+    var A = [[1, 1, 1, 1], [12, 12, 7, 9.5], [1, 1, 0, 0.5]], names = ["Budget", "Return", "Exposure"];
+    function update() {
+      var c = parseFloat(ci.value), dd = parseFloat(di.value); if (!isFinite(c)) c = 0; if (!isFinite(dd)) dd = 0;
+      var x = [-c - 0.5 * dd, c, -0.5 * dd, dd];
+      var h = "<p><b>Free</b> (you chose): ETF $x_2 = " + d(c) + "$, balanced $x_4 = " + d(dd) + "$.<br><b>Forced</b>: Nifty $x_1 = -c - 0.5d = " + d(x[0]) + "$, bonds $x_3 = -0.5d = " + d(x[2]) + "$.</p>";
+      h += "<p>Trade $= " + d(c) + "\\,s_1 + " + (dd < 0 ? "(" + d(dd) + ")" : d(dd)) + "\\,s_2 = " + vec(x, d) + "$ (₹ lakh in Nifty, ETF, bonds, balanced).</p><p>";
+      h += A.map(function (row, i) {
+        var s = row.reduce(function (acc, a, j) { return acc + a * x[j]; }, 0);
+        return names[i] + ": $" + row.map(function (a, j) { return d(a) + "(" + d(x[j]) + ")"; }).join(" + ") + " = " + d(s) + "$ ✓";
+      }).join("<br>") + "</p>";
+      h += '<p class="answer">Nothing changes: every rule stays at 0, whatever free amounts you pick.</p>';
+      out.innerHTML = h; km(out);
+    }
+    root.addEventListener("input", update); update();
+  })();
+
+  // ---- Examples tab: pivot and special-solution lab (m × n, m ≤ 3, n ≤ 5) ----
+  (function () {
+    var root = document.getElementById("rreflab"); if (!root) return;
+    var presets = [
+      { label: "Portfolio · Nifty, ETF, bonds, balanced", rows: ["budget", "return", "exposure"], cols: ["Nifty", "ETF", "Bonds", "Balanced"], A: [[1, 1, 1, 1], [12, 12, 7, 9.5], [1, 1, 0, 0.5]] },
+      { label: "Portfolio · Nifty, bonds, midcap, balanced", rows: ["budget", "return", "exposure"], cols: ["Nifty", "Bonds", "Midcap", "Balanced"], A: [[1, 1, 1, 1], [12, 7, 15, 9.5], [1, 0, 1.2, 0.5]] },
+      { label: "Portfolio · zero-cost rule (1 × 3)", rows: ["cost"], cols: ["Nifty", "Bonds", "Midcap"], A: [[1, 1, 1]] },
+      { label: "Hedging · 4 hedges, 3 risks", rows: ["market", "currency", "rates"], cols: ["Nifty fut", "IT fut", "Bank fut", "Spread"], A: [[1, 1, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]] },
+      { label: "Lot sizes · fut, 20,000 C, 20,000 P, 19,900 C", rows: ["at 19,800", "at 20,000", "at 20,200"], cols: ["Futures", "20,000 C", "20,000 P", "19,900 C"], A: [[-200, 0, 200, 0], [0, 0, 0, 100], [200, 200, 0, 300]] },
+      { label: "MIT lecture example (3 × 4)", rows: ["row 1", "row 2", "row 3"], cols: ["x₁", "x₂", "x₃", "x₄"], A: [[1, 2, 2, 2], [2, 4, 6, 8], [3, 6, 8, 10]] },
+      { label: "MIT problem 7.1 (3 × 4)", rows: ["row 1", "row 2", "row 3"], cols: ["x₁", "x₂", "x₃", "x₄"], A: [[1, 5, 7, 9], [0, 4, 1, 7], [2, -2, 11, -3]] }
+    ];
+    var TOL = 1e-9;
+    root.innerHTML = '<div class="lab-controls"><div class="lab-row"><label>Example <select class="rr-pick">' +
+      presets.map(function (p, i) { return '<option value="' + i + '">' + p.label + "</option>"; }).join("") +
+      '</select></label><button type="button" class="lab-btn rr-reset">Reset numbers</button></div>' +
+      '<div class="lab-row"><label>Rules (rows) <select class="rr-m"><option>1</option><option>2</option><option>3</option></select></label>' +
+      '<label>Instruments (columns) <select class="rr-n"><option>2</option><option>3</option><option>4</option><option>5</option></select></label></div>' +
+      '<div class="rr-grid"></div></div><div class="rr-out"></div>';
+    var pick = root.querySelector(".rr-pick"), mSel = root.querySelector(".rr-m"), nSel = root.querySelector(".rr-n"), grid = root.querySelector(".rr-grid"), out = root.querySelector(".rr-out");
+    var P, rows, cols;
+    function load() {
+      P = presets[+pick.value]; mSel.value = String(P.A.length); nSel.value = String(P.A[0].length);
+      rows = P.rows.slice(); cols = P.cols.slice(); draw(P.A);
+    }
+    function current() {
+      var M = []; grid.querySelectorAll("input").forEach(function (el) { var i = +el.dataset.i, j = +el.dataset.j, x = parseFloat(el.value); (M[i] = M[i] || [])[j] = isFinite(x) ? x : 0; });
+      return M;
+    }
+    function resize() {
+      var old = current(), m = +mSel.value, n = +nSel.value, A = [];
+      for (var i = 0; i < m; i++) { A.push([]); for (var j = 0; j < n; j++) A[i].push(old[i] && old[i][j] !== undefined ? old[i][j] : 0); }
+      while (rows.length < m) rows.push("row " + (rows.length + 1)); while (cols.length < n) cols.push("x" + (cols.length + 1));
+      draw(A);
+    }
+    function draw(A) {
+      var m = A.length, n = A[0].length;
+      var h = '<table class="lab-table sl-table"><tr><th></th>';
+      for (var j = 0; j < n; j++) h += "<th>" + cols[j] + "</th>";
+      h += "</tr>";
+      for (var i = 0; i < m; i++) {
+        h += "<tr><th>" + rows[i] + "</th>";
+        for (var j2 = 0; j2 < n; j2++) h += '<td><input type="number" step="any" data-i="' + i + '" data-j="' + j2 + '" value="' + A[i][j2] + '"></td>';
+        h += "</tr>";
+      }
+      grid.innerHTML = h + "</table>"; update();
+    }
+    function mat(M, piv) {
+      return "\\begin{bmatrix}" + M.map(function (r, i) {
+        return r.map(function (v, j) { return piv && piv.some(function (p) { return p[0] === i && p[1] === j; }) ? "\\boxed{" + t(v) + "}" : t(v); }).join(" & ");
+      }).join(" \\\\ ") + "\\end{bmatrix}";
+    }
+    function update() {
+      var A0 = current(), m = A0.length, n = A0[0].length;
+      var M = A0.map(function (r) { return r.slice(); });
+      var scale = Math.max(1, Math.max.apply(null, M.map(function (r) { return Math.max.apply(null, r.map(Math.abs)); })));
+      var zero = function (v) { return Math.abs(v) < TOL * scale * 1e3; };
+      var clean = function () { M.forEach(function (r) { r.forEach(function (v, k) { if (zero(v)) r[k] = 0; }); }); };
+      var steps = [], piv = [], row = 0;
+      for (var col = 0; col < n && row < m; col++) {
+        var p = -1; for (var i = row; i < m; i++) if (!zero(M[i][col])) { p = i; break; }
+        if (p < 0) { steps.push("Column " + (col + 1) + " (" + cols[col] + "): no non-zero entry from row " + (row + 1) + " down, so <b>no pivot</b>: free column. Move right."); continue; }
+        if (p !== row) { var tmp = M[p]; M[p] = M[row]; M[row] = tmp; steps.push("Swap rows " + (row + 1) + " and " + (p + 1) + " to bring a non-zero entry into the pivot spot."); }
+        steps.push("Column " + (col + 1) + " (" + cols[col] + "): pivot $" + t(M[row][col]) + "$ in row " + (row + 1) + ".");
+        for (var r2 = row + 1; r2 < m; r2++) {
+          if (zero(M[r2][col])) continue;
+          var l = M[r2][col] / M[row][col], before = M[r2].slice();
+          for (var k = 0; k < n; k++) M[r2][k] -= l * M[row][k];
+          clean();
+          steps.push("&nbsp;&nbsp;Row " + (r2 + 1) + " − (" + d(l) + ") × row " + (row + 1) + " (multiplier $" + t(before[col]) + " / " + t(M[row][col]) + " = " + t(l) + "$): $" +
+            before.map(function (v, k2) { return t(v) + " - (" + t(l) + ")(" + t(M[row][k2]) + ") = " + t(M[r2][k2]); }).join(", \\;") + "$");
+        }
+        piv.push([row, col]); row++;
+      }
+      var U = M.map(function (r) { return r.slice(); });
+      // Reduce: pivots to 1, clear above.
+      var rsteps = [];
+      for (var q = piv.length - 1; q >= 0; q--) {
+        var pr = piv[q][0], pc = piv[q][1], pv = M[pr][pc];
+        if (Math.abs(pv - 1) > 1e-12) { var b4 = M[pr].slice(); for (var k3 = 0; k3 < n; k3++) M[pr][k3] /= pv; clean(); rsteps.push("Row " + (pr + 1) + " ÷ $" + t(pv) + "$: $" + vec(b4) + " \\to " + vec(M[pr]) + "$"); }
+        for (var up = 0; up < pr; up++) {
+          if (zero(M[up][pc])) continue;
+          var l2 = M[up][pc], b5 = M[up].slice();
+          for (var k4 = 0; k4 < n; k4++) M[up][k4] -= l2 * M[pr][k4];
+          clean();
+          rsteps.push("Row " + (up + 1) + " − (" + d(l2) + ") × row " + (pr + 1) + " to clear above the pivot: $" + vec(b5) + " \\to " + vec(M[up]) + "$");
+        }
+      }
+      var pivCols = piv.map(function (p2) { return p2[1]; }), free = [];
+      for (var j = 0; j < n; j++) if (pivCols.indexOf(j) < 0) free.push(j);
+      var r = piv.length;
+      var h = "<h4>1. Eliminate to the staircase U</h4><p>Start: $A = " + mat(A0) + "$</p><p>" + steps.join("<br>") + "</p>";
+      h += "<p>$U = " + mat(U, piv) + "$</p>";
+      h += "<h4>2. Pivots, free columns, rank</h4><p>Pivot columns: " + (pivCols.length ? pivCols.map(function (c) { return cols[c]; }).join(", ") : "none") +
+        ". Free columns: " + (free.length ? free.map(function (c) { return cols[c]; }).join(", ") : "none") + ".</p>";
+      h += '<p class="answer">Rank $r = ' + r + "$, so $n - r = " + n + " - " + r + " = " + (n - r) + "$ special solution" + (n - r === 1 ? "" : "s") + ".</p>";
+      h += "<h4>3. Reduce to R</h4><p>" + (rsteps.length ? rsteps.join("<br>") : "Nothing to do: pivots are already 1 with zeros above.") + "</p><p>$R = " + mat(M, piv.map(function (p3) { return p3; })) + "$</p>";
+      h += "<h4>4. Special solutions</h4>";
+      if (!free.length) h += '<p class="answer">No free column: $N(A) = \\{0\\}$. The only do-nothing trade is doing nothing.</p>';
+      else {
+        free.forEach(function (fj, k5) {
+          var x = new Array(n).fill(0); x[fj] = 1;
+          piv.forEach(function (p4) { x[p4[1]] = -M[p4[0]][fj]; });
+          h += "<p><b>$s_" + (k5 + 1) + "$</b>: " + cols[fj] + " $= 1$" + (free.length > 1 ? ", other free $= 0$" : "") + "; pivot amounts $= -$(column " + (fj + 1) + " of $R$): $s_" + (k5 + 1) + " = " + vec(x) + "$.<br>Check $As_" + (k5 + 1) + "$: " +
+            A0.map(function (row2, i2) { var s = row2.reduce(function (acc, a, jj) { return acc + a * x[jj]; }, 0); return rows[i2] + " $" + row2.map(function (a, jj) { return t(a) + "(" + t(x[jj]) + ")"; }).join(" + ") + " = " + t(s) + "$"; }).join("; ") + " ✓</p>";
+        });
+        h += '<p class="answer">$N(A)$ = every mix of ' + (free.length === 1 ? "$s_1$: a line" : free.length === 2 ? "$s_1, s_2$: a plane" : "these " + free.length + " special solutions") + " in $\\mathbb{R}^" + n + "$.</p>";
+      }
+      out.innerHTML = h; km(out);
+    }
+    pick.addEventListener("change", load); root.querySelector(".rr-reset").addEventListener("click", load);
+    mSel.addEventListener("change", resize); nSel.addEventListener("change", resize); grid.addEventListener("input", update);
+    load();
+  })();
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=8"></script>
+</body>
+</html>

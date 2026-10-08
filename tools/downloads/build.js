@@ -51,6 +51,13 @@ const LESSONS = [
     page: "linear-algebra/06_column-space-and-nullspace.html",
     slides: "linear-algebra/06_column-space-and-nullspace-slides.html",
     plots: { nsPlot: { file: "linear-algebra/img/l6-nullspace.png", width: 600, height: 520 } }
+  },
+  {
+    slug: "la-07-solving-ax-0-pivot-variables-special-solutions",
+    title: "Linear Algebra · Lesson 7 · Solving Ax = 0: Pivot Variables, Special Solutions",
+    page: "linear-algebra/07_solving-ax-0-pivot-variables-special-solutions.html",
+    slides: "linear-algebra/07_solving-ax-0-pivot-variables-special-solutions-slides.html",
+    plots: {}
   }
 ];
 

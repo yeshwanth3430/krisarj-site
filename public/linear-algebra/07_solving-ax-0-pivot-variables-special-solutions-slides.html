@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solving Ax = 0 · Slides</title>
+<meta name="description" content="Linear Algebra Lesson 7 as a slide carousel: pivot and free variables, rank, special solutions, the reduced form R and the nullspace matrix, on portfolio, hedging and options examples.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<style>
+  /* One slide = one 1080 × 1350 page (LinkedIn's portrait carousel size). Always light. */
+  @page { size: 1080px 1350px; margin: 0; }
+  html, body { margin: 0; background: #e9e5dc; }
+  body { font: 34px/1.5 var(--serif); color: var(--ink); }
+  .slide {
+    position: relative; overflow: hidden; box-sizing: border-box;
+    width: 1080px; height: 1350px; margin: 0 auto 24px; padding: 96px 84px 130px;
+    background: var(--paper); display: flex; flex-direction: column;
+    font-size: 38px; line-height: 1.45;   /* set here, so print styles for the notes don't shrink it */
+    break-after: page; page-break-after: always;
+  }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .kicker { font: 600 22px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .slide h1 { font: 700 82px/1.06 var(--sans); letter-spacing: -.02em; margin: 22px 0 30px; }
+  .slide h2 { font: 700 60px/1.12 var(--sans); letter-spacing: -.015em; margin: 14px 0 34px; padding: 0; border: 0; }
+  .slide p { margin: 0 0 26px; }
+  .slide ul, .slide ol { margin: 0 0 26px; padding-left: 40px; }
+  .slide li { margin: 0 0 14px; }
+  .lead { font-size: 44px; line-height: 1.38; }
+  .soft { color: var(--ink-soft); }
+  .slide table { display: table; width: 100%; font-size: 32px; margin: 10px 0 28px; }
+  .slide th { font-size: 24px; }
+  .slide th, .slide td { padding: 12px 16px; }
+  .slide .box { font-size: 34px; margin: 10px 0 26px; padding: 18px 24px; }
+  .slide .box > .label { font-size: 18px; }
+  .slide figure.fig { width: 100%; max-width: 660px; align-self: center; margin: 6px 0 0; padding: 18px; }
+  .slide .figs { width: 100%; }
+  .slide .figs figure.fig { max-width: none; }
+  .slide figure.fig figcaption { font-size: 26px; }
+  .slide .fig .tick { font-size: 12px; }
+  .slide .figs { gap: 22px; }
+  .slide img.plot { display: block; align-self: center; max-width: 100%; max-height: 440px; width: auto; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .slide .katex { font-size: 1.04em; }
+  .answer { font-size: 1em; }
+  .foot {
+    position: absolute; left: 84px; right: 84px; bottom: 48px;
+    display: flex; justify-content: space-between; gap: 20px;
+    padding-top: 18px; border-top: 2px solid var(--rule);
+    font: 500 21px/1 var(--sans); color: var(--ink-soft);
+  }
+  .cover { justify-content: center; }
+  .cover h1 { font-size: 104px; }
+  .cover .lead { font-size: 44px; }
+  .chip { display: inline-block; font: 600 24px/1 var(--sans); color: var(--accent); border: 2px solid var(--accent); border-radius: 999px; padding: 12px 20px; margin: 0 10px 12px 0; }
+  .center { text-align: center; }
+  .grow { flex: 1; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  @media screen and (max-width: 1100px) { .slide { zoom: .5; } }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide cover">
+  <div class="kicker">Linear Algebra · Lesson 7</div>
+  <h1>Solving Ax = 0</h1>
+  <p class="lead">The recipe for finding <b>every</b> do-nothing trade, even when you have more funds than rules.</p>
+  <p class="lead soft">Pivots, free variables, rank, special solutions.</p>
+  <div><span class="chip">Rank r</span><span class="chip">n − r special solutions</span><span class="chip">MIT 18.06, Lecture 7</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">The setup</div>
+  <h2>Four funds, three rules</h2>
+  <p>Nifty, a Nifty ETF (its twin), bonds, balanced (half Nifty, half bonds). Rows: budget, return, exposure.</p>
+  $$ A = \begin{bmatrix} 1 & 1 & 1 & 1 \\ 12 & 12 & 7 & 9.5 \\ 1 & 1 & 0 & 0.5 \end{bmatrix} $$
+  <p>Real fund menus look like this: many products, a few things you measure, plenty of overlap. Which trades change <b>nothing</b>?</p>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="kicker">Step 0</div>
+  <h2>Elimination keeps the nullspace</h2>
+  <p>Row operations only <b>recombine the rules</b>. A trade that leaves every rule at 0 leaves every combination of rules at 0 too.</p>
+  <p>So $Ax = 0$ and $Ux = 0$ have the <b>same</b> solutions.</p>
+  <div class="box method"><span class="label">Careful</span><p>The column space <b>does</b> change. Use $U$ for the nullspace, never for $C(A)$.</p></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">Step 1</div>
+  <h2>Eliminate to a staircase</h2>
+  $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} $$
+  <p>Column 2 has no pivot (the ETF copies Nifty), so skip it. Row 3 vanishes: exposure added no new information.</p>
+  <p><b>Pivot columns:</b> Nifty, bonds. <b>Free columns:</b> ETF, balanced. <b>Rank $r = 2$.</b></p>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="kicker">Step 2</div>
+  <h2>Pivot = forced, free = your choice</h2>
+  <p>Choose the free amounts. The pivot amounts are then forced:</p>
+  $$ x_3 = -0.5\,x_4 \qquad x_1 = -x_2 - 0.5\,x_4 $$
+  <div class="box method"><span class="label">Rank</span><p>$r$ = number of pivots = number of genuinely different funds.</p></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">Step 3</div>
+  <h2>Special solutions</h2>
+  <p>One free variable = 1, the others 0:</p>
+  <ul>
+    <li>ETF = 1: $s_1 = (-1, 1, 0, 0)$, swap Nifty for its twin</li>
+    <li>Balanced = 1: $s_2 = (-0.5, 0, -0.5, 1)$, build balanced yourself</li>
+  </ul>
+  <p>Check $s_2$: $-0.5 - 0.5 + 1 = 0$, $\;-6 - 3.5 + 9.5 = 0$, $\;-0.5 + 0.5 = 0$ ✓</p>
+  <p>$N(A)$ = every mix $c\,s_1 + d\,s_2$: a plane in $\mathbb{R}^4$.</p>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">Counting</div>
+  <h2>n − r special solutions</h2>
+  <table>
+    <tr><th>Funds</th><th>m</th><th>n</th><th>r</th><th>n − r</th></tr>
+    <tr><td>Nifty, bonds, midcap</td><td>3</td><td>3</td><td>3</td><td>0</td></tr>
+    <tr><td>Nifty, bonds, balanced</td><td>3</td><td>3</td><td>2</td><td>1</td></tr>
+    <tr><td>Nifty, ETF, bonds, balanced</td><td>3</td><td>4</td><td>2</td><td>2</td></tr>
+  </table>
+  <div class="box finance"><span class="label">The rule</span><p>More funds than rules ($n > m$) ⇒ a do-nothing trade <b>always</b> exists.</p></div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="kicker">The reduced form</div>
+  <h2>R: clear above the pivots too</h2>
+  $$ R = \begin{bmatrix} \boxed{1} & 1 & 0 & 0.5 \\ 0 & 0 & \boxed{1} & 0.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} $$
+  <p>Pivot columns first: $R = [\,I \;\; F\,]$ with</p>
+  $$ F = \begin{bmatrix} 1 & 0.5 \\ 0 & 0.5 \end{bmatrix} $$
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="kicker">Read it off</div>
+  <h2>The nullspace matrix</h2>
+  $$ N = \begin{bmatrix} -F \\ I \end{bmatrix} = \begin{array}{c} x_1 \\ x_3 \\ x_2 \\ x_4 \end{array}\!\begin{bmatrix} -1 & -0.5 \\ 0 & -0.5 \\ 1 & 0 \\ 0 & 1 \end{bmatrix} $$
+  <p>Its columns are the special solutions, and $RN = I(-F) + F\,I = 0$. No back substitution needed.</p>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="kicker">In markets</div>
+  <h2>Four products, three scenarios</h2>
+  <p>Futures, 20,000 call, 20,000 put, 19,900 call. The recipe finds one free column (the put) and one special solution:</p>
+  $$ (1, -1, 1, 0) $$
+  <p>Long future, short call, long put pays 0 everywhere: <b>put–call parity</b>. The 19,900 call is in no do-nothing trade: it's the only one paying at 20,000.</p>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <div class="kicker">Recap</div>
+  <h2>Key takeaways</h2>
+  <ol class="lead" style="font-size:36px">
+    <li>Row operations keep the nullspace.</li>
+    <li>Pivot variables are forced, free ones are chosen.</li>
+    <li>Rank $r$ = number of pivots.</li>
+    <li>Special solution: one free = 1, others 0.</li>
+    <li>$n - r$ of them; $n > m$ ⇒ always one.</li>
+    <li>$R = [\,I \;\; F\,]$, $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</li>
+  </ol>
+</section>
+
+<!-- 12 -->
+<section class="slide cover">
+  <div class="kicker">Quant from First Principles</div>
+  <h1 style="font-size:76px">The full interactive lesson is free</h1>
+  <p class="lead">A pivot and special-solution lab for any matrix up to 3 × 5, and worked hedging and options examples:</p>
+  <p class="lead"><b>learn.krisarj.com</b></p>
+  <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
+</section>
+
+<script>
+// Footer with page numbers on every slide.
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  slides.forEach(function (s, i) {
+    var f = document.createElement("div");
+    f.className = "foot";
+    f.innerHTML = "<span>Quant from First Principles · learn.krisarj.com</span><span>" + (i + 1) + " / " + slides.length + "</span>";
+    s.appendChild(f);
+  });
+})();
+window.addEventListener("load", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {
+    delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>
