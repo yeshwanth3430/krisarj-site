@@ -61,7 +61,7 @@
     <ol class="index-list">
       <li><a href="#t1">The question, and a guess</a><span>Four funds, three rules. We can guess two do-nothing trades. Are there more? The recipe will tell us for sure.</span></li>
       <li><a href="#t2">Move 1: simplify the rules</a><span>Elimination, explained as rewriting the rules ("return beyond 12%"). Why that can't change the do-nothing trades.</span></li>
-      <li><a href="#t3">Move 2: pivot columns and free columns</a><span>Which amounts you choose and which the rules then force. Rank.</span></li>
+      <li><a href="#t3">Move 2: pivot columns and free columns</a><span>You pick two amounts, the rules force the other two. Why it's the ETF and balanced you pick. Rank.</span></li>
       <li><a href="#t4">Move 3: the special solutions</a><span>Choose the free amounts one at a time. Out come exactly our two guesses.</span></li>
       <li><a href="#t5">Move 4: every do-nothing trade</a><span>Every do-nothing trade is a mix of the special solutions, and nothing else exists. With a try-it box.</span></li>
       <li><a href="#t6">The same four moves on smaller menus</a><span>A 2 × 2 and two 3 × 3s. How many special solutions: $n - r$.</span></li>
@@ -163,27 +163,63 @@
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t3">3. Move 2: pivot columns and free columns</h3>
-    <p>Now read the staircase $U$. In each non-zero row, look at its <b>first</b> non-zero entry. That entry is a <b>pivot</b>.</p>
-    $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} \qquad \begin{array}{l} \text{row 1 starts in column 1 (Nifty)} \\ \text{row 2 starts in column 3 (bonds)} \\ \text{row 3 has no pivot} \end{array} $$
+    <p>Move 1 left us with just two real rules. Written out as sentences about the trade $(x_1, x_2, x_3, x_4)$ = (Nifty, ETF, bonds, balanced):</p>
+    <table>
+      <tr><th>Rule</th><th>Equation</th><th>In words</th></tr>
+      <tr><td>Rule 1 (row 1 of $U$)</td><td>$x_1 + x_2 + x_3 + x_4 = 0$</td><td>the budget doesn't change</td></tr>
+      <tr><td>Rule 2 (row 2 of $U$)</td><td>$-5x_3 - 2.5x_4 = 0$</td><td>no return beyond 12%</td></tr>
+    </table>
+    <p>Two rules, four amounts. Two rules can pin down two amounts, so <b>two amounts are left for you to choose</b>. Let's see which two, by playing it as a game.</p>
+
+    <h4>Step 1: you pick two amounts, the rules decide the rest</h4>
+    <p>Say you decide: buy ₹3 lakh of the <b>ETF</b> ($x_2 = 3$) and ₹2 lakh of <b>balanced</b> ($x_4 = 2$). Now use the rules, bottom one first:</p>
     <ol class="step-list kid-step">
       <li>
-        <p class="k"><span class="kl">Pivot columns</span> Columns 1 and 3: <b>Nifty and bonds</b>.</p>
-        <p class="k"><span class="kl">Free columns</span> Columns 2 and 4, where no row starts: <b>ETF and balanced</b>.</p>
+        <p class="k"><span class="kl">Rule 2</span> It only involves bonds and balanced: $-5x_3 - 2.5(2) = 0 \Rightarrow -5x_3 = 5 \Rightarrow x_3 = -1$. You <b>must</b> sell ₹1 lakh bonds.</p>
+        <p class="k"><span class="kl">Rule 1</span> Now only Nifty is unknown: $x_1 + 3 + (-1) + 2 = 0 \Rightarrow x_1 = -4$. You <b>must</b> sell ₹4 lakh Nifty.</p>
       </li>
       <li>
-        <p class="k"><span class="kl">Solve row 2</span> $-5x_3 - 2.5x_4 = 0 \Rightarrow x_3 = -0.5x_4$. The bond amount is decided by the balanced amount.</p>
-        <p class="k"><span class="kl">Solve row 1</span> $x_1 = -x_2 - x_3 - x_4 = -x_2 + 0.5x_4 - x_4 = -x_2 - 0.5x_4$. The Nifty amount is decided by the ETF and balanced amounts.</p>
+        <p class="k"><span class="kl">The trade</span> $(-4, 3, -1, 2)$.</p>
+        <p class="k"><span class="kl">Check</span> Budget $-4 + 3 - 1 + 2 = 0$ ✓. Return $-48 + 36 - 7 + 19 = 0$ ✓. Exposure $-4 + 3 + 0 + 1 = 0$ ✓. It changes nothing.</p>
       </li>
     </ol>
+    <p>Pick any other ETF and balanced amounts and the same two steps always work: rule 2 hands you the bonds amount, then rule 1 hands you the Nifty amount. In general:</p>
+    $$ \text{bonds } x_3 = -0.5\,x_4 \qquad\qquad \text{Nifty } x_1 = -x_2 - x_3 - x_4 = -x_2 - 0.5\,x_4 $$
+    <p>Solving the bottom rule first and working upward like this is called <b>back substitution</b> (Lesson 2).</p>
+
+    <h4>Step 2: why ETF and balanced are the ones you pick</h4>
+    <p>Look at where each rule <b>starts</b>, its first non-zero entry in $U$. That entry is the rule's <b>pivot</b>, and it tells you which amount the rule solves for:</p>
+    $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} $$
+    <table>
+      <tr><th>Rule</th><th>Starts at (pivot)</th><th>So it solves for</th></tr>
+      <tr><td>Rule 1</td><td>column 1</td><td>Nifty $x_1$</td></tr>
+      <tr><td>Rule 2</td><td>column 3</td><td>bonds $x_3$</td></tr>
+      <tr><td>(row 3)</td><td>nowhere: all zeros</td><td>nothing</td></tr>
+    </table>
+    <p>No rule starts at column 2 or column 4, so <b>no rule ever solves for the ETF or balanced</b>. Their amounts are never decided for you. That's why they're yours to pick.</p>
     <div class="box method" id="m-pivfree"><span class="label">Rule · Pivot variables and free variables</span>
-      <p>The amounts in <b>free columns</b> (ETF $x_2$, balanced $x_4$) can be anything you like: they are <b>free variables</b>. The amounts in <b>pivot columns</b> (Nifty $x_1$, bonds $x_3$) are then forced by back substitution: they are <b>pivot variables</b>.</p>
+      <p>A column where a rule starts is a <b>pivot column</b>; its amount is a <b>pivot variable</b>, solved for by back substitution (here Nifty $x_1$, bonds $x_3$). A column where no rule starts is a <b>free column</b>; its amount is a <b>free variable</b>, which you choose (here ETF $x_2$, balanced $x_4$).</p>
     </div>
-    <p><b>In plain words:</b> whatever you do with the ETF and the balanced fund, the rules tell you exactly how much Nifty and bonds to trade to undo its effect. Buy ₹1 lakh ETF? You must sell ₹1 lakh Nifty. Buy ₹1 lakh balanced? You must sell ₹0.5 lakh bonds and ₹0.5 lakh Nifty.</p>
-    <p><b>Why these two are the free ones.</b> Reading the menu left to right, a column is free when it adds <b>nothing new</b> compared with the columns before it. The ETF copies Nifty; balanced is a mix of Nifty and bonds. Nifty and bonds each brought something new, so they got the pivots. These are exactly the two overlaps we guessed.</p>
+
+    <h4>Step 3: what it means for the funds</h4>
+    <p>The free funds are exactly the ones that <b>add nothing new</b>, so their effect can always be undone with the pivot funds:</p>
+    <table>
+      <tr><th>You buy</th><th>Why it can be undone</th><th>To undo it</th></tr>
+      <tr><td>₹3 lakh ETF</td><td>it is a copy of Nifty</td><td>sell ₹3 lakh Nifty</td></tr>
+      <tr><td>₹2 lakh balanced</td><td>it is half Nifty, half bonds</td><td>sell ₹1 lakh Nifty and ₹1 lakh bonds</td></tr>
+      <tr><td><b>Both</b></td><td></td><td><b>sell ₹4 lakh Nifty and ₹1 lakh bonds</b></td></tr>
+    </table>
+    <p>That is exactly the trade $(-4, 3, -1, 2)$ the rules produced in step 1. The algebra and the common sense agree. Nifty and bonds can't be undone this way by the funds before them (each brings something new), so they are the ones the rules solve for.</p>
+    <details class="more"><summary>For the curious: could Nifty be free and the ETF be the pivot instead?</summary>
+      <p>Yes: the twins are interchangeable, so you could just as well choose the Nifty amount and let the rules force the ETF. The recipe avoids that choice by always reading <b>left to right</b>: a column gets a pivot only if it brings something new compared with the columns <i>before</i> it. Since Nifty comes first, Nifty gets the pivot and the ETF (which repeats it) is free. Any choice gives the same set of do-nothing trades in the end.</p>
+    </details>
+
+    <h4>Step 4: counting the pivots: the rank</h4>
     <div class="box method" id="m-rank"><span class="label">Definition · Rank r = the number of pivots</span>
-      <p>Here $r = 2$. The rank counts the funds that bring something new, and equally the rules that really bite: of three rules, only two carried information.</p>
+      <p>Here two rules start somewhere, so $r = 2$. Two ways to read that number: only <b>two funds bring something new</b> (Nifty-like and bond-like), and only <b>two of the three rules carried information</b> (exposure was already decided by the other two).</p>
     </div>
-    <div class="box intuition"><span class="label">In one line</span><p>Pivot columns = amounts the rules force; free columns = amounts you choose. Rank = number of pivots.</p></div>
+    <p>And the count of free amounts follows: 4 funds minus 2 pivots = 2 free amounts to choose.</p>
+    <div class="box intuition"><span class="label">In one line</span><p>Each rule solves for the fund where it starts (a pivot); funds where no rule starts are free for you to choose, and they're the ones that add nothing new.</p></div>
 
     <!-- ====================================================== -->
     <h3 class="topic" id="t4">4. Move 3: the special solutions</h3>
