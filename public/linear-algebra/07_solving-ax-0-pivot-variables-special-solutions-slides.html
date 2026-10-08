@@ -81,22 +81,22 @@
   <h2>Four funds, three rules</h2>
   <p>Nifty, a Nifty ETF (its twin), bonds, balanced (half Nifty, half bonds). Rows: budget, return, exposure.</p>
   $$ A = \begin{bmatrix} 1 & 1 & 1 & 1 \\ 12 & 12 & 7 & 9.5 \\ 1 & 1 & 0 & 0.5 \end{bmatrix} $$
-  <p>Real fund menus look like this: many products, a few things you measure, plenty of overlap. Which trades change <b>nothing</b>?</p>
+  <p><b>Which trades change nothing?</b> Two jump out: swap Nifty for its twin, and build balanced from Nifty + bonds. Are there more? A four-move recipe answers for sure.</p>
 </section>
 
 <!-- 3 -->
 <section class="slide">
-  <div class="kicker">Step 0</div>
-  <h2>Elimination keeps the nullspace</h2>
-  <p>Row operations only <b>recombine the rules</b>. A trade that leaves every rule at 0 leaves every combination of rules at 0 too.</p>
+  <div class="kicker">Move 1 · why it's safe</div>
+  <h2>Elimination rewrites the rules</h2>
+  <p>"Return − 12 × budget" asks: how much return <b>beyond</b> 12%? A trade answering 0 to both old questions answers $0 - 12 \times 0 = 0$ to the new one.</p>
   <p>So $Ax = 0$ and $Ux = 0$ have the <b>same</b> solutions.</p>
   <div class="box method"><span class="label">Careful</span><p>The column space <b>does</b> change. Use $U$ for the nullspace, never for $C(A)$.</p></div>
 </section>
 
 <!-- 4 -->
 <section class="slide">
-  <div class="kicker">Step 1</div>
-  <h2>Eliminate to a staircase</h2>
+  <div class="kicker">Move 1</div>
+  <h2>Simplify to a staircase</h2>
   $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} $$
   <p>Column 2 has no pivot (the ETF copies Nifty), so skip it. Row 3 vanishes: exposure added no new information.</p>
   <p><b>Pivot columns:</b> Nifty, bonds. <b>Free columns:</b> ETF, balanced. <b>Rank $r = 2$.</b></p>
@@ -104,7 +104,7 @@
 
 <!-- 5 -->
 <section class="slide">
-  <div class="kicker">Step 2</div>
+  <div class="kicker">Move 2</div>
   <h2>Pivot = forced, free = your choice</h2>
   <p>Choose the free amounts. The pivot amounts are then forced:</p>
   $$ x_3 = -0.5\,x_4 \qquad x_1 = -x_2 - 0.5\,x_4 $$
@@ -113,15 +113,15 @@
 
 <!-- 6 -->
 <section class="slide">
-  <div class="kicker">Step 3</div>
+  <div class="kicker">Move 3</div>
   <h2>Special solutions</h2>
   <p>One free variable = 1, the others 0:</p>
   <ul>
-    <li>ETF = 1: $s_1 = (-1, 1, 0, 0)$, swap Nifty for its twin</li>
-    <li>Balanced = 1: $s_2 = (-0.5, 0, -0.5, 1)$, build balanced yourself</li>
+    <li>ETF = 1: $s_1 = (-1, 1, 0, 0)$: guess 1</li>
+    <li>Balanced = 1: $s_2 = (-0.5, 0, -0.5, 1)$: guess 2</li>
   </ul>
   <p>Check $s_2$: $-0.5 - 0.5 + 1 = 0$, $\;-6 - 3.5 + 9.5 = 0$, $\;-0.5 + 0.5 = 0$ ✓</p>
-  <p>$N(A)$ = every mix $c\,s_1 + d\,s_2$: a plane in $\mathbb{R}^4$.</p>
+  <p><b>Move 4:</b> every do-nothing trade is $c\,s_1 + d\,s_2$, and nothing else exists: a plane in $\mathbb{R}^4$.</p>
 </section>
 
 <!-- 7 -->
@@ -168,10 +168,10 @@
   <div class="kicker">Recap</div>
   <h2>Key takeaways</h2>
   <ol class="lead" style="font-size:36px">
-    <li>Row operations keep the nullspace.</li>
-    <li>Pivot variables are forced, free ones are chosen.</li>
-    <li>Rank $r$ = number of pivots.</li>
+    <li>Simplify: elimination keeps the do-nothing trades.</li>
+    <li>Pivot amounts are forced, free ones chosen.</li>
     <li>Special solution: one free = 1, others 0.</li>
+    <li>All of them: mixes of the special solutions.</li>
     <li>$n - r$ of them; $n > m$ ⇒ always one.</li>
     <li>$R = [\,I \;\; F\,]$, $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</li>
   </ol>

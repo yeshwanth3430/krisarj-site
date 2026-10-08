@@ -29,7 +29,7 @@
   <div class="tab-body">
   <p class="meta">Linear Algebra · Topic 4 · Lesson 7 (MIT 18.06, Lecture 7)</p>
   <h1>Solving Ax = 0: Pivot Variables, Special Solutions</h1>
-  <p class="subtitle">Lesson 6 said what the nullspace is. This lesson is the recipe for finding all of it, for any matrix, even when there are more funds than rules: pivots, free variables, rank, special solutions and the reduced form $R$.</p>
+  <p class="subtitle">Lesson 6 said what the do-nothing trades are. This lesson is a four-move recipe that finds every one of them, for any menu of funds, even when there are more funds than rules.</p>
   <div class="downloads no-print">
     <span class="label">Take it with you</span>
     <a class="dl" href="../downloads/la-07-solving-ax-0-pivot-variables-special-solutions-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
@@ -44,27 +44,29 @@
       <ol>
         <li><a href="#index">Index</a></li>
         <li><a href="#prereq">Prerequisites</a></li>
-        <li><a href="#t1">Elimination keeps the nullspace</a></li>
-        <li><a href="#t2">Warm-up: one rule, three funds</a></li>
-        <li><a href="#t3">Pivots, free variables and rank</a></li>
-        <li><a href="#t4">The full recipe: four funds, three rules</a></li>
-        <li><a href="#t5">Counting: n − r special solutions</a></li>
-        <li><a href="#t6">The reduced form R and the nullspace matrix</a></li>
-        <li><a href="#t7">Summary</a></li>
+        <li><a href="#t1">The question, and a guess</a></li>
+        <li><a href="#t2">Move 1: simplify the rules</a></li>
+        <li><a href="#t3">Move 2: pivot columns and free columns</a></li>
+        <li><a href="#t4">Move 3: the special solutions</a></li>
+        <li><a href="#t5">Move 4: every do-nothing trade</a></li>
+        <li><a href="#t6">The same four moves on smaller menus</a></li>
+        <li><a href="#t7">The shortcut: the reduced form R</a></li>
+        <li><a href="#t8">Summary</a></li>
       </ol>
     </nav>
 
     <!-- ====================================================== -->
     <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
-    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <p>One question runs through the whole lesson: <b>which trades change nothing?</b> Each topic is one move of the recipe that answers it.</p>
     <ol class="index-list">
-      <li><a href="#t1">Elimination keeps the nullspace</a><span>Elimination rewrites the rules ("return beyond 12%"), not the trades: do-nothing trades survive, other answers change.</span></li>
-      <li><a href="#t2">Warm-up: one rule, three funds</a><span>Zero-cost trades: one pivot, two free amounts, two special solutions.</span></li>
-      <li><a href="#t3">Pivots, free variables and rank</a><span>The 2 × 2 twins and the 3 × 3 funds: which amounts you choose, which are forced, and the rank.</span></li>
-      <li><a href="#t4">The full recipe: four funds, three rules</a><span>A 3 × 4 matrix to a staircase, two special solutions, every do-nothing trade, with a try-it box.</span></li>
-      <li><a href="#t5">Counting: n − r special solutions</a><span>More funds than rules always leaves a do-nothing trade.</span></li>
-      <li><a href="#t6">The reduced form R and the nullspace matrix</a><span>Clear above the pivots too: $R = [\,I \;\; F\,]$, and the special solutions are read off as $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</span></li>
-      <li class="no-print"><a href="#t7">Summary</a><span>The key ideas and words on one screen.</span></li>
+      <li><a href="#t1">The question, and a guess</a><span>Four funds, three rules. We can guess two do-nothing trades. Are there more? The recipe will tell us for sure.</span></li>
+      <li><a href="#t2">Move 1: simplify the rules</a><span>Elimination, explained as rewriting the rules ("return beyond 12%"). Why that can't change the do-nothing trades.</span></li>
+      <li><a href="#t3">Move 2: pivot columns and free columns</a><span>Which amounts you choose and which the rules then force. Rank.</span></li>
+      <li><a href="#t4">Move 3: the special solutions</a><span>Choose the free amounts one at a time. Out come exactly our two guesses.</span></li>
+      <li><a href="#t5">Move 4: every do-nothing trade</a><span>Every do-nothing trade is a mix of the special solutions, and nothing else exists. With a try-it box.</span></li>
+      <li><a href="#t6">The same four moves on smaller menus</a><span>A 2 × 2 and two 3 × 3s. How many special solutions: $n - r$.</span></li>
+      <li><a href="#t7">The shortcut: the reduced form R</a><span>Two more row operations, and the special solutions can be read straight off.</span></li>
+      <li class="no-print"><a href="#t8">Summary</a><span>The recipe and the words on one screen.</span></li>
     </ol>
     <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-keep">Row operations keep N(A)</a> <a href="#m-echelon">Echelon form U</a> <a href="#m-pivfree">Pivot and free variables</a> <a href="#m-rank">Rank r</a> <a href="#m-special">Special solutions</a> <a href="#m-count">n − r rule</a> <a href="#m-rref">Reduced row echelon form R</a> <a href="#m-nmatrix">Nullspace matrix N</a></p>
 
@@ -72,8 +74,7 @@
     <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
     <p>Click any link to review it, then come back.</p>
     <ul>
-      <li><a href="06_column-space-and-nullspace.html#t2">The nullspace</a> and <a href="06_column-space-and-nullspace.html#m-elim0">elimination on Ax = 0</a> (Lesson 6): do-nothing trades, free columns.</li>
-      <li><a href="06_column-space-and-nullspace.html#t5">All solutions = one answer + the nullspace</a> (Lesson 6).</li>
+      <li><a href="06_column-space-and-nullspace.html#t2">The nullspace</a> (Lesson 6): the trades with $Ax = 0$, which change nothing.</li>
       <li><a href="02_elimination-with-matrices.html#t3">Elimination, 3 × 3</a> and <a href="02_elimination-with-matrices.html#t4">back substitution</a> (Lesson 2).</li>
       <li><a href="03_multiplication-and-inverse-matrices.html#t7">Gauss–Jordan</a> (Lesson 3): clearing above the pivots as well as below.</li>
     </ul>
@@ -81,265 +82,279 @@
     <!-- ====================================================== -->
     <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
 
-    <div class="box intuition"><span class="label">The whole idea in one line</span>
-      <p>Eliminate until the matrix is a staircase. Columns with a pivot hold the amounts that are <b>forced</b>; columns without one hold amounts you can <b>choose freely</b>. Set one free amount to 1 and the rest to 0, solve: that's a <b>special solution</b>. All do-nothing trades are mixes of the special solutions.</p>
+    <div class="box intuition"><span class="label">The whole lesson in one line</span>
+      <p>To find every trade that changes nothing: <b>(1)</b> simplify the rules by elimination, <b>(2)</b> see which fund amounts you can choose freely, <b>(3)</b> choose them one at a time to get a few basic do-nothing trades, <b>(4)</b> mix those to get all of them.</p>
     </div>
 
-    <div class="box finance"><span class="label">The running example: more funds than before</span>
-      <p>Rules (rows): budget (₹ lakh), return (₹ thousand), market exposure. Funds (columns), each showing what ₹1 lakh of it does:</p>
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. The question, and a guess</h3>
+    <p>In Lesson 6 a menu of three funds had one do-nothing trade, and we found it by hand. Real menus are bigger: many products, a few things you measure. So we need a recipe that works for <b>any</b> menu. Here is the menu we'll use for the whole lesson.</p>
+    <div class="box finance"><span class="label">The menu: four funds, three rules</span>
       <table>
-        <tr><th>Fund</th><th>Column (budget, return, exposure)</th><th>Note</th></tr>
-        <tr><td>Nifty</td><td>$(1, 12, 1)$</td><td>12%, beta 1</td></tr>
+        <tr><th>Fund</th><th>What ₹1 lakh does to (budget, return, exposure)</th><th>Note</th></tr>
+        <tr><td>Nifty</td><td>$(1, 12, 1)$</td><td>12% return, beta 1</td></tr>
         <tr><td>Nifty ETF</td><td>$(1, 12, 1)$</td><td>a twin of Nifty from another fund house</td></tr>
-        <tr><td>Bonds</td><td>$(1, 7, 0)$</td><td>7%, beta 0</td></tr>
+        <tr><td>Bonds</td><td>$(1, 7, 0)$</td><td>7% return, beta 0</td></tr>
         <tr><td>Balanced</td><td>$(1, 9.5, 0.5)$</td><td>half Nifty, half bonds</td></tr>
-        <tr><td>Midcap</td><td>$(1, 15, 1.2)$</td><td>15%, beta 1.2</td></tr>
       </table>
-      <p>Real fund menus look like this: many products, a few things you care about, and plenty of overlap. This lesson finds every overlap systematically.</p>
+      <p>A trade is four amounts $x = (x_1, x_2, x_3, x_4)$: ₹ lakh into Nifty, ETF, bonds, balanced. Positive = buy, negative = sell.</p>
     </div>
-
-    <!-- ====================================================== -->
-    <h3 class="topic" id="t1">1. Elimination keeps the nullspace</h3>
-    <div class="box intuition"><span class="label">The whole idea in one line</span>
-      <p>Elimination doesn't touch the trades. It only <b>rewrites the rules</b> in a simpler form. A trade that changes none of the old rules changes none of the new ones, and the other way round. So the do-nothing trades stay exactly the same.</p>
-    </div>
-    <p>Take Lesson 6's funds: Nifty, bonds, balanced. Elimination turned $A$ into the staircase $U$:</p>
-    $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 9.5 \\ 1 & 0 & 0.5 \end{bmatrix} \;\longrightarrow\; U = \begin{bmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & 0 \end{bmatrix} $$
-    <p>Before we trust $U$ to find the do-nothing trades, let's see what it really is.</p>
-
-    <h4>Step 1: each row is a rule, a question you ask about a trade</h4>
-    <p>Each row of $A$ asks one question about a trade $(x, y, z)$ = (₹ lakh into Nifty, bonds, balanced):</p>
-    <table>
-      <tr><th>Row of $A$</th><th>The question</th><th>Formula</th></tr>
-      <tr><td>1</td><td>How much does the <b>budget</b> change?</td><td>$x + y + z$</td></tr>
-      <tr><td>2</td><td>How much does the <b>return</b> change?</td><td>$12x + 7y + 9.5z$</td></tr>
-      <tr><td>3</td><td>How much does the <b>exposure</b> change?</td><td>$x + 0y + 0.5z$</td></tr>
-    </table>
-    <p>A do-nothing trade is one where <b>all three answers are 0</b>.</p>
-
-    <h4>Step 2: what elimination does to a rule</h4>
-    <p>The first step was "row 2 $-\ 12 \times$ row 1". In words, it replaces the return question with a new one:</p>
-    <div class="box finance"><span class="label">The new rule 2: "return minus 12 × budget"</span>
-      <p>How much return does the trade make <b>beyond</b> what the same money would earn in Nifty at 12%? Per lakh: Nifty $12 - 12 = 0$, bonds $7 - 12 = -5$, balanced $9.5 - 12 = -2.5$. That's exactly row 2 of $U$: $(0, -5, -2.5)$.</p>
-    </div>
-    <p>Row 3 of $U$ is built the same way, from (exposure) $-$ (budget) $-\ 0.2 \times$ (new rule 2). For these funds it comes out $(0, 0, 0)$: it asks a question whose answer is <b>always</b> 0, so it carries no information. (That's because exposure was already fixed by budget and return, $R = 7B + 5E$.)</p>
-
-    <h4>Step 3: a do-nothing trade passes the new rules too</h4>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">The trade</span> $(1, 1, -2)$: buy ₹1 lakh Nifty and ₹1 lakh bonds, sell ₹2 lakh balanced.</p>
-        <p class="k"><span class="kl">Old rules</span> Budget $1 + 1 - 2 = 0$. Return $12 + 7 - 19 = 0$. Exposure $1 + 0 - 1 = 0$. All zero.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">New rule 2</span> "Return minus 12 × budget" $= 0 - 12 \times 0 = 0$. If both old answers are 0, a combination of them must be 0.</p>
-        <p class="k"><span class="kl">Check in $U$</span> Row 1: $1 + 1 - 2 = 0$. Row 2: $0(1) - 5(1) - 2.5(-2) = -5 + 5 = 0$. Row 3: $0$. All zero ✓.</p>
-      </li>
-    </ol>
-
-    <h4>Step 4: and no new trade sneaks in</h4>
-    <p>Could $U$ have <b>extra</b> do-nothing trades that $A$ doesn't? No, because the old rules can be rebuilt from the new ones: return $=$ (new rule 2) $+\ 12 \times$ budget. If a trade gives 0 for the new rules, it gives $0 + 12 \times 0 = 0$ for the old return rule too. Nothing is lost and nothing is added.</p>
-    <div class="box method" id="m-keep"><span class="label">Rule · Row operations keep the nullspace</span>
-      <p>Subtracting a multiple of one row from another, swapping two rows, or scaling a row by a non-zero number can always be undone. So $Ax = 0$ and $Ux = 0$ (and later $Rx = 0$) have exactly the same solutions.</p>
-    </div>
-
-    <h4>Step 5: but the answers for other trades do change</h4>
-    <p>Feed in trades that <b>aren't</b> do-nothing and compare what $A$ and $U$ report:</p>
-    <table>
-      <tr><th>Trade</th><th>$A$ reports (budget, return, exposure)</th><th>$U$ reports (budget, return beyond 12%, always-0)</th></tr>
-      <tr><td>Buy ₹1L Nifty $(1, 0, 0)$</td><td>$(1, 12, 1)$</td><td>$(1, 0, 0)$</td></tr>
-      <tr><td>Buy ₹1L bonds $(0, 1, 0)$</td><td>$(1, 7, 0)$</td><td>$(1, -5, 0)$</td></tr>
-      <tr><td>₹7L Nifty + ₹3L bonds $(7, 3, 0)$</td><td>$(10, 105, 7)$</td><td>$(10, -15, 0)$</td></tr>
-      <tr><td>Do-nothing $(1, 1, -2)$</td><td>$(0, 0, 0)$</td><td>$(0, 0, 0)$</td></tr>
-    </table>
-    <p>Different questions give different answers, so the <b>targets</b> $U$ can reach are not the targets $A$ can reach. Everything $U$ produces has third entry 0. But $A$ reaches $(10, 105, 7)$, whose third entry is 7. So $C(U) \ne C(A)$. Only the last row of the table, all zeros, is the same for both.</p>
-    <div class="box pitfall"><span class="label">Careful</span>
-      <p>Use $U$ (or $R$) to find the <b>nullspace</b>. To test whether a target is reachable, never look at $U$'s columns. Carry the target along through elimination instead (Lesson 8).</p>
-    </div>
-    <div class="box intuition"><span class="label">In one line</span><p>Elimination rewrites the questions, not the trades: "all answers are zero" survives the rewrite, but the other answers (and so the column space) don't.</p></div>
-
-    <!-- ====================================================== -->
-    <h3 class="topic" id="t2">2. Warm-up: one rule, three funds</h3>
-    <p>Start with the simplest possible case: a single rule. With Nifty, bonds and midcap, a <b>zero-cost</b> trade has $x + y + z = 0$, a $1 \times 3$ system $\begin{bmatrix} 1 & 1 & 1 \end{bmatrix} x = 0$.</p>
-    <ol class="step-list kid-step">
-      <li>
-        <p class="k"><span class="kl">Pivot</span> The 1 in column 1 is the only pivot. Nothing to eliminate: one row is already a staircase.</p>
-        <p class="k"><span class="kl">Free</span> Columns 2 and 3 have no pivot, so the bond amount $y$ and the midcap amount $z$ are <b>free</b>: pick them however you like.</p>
-        <p class="k"><span class="kl">Forced</span> The Nifty amount is then forced: $x = -y - z$.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Special 1</span> $y = 1$, $z = 0$: $x = -1 - 0 = -1$. So $s_1 = (-1, 1, 0)$: sell ₹1 lakh Nifty, buy ₹1 lakh bonds.</p>
-        <p class="k"><span class="kl">Special 2</span> $y = 0$, $z = 1$: $x = -0 - 1 = -1$. So $s_2 = (-1, 0, 1)$: sell ₹1 lakh Nifty, buy ₹1 lakh midcap.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Everything</span> Every zero-cost trade is $y\,s_1 + z\,s_2$. Example: Lesson 5's trade $(-6, 1, 5) = 1 \times (-1, 1, 0) + 5 \times (-1, 0, 1) = (-1 - 5,\ 1 + 0,\ 0 + 5)$ ✓.</p>
-        <p class="k"><span class="kl">Meaning</span> Any rebalancing that doesn't add or withdraw money is "switch some Nifty into bonds" plus "switch some Nifty into midcap". Two building blocks, because two amounts are free.</p>
-      </li>
-    </ol>
-    <p>MIT's recitation does the same with $x - 5y + 2z = 0$: pivot $x$, free $y$ and $z$, special solutions $(5, 1, 0)$ and $(-2, 0, 1)$. Check: $5 - 5(1) + 2(0) = 0$ ✓ and $-2 - 5(0) + 2(1) = 0$ ✓.</p>
-    <div class="box intuition"><span class="label">In one line</span><p>One rule on three funds: one forced amount, two free amounts, two special solutions, a <b>plane</b> of do-nothing trades.</p></div>
-
-    <!-- ====================================================== -->
-    <h3 class="topic" id="t3">3. Pivots, free variables and rank</h3>
-    <div class="box method" id="m-pivfree"><span class="label">Rule · Pivot variables and free variables</span>
-      <p>After elimination, a <b>pivot column</b> has a pivot (the first non-zero entry of some row); its unknown is a <b>pivot variable</b>, forced by back substitution. A <b>free column</b> has no pivot; its unknown is a <b>free variable</b>, chosen freely.</p>
-    </div>
-    <div class="box method" id="m-rank"><span class="label">Definition · Rank r = the number of pivots</span>
-      <p>The <b>rank</b> of $A$ is how many pivots elimination finds. In money terms: how many genuinely different directions the funds give you.</p>
-    </div>
-
-    <h4>2 × 2: the twins</h4>
-    <p>$\left[\begin{smallmatrix} 1 & 1 \\ 12 & 12 \end{smallmatrix}\right]$ (budget and return of Nifty and its twin ETF). Row 2 $-\ 12 \times$ row 1: $12 - 12 = 0$, $12 - 12 = 0$. One pivot (column 1), one free column (column 2). <b>Rank 1.</b> Special solution: ETF $= 1$, then $x + 1 = 0$, so $(-1, 1)$: swap ₹1 lakh of Nifty for the ETF.</p>
-
-    <h4>3 × 3: three funds, three rules</h4>
-    <table>
-      <tr><th>Funds</th><th>Staircase $U$</th><th>Pivots in columns</th><th>Free</th><th>Rank</th><th>Special solutions</th></tr>
-      <tr><td>Nifty, bonds, balanced</td><td>$\left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & 0 \end{smallmatrix}\right]$</td><td>1, 2</td><td>3 (balanced)</td><td>2</td><td>$(-0.5, -0.5, 1)$</td></tr>
-      <tr><td>Nifty, bonds, midcap</td><td>$\left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{smallmatrix}\right]$</td><td>1, 2, 3</td><td>none</td><td>3</td><td>none: $N = \{0\}$</td></tr>
-    </table>
-    <p>The balanced row, entry by entry (from Lesson 6): free $z = 1$. Row 2: $-5y - 2.5(1) = 0 \Rightarrow y = -0.5$. Row 1: $x + (-0.5) + 1 = 0 \Rightarrow x = -0.5$. This is Lesson 6's $(1, 1, -2)$ scaled by $-\tfrac12$: by convention a special solution sets its free variable to exactly 1.</p>
-    <div class="box intuition"><span class="label">In one line</span><p>Pivot = forced, free = your choice; rank = number of pivots = number of truly different funds.</p></div>
-
-    <!-- ====================================================== -->
-    <h3 class="topic" id="t4">4. The full recipe: four funds, three rules</h3>
-    <p>Now a menu with overlap in two places: Nifty, Nifty ETF, bonds, balanced. Four unknowns $(x_1, x_2, x_3, x_4)$ = ₹ lakh in each, three rules:</p>
+    <p>Each fund is a column, each rule is a row:</p>
     $$ A = \begin{bmatrix} 1 & 1 & 1 & 1 \\ 12 & 12 & 7 & 9.5 \\ 1 & 1 & 0 & 0.5 \end{bmatrix} \;\begin{matrix} \leftarrow \text{budget} \\ \leftarrow \text{return} \\ \leftarrow \text{exposure} \end{matrix} $$
-    <p>This has exactly the shape of Strang's lecture example $\left[\begin{smallmatrix} 1 & 2 & 2 & 2 \\ 2 & 4 & 6 & 8 \\ 3 & 6 & 8 & 10 \end{smallmatrix}\right]$: a $3 \times 4$ matrix whose free columns turn out to be 2 and 4.</p>
+    <p><b>The question:</b> which trades $x$ change nothing, so that $Ax = 0$? (That set is the nullspace $N(A)$.)</p>
 
-    <h4>Step 1: eliminate to a staircase</h4>
+    <h4>A guess</h4>
+    <p>Just by looking at the menu, two do-nothing trades jump out:</p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Guess 1</span> The ETF is a copy of Nifty. <b>Buy ₹1 lakh ETF, sell ₹1 lakh Nifty:</b> $(-1, 1, 0, 0)$.</p>
+        <p class="k"><span class="kl">Check</span> Budget $-1 + 1 = 0$. Return $-12 + 12 = 0$. Exposure $-1 + 1 = 0$. Nothing changes ✓.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Guess 2</span> Balanced is half Nifty, half bonds. <b>Buy ₹1 lakh balanced, sell ₹0.5 lakh Nifty and ₹0.5 lakh bonds:</b> $(-0.5, 0, -0.5, 1)$.</p>
+        <p class="k"><span class="kl">Check</span> Budget $-0.5 - 0.5 + 1 = 0$. Return $-6 - 3.5 + 9.5 = 0$. Exposure $-0.5 + 0 + 0.5 = 0$ ✓.</p>
+      </li>
+    </ol>
+    <p>But guessing leaves two questions open. <b>Are there other do-nothing trades we missed?</b> And what do we do with a menu where nothing is obvious? The recipe answers both. Watch for these two guesses: the recipe will produce them on its own.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. Move 1: simplify the rules</h3>
+    <p>Three rules about four funds are hard to read. Elimination rewrites them in a simpler form. First, let's see why that's allowed.</p>
+
+    <h4>Each row is a question about the trade</h4>
+    <table>
+      <tr><th>Row</th><th>The question it asks</th><th>Its formula</th></tr>
+      <tr><td>1</td><td>How much does the <b>budget</b> change?</td><td>$x_1 + x_2 + x_3 + x_4$</td></tr>
+      <tr><td>2</td><td>How much does the <b>return</b> change?</td><td>$12x_1 + 12x_2 + 7x_3 + 9.5x_4$</td></tr>
+      <tr><td>3</td><td>How much does the <b>exposure</b> change?</td><td>$x_1 + x_2 + 0x_3 + 0.5x_4$</td></tr>
+    </table>
+    <p>A do-nothing trade is one where <b>every answer is 0</b>.</p>
+
+    <h4>Why rewriting the questions is safe</h4>
+    <p>Elimination replaces a question by a combination of questions, like "return minus 12 × budget". If a trade answers 0 to both "return" and "budget", it answers $0 - 12 \times 0 = 0$ to the new question. And the step can be undone (return $=$ new question $+ 12 \times$ budget), so no new trade can pass that didn't pass before.</p>
+    <div class="box method" id="m-keep"><span class="label">Rule · Row operations keep the nullspace</span>
+      <p>Subtracting a multiple of one row from another, swapping rows, or dividing a row by a non-zero number never changes which trades give all zeros. So $Ax = 0$ and the simplified $Ux = 0$ have exactly the same solutions. (They do change the <i>other</i> answers, so never read reachable targets off $U$: that's Lesson 8's job.)</p>
+    </div>
+
+    <h4>Doing it: three row operations</h4>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">What</span> Row 2 $-\ 12 \times$ row 1.</p>
+        <p class="k"><span class="kl">Entries</span> $12 - 12(1) = 0$, $\;12 - 12(1) = 0$, $\;7 - 12(1) = -5$, $\;9.5 - 12(1) = -2.5$. New row 2: $(0, 0, -5, -2.5)$.</p>
+        <p class="k"><span class="kl">Meaning</span> The new question is "how much return <b>beyond</b> what the same money would earn in Nifty at 12%?" Nifty and its ETF: 0 extra. Bonds: 5 less. Balanced: 2.5 less.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">What</span> Row 3 $-\ 1 \times$ row 1.</p>
+        <p class="k"><span class="kl">Entries</span> $1 - 1 = 0$, $\;1 - 1 = 0$, $\;0 - 1 = -1$, $\;0.5 - 1 = -0.5$. New row 3: $(0, 0, -1, -0.5)$.</p>
+        <p class="k"><span class="kl">Meaning</span> "Exposure minus budget": how much less exposure than an all-Nifty trade of the same size.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">What</span> Row 3 $-\ 0.2 \times$ row 2 (multiplier $= (-1)/(-5) = 0.2$).</p>
+        <p class="k"><span class="kl">Entries</span> $0 - 0.2(0) = 0$, $\;0 - 0.2(0) = 0$, $\;-1 - 0.2(-5) = -1 + 1 = 0$, $\;-0.5 - 0.2(-2.5) = -0.5 + 0.5 = 0$. New row 3: $(0, 0, 0, 0)$.</p>
+        <p class="k"><span class="kl">Meaning</span> Row 3 now asks a question whose answer is <b>always</b> 0. For these funds, exposure carries no information that budget and return don't already give.</p>
+      </li>
+    </ol>
     <div class="box method" id="m-echelon"><span class="label">Method · Echelon form U (the staircase)</span>
-      <p>Eliminate column by column. If a column has no non-zero entry at or below the current row, <b>skip it</b> (it's free) and move right; the pivot steps down only when one is found. The result: each row starts further right than the one above, and zero rows sit at the bottom.</p>
+      <p>Eliminate column by column, as in Lesson 2. The result $U$ is a staircase: each row starts further right than the row above, and rows that became all zeros sit at the bottom.</p>
     </div>
+    $$ U = \begin{bmatrix} 1 & 1 & 1 & 1 \\ 0 & 0 & -5 & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} \qquad \begin{aligned} &\text{row 1: } x_1 + x_2 + x_3 + x_4 = 0 \\ &\text{row 2: } -5x_3 - 2.5x_4 = 0 \\ &\text{row 3: } 0 = 0 \end{aligned} $$
+    <p>Same do-nothing trades as $A$, but now only <b>two</b> real rules, and the second one doesn't involve Nifty or the ETF at all. That's what makes the next move easy.</p>
+    <div class="box intuition"><span class="label">In one line</span><p>Elimination rewrites the rules in a simpler form without changing which trades pass them.</p></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. Move 2: pivot columns and free columns</h3>
+    <p>Now read the staircase $U$. In each non-zero row, look at its <b>first</b> non-zero entry. That entry is a <b>pivot</b>.</p>
+    $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} \qquad \begin{array}{l} \text{row 1 starts in column 1 (Nifty)} \\ \text{row 2 starts in column 3 (bonds)} \\ \text{row 3 has no pivot} \end{array} $$
     <ol class="step-list kid-step">
       <li>
-        <p class="k"><span class="kl">What we do</span> Clear column 1 below the pivot 1.</p>
-        <p class="k"><span class="kl">Row 2</span> Multiplier $12 / 1 = 12$. Row 2 $-\ 12 \times$ row 1: $12 - 12(1) = 0$, $\;12 - 12(1) = 0$, $\;7 - 12(1) = -5$, $\;9.5 - 12(1) = -2.5$. Now $(0, 0, -5, -2.5)$.</p>
-        <p class="k"><span class="kl">Row 3</span> Multiplier $1 / 1 = 1$. Row 3 $-$ row 1: $1 - 1 = 0$, $\;1 - 1 = 0$, $\;0 - 1 = -1$, $\;0.5 - 1 = -0.5$. Now $(0, 0, -1, -0.5)$.</p>
+        <p class="k"><span class="kl">Pivot columns</span> Columns 1 and 3: <b>Nifty and bonds</b>.</p>
+        <p class="k"><span class="kl">Free columns</span> Columns 2 and 4, where no row starts: <b>ETF and balanced</b>.</p>
       </li>
       <li>
-        <p class="k"><span class="kl">Column 2</span> Look for the next pivot in row 2, column 2: it's 0, and so is row 3's entry. <b>No pivot</b>, so column 2 (the ETF) is free. Move right.</p>
-        <p class="k"><span class="kl">Why</span> The ETF column equals the Nifty column, so whatever cleared Nifty cleared the ETF too.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Column 3</span> Row 2, column 3 is $-5$: that's pivot 2. Row 3: multiplier $(-1)/(-5) = 0.2$. Row 3 $-\ 0.2 \times$ row 2: $0$, $\;0$, $\;-1 - 0.2(-5) = 0$, $\;-0.5 - 0.2(-2.5) = 0$. Row 3 is all zeros.</p>
-        <p class="k"><span class="kl">Column 4</span> No rows left below row 2 with a non-zero entry: column 4 (balanced) is free.</p>
+        <p class="k"><span class="kl">Solve row 2</span> $-5x_3 - 2.5x_4 = 0 \Rightarrow x_3 = -0.5x_4$. The bond amount is decided by the balanced amount.</p>
+        <p class="k"><span class="kl">Solve row 1</span> $x_1 = -x_2 - x_3 - x_4 = -x_2 + 0.5x_4 - x_4 = -x_2 - 0.5x_4$. The Nifty amount is decided by the ETF and balanced amounts.</p>
       </li>
     </ol>
-    $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} \qquad \begin{aligned} &\text{pivot columns: } 1, 3 \;(\text{Nifty, bonds}) \\ &\text{free columns: } 2, 4 \;(\text{ETF, balanced}) \\ &\text{rank } r = 2 \end{aligned} $$
-    <p>Row 3 vanished because exposure was already a mix of the other two rules for these funds: it carried no new information.</p>
+    <div class="box method" id="m-pivfree"><span class="label">Rule · Pivot variables and free variables</span>
+      <p>The amounts in <b>free columns</b> (ETF $x_2$, balanced $x_4$) can be anything you like: they are <b>free variables</b>. The amounts in <b>pivot columns</b> (Nifty $x_1$, bonds $x_3$) are then forced by back substitution: they are <b>pivot variables</b>.</p>
+    </div>
+    <p><b>In plain words:</b> whatever you do with the ETF and the balanced fund, the rules tell you exactly how much Nifty and bonds to trade to undo its effect. Buy ₹1 lakh ETF? You must sell ₹1 lakh Nifty. Buy ₹1 lakh balanced? You must sell ₹0.5 lakh bonds and ₹0.5 lakh Nifty.</p>
+    <p><b>Why these two are the free ones.</b> Reading the menu left to right, a column is free when it adds <b>nothing new</b> compared with the columns before it. The ETF copies Nifty; balanced is a mix of Nifty and bonds. Nifty and bonds each brought something new, so they got the pivots. These are exactly the two overlaps we guessed.</p>
+    <div class="box method" id="m-rank"><span class="label">Definition · Rank r = the number of pivots</span>
+      <p>Here $r = 2$. The rank counts the funds that bring something new, and equally the rules that really bite: of three rules, only two carried information.</p>
+    </div>
+    <div class="box intuition"><span class="label">In one line</span><p>Pivot columns = amounts the rules force; free columns = amounts you choose. Rank = number of pivots.</p></div>
 
-    <h4>Step 2: one special solution per free column</h4>
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. Move 3: the special solutions</h3>
+    <p>Move 2 says: choose the ETF and balanced amounts, and the rest follows. The simplest choices are to switch on <b>one free fund at a time</b>.</p>
     <div class="box method" id="m-special"><span class="label">Method · Special solutions</span>
-      <p>For each free variable in turn: set it to <b>1</b>, set the other free variables to <b>0</b>, and back-substitute for the pivot variables. Each free column gives one special solution.</p>
+      <p>For each free variable in turn: set it to <b>1</b>, set every other free variable to <b>0</b>, and work out the pivot variables. Each free column gives one special solution.</p>
     </div>
     <ol class="step-list kid-step">
       <li>
-        <p class="k"><span class="kl">Free choice</span> ETF $x_2 = 1$, balanced $x_4 = 0$.</p>
-        <p class="k"><span class="kl">Row 2</span> $-5x_3 - 2.5(0) = 0 \Rightarrow x_3 = 0$.</p>
-        <p class="k"><span class="kl">Row 1</span> $x_1 + 1 + 0 + 0 = 0 \Rightarrow x_1 = -1$.</p>
-        <p class="k"><span class="kl">Result</span> $s_1 = (-1, 1, 0, 0)$: sell ₹1 lakh Nifty, buy ₹1 lakh ETF.</p>
+        <p class="k"><span class="kl">Choose</span> ETF $x_2 = 1$, balanced $x_4 = 0$.</p>
+        <p class="k"><span class="kl">Bonds</span> $x_3 = -0.5x_4 = -0.5(0) = 0$.</p>
+        <p class="k"><span class="kl">Nifty</span> $x_1 = -x_2 - 0.5x_4 = -1 - 0 = -1$.</p>
+        <p class="k"><span class="kl">Result</span> $s_1 = (-1, 1, 0, 0)$. That's <b>guess 1</b>: swap Nifty for its twin.</p>
       </li>
       <li>
-        <p class="k"><span class="kl">Free choice</span> ETF $x_2 = 0$, balanced $x_4 = 1$.</p>
-        <p class="k"><span class="kl">Row 2</span> $-5x_3 - 2.5(1) = 0 \Rightarrow -5x_3 = 2.5 \Rightarrow x_3 = -0.5$.</p>
-        <p class="k"><span class="kl">Row 1</span> $x_1 + 0 + (-0.5) + 1 = 0 \Rightarrow x_1 = -0.5$.</p>
-        <p class="k"><span class="kl">Result</span> $s_2 = (-0.5, 0, -0.5, 1)$: buy ₹1 lakh balanced, sell ₹0.5 lakh each of Nifty and bonds.</p>
-      </li>
-      <li>
-        <p class="k"><span class="kl">Check $s_1$</span> Budget $-1 + 1 + 0 + 0 = 0$ ✓. Return $-12 + 12 + 0 + 0 = 0$ ✓. Exposure $-1 + 1 + 0 + 0 = 0$ ✓.</p>
-        <p class="k"><span class="kl">Check $s_2$</span> Budget $-0.5 + 0 - 0.5 + 1 = 0$ ✓. Return $12(-0.5) + 12(0) + 7(-0.5) + 9.5(1) = -6 - 3.5 + 9.5 = 0$ ✓. Exposure $-0.5 + 0 + 0 + 0.5 = 0$ ✓.</p>
+        <p class="k"><span class="kl">Choose</span> ETF $x_2 = 0$, balanced $x_4 = 1$.</p>
+        <p class="k"><span class="kl">Bonds</span> $x_3 = -0.5(1) = -0.5$.</p>
+        <p class="k"><span class="kl">Nifty</span> $x_1 = -0 - 0.5(1) = -0.5$.</p>
+        <p class="k"><span class="kl">Result</span> $s_2 = (-0.5, 0, -0.5, 1)$. That's <b>guess 2</b>: build the balanced fund yourself.</p>
       </li>
     </ol>
+    <p>Full check in the original rules, entry by entry:</p>
+    <table>
+      <tr><th></th><th>Budget $1, 1, 1, 1$</th><th>Return $12, 12, 7, 9.5$</th><th>Exposure $1, 1, 0, 0.5$</th></tr>
+      <tr><td>$s_1 = (-1, 1, 0, 0)$</td><td>$-1 + 1 + 0 + 0 = 0$ ✓</td><td>$-12 + 12 + 0 + 0 = 0$ ✓</td><td>$-1 + 1 + 0 + 0 = 0$ ✓</td></tr>
+      <tr><td>$s_2 = (-0.5, 0, -0.5, 1)$</td><td>$-0.5 + 0 - 0.5 + 1 = 0$ ✓</td><td>$-6 + 0 - 3.5 + 9.5 = 0$ ✓</td><td>$-0.5 + 0 + 0 + 0.5 = 0$ ✓</td></tr>
+    </table>
+    <p>The recipe found our two guesses without any guessing. On a menu where nothing is obvious, it works exactly the same way.</p>
+    <div class="box intuition"><span class="label">In one line</span><p>One free amount = 1, the others = 0, solve for the rest: one special solution per free column.</p></div>
 
-    <h4>Step 3: every do-nothing trade</h4>
-    <p>$N(A)$ is all mixes $c\,s_1 + d\,s_2$: a <b>plane</b> inside $\mathbb{R}^4$ (the space of four-fund trades). Choose the ETF amount $c$ and the balanced amount $d$; the Nifty and bond amounts are forced: $x_1 = -c - 0.5d$, $x_3 = -0.5d$.</p>
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. Move 4: every do-nothing trade</h3>
+    <p>Now the open question from topic 1: <b>are there any others?</b></p>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Any choice</span> Choose any ETF amount $c$ and any balanced amount $d$. Move 2 forces $x_1 = -c - 0.5d$ and $x_3 = -0.5d$.</p>
+        <p class="k"><span class="kl">Split it</span> $\begin{bmatrix} -c - 0.5d \\ c \\ -0.5d \\ d \end{bmatrix} = c\begin{bmatrix} -1 \\ 1 \\ 0 \\ 0 \end{bmatrix} + d\begin{bmatrix} -0.5 \\ 0 \\ -0.5 \\ 1 \end{bmatrix} = c\,s_1 + d\,s_2$.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">So</span> Every do-nothing trade is $c\,s_1 + d\,s_2$: "do guess 1, $c$ times, and guess 2, $d$ times".</p>
+        <p class="k"><span class="kl">Nothing else</span> A do-nothing trade is pinned down by its ETF and balanced amounts. If both are 0, the forced amounts are 0 too, so the trade is zero. There's no room for a hidden third kind.</p>
+      </li>
+      <li>
+        <p class="k"><span class="kl">Example</span> Someone hands you the trade $(-3, 2, -1, 2)$. Its ETF amount is 2, its balanced amount is 2, so it must be $2s_1 + 2s_2 = (-2 - 1,\ 2,\ -1,\ 2) = (-3, 2, -1, 2)$ ✓.</p>
+        <p class="k"><span class="kl">Check</span> Budget $-3 + 2 - 1 + 2 = 0$. Return $-36 + 24 - 7 + 19 = 0$. Exposure $-3 + 2 + 0 + 1 = 0$ ✓.</p>
+      </li>
+    </ol>
+    <p>Two free choices give two independent directions, so $N(A)$ is a <b>plane</b> inside $\mathbb{R}^4$ (the space of four-fund trades).</p>
     <h4>Try it: choose the free amounts</h4>
     <div id="mixspecial" class="lab-controls"></div>
-    <div class="box intuition"><span class="label">In one line</span><p>Staircase → pivot and free columns → one special solution per free column → all their mixes are the nullspace.</p></div>
+    <div class="box intuition"><span class="label">In one line</span><p>Every do-nothing trade is a mix of the special solutions, and every mix is one: $N(A)$ = all $c\,s_1 + d\,s_2$.</p></div>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t5">5. Counting: n − r special solutions</h3>
-    <div class="box method" id="m-count"><span class="label">Rule · n − r free variables, n − r special solutions</span>
-      <p>With $n$ columns and rank $r$: $r$ pivot variables and $n - r$ free variables, so $n - r$ special solutions. If $n > m$ (more unknowns than equations), then $r \le m < n$, so there is <b>at least one</b> free variable and a non-zero do-nothing trade <b>always</b> exists.</p>
+    <h3 class="topic" id="t6">6. The same four moves on smaller menus</h3>
+    <p>The recipe doesn't depend on the menu. Here it is on a 2 × 2 and two 3 × 3s, move by move.</p>
+
+    <h4>2 × 2: Nifty and its twin, budget and return only</h4>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Move 1</span> $\left[\begin{smallmatrix} 1 & 1 \\ 12 & 12 \end{smallmatrix}\right]$. Row 2 $-\ 12 \times$ row 1: $12 - 12 = 0$, $12 - 12 = 0$. $U = \left[\begin{smallmatrix} 1 & 1 \\ 0 & 0 \end{smallmatrix}\right]$.</p>
+        <p class="k"><span class="kl">Move 2</span> Pivot in column 1 (Nifty); column 2 (ETF) is free. Rank 1.</p>
+        <p class="k"><span class="kl">Move 3</span> ETF $= 1$: row 1 gives $x_1 + 1 = 0$, so $x_1 = -1$. Special solution $(-1, 1)$.</p>
+        <p class="k"><span class="kl">Move 4</span> All do-nothing trades: $c(-1, 1)$, a line.</p>
+      </li>
+    </ol>
+
+    <h4>3 × 3: Nifty, bonds, balanced (Lesson 6's menu)</h4>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Move 1</span> Same three row operations as topic 2 (just without the ETF column): $U = \left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -5 & -2.5 \\ 0 & 0 & 0 \end{smallmatrix}\right]$.</p>
+        <p class="k"><span class="kl">Move 2</span> Pivots in columns 1 and 2 (Nifty, bonds); column 3 (balanced) is free. Rank 2.</p>
+        <p class="k"><span class="kl">Move 3</span> Balanced $= 1$. Row 2: $-5x_2 - 2.5(1) = 0 \Rightarrow x_2 = -0.5$. Row 1: $x_1 - 0.5 + 1 = 0 \Rightarrow x_1 = -0.5$. Special solution $(-0.5, -0.5, 1)$.</p>
+        <p class="k"><span class="kl">Move 4</span> All: $c(-0.5, -0.5, 1)$, a line. ($c = -2$ gives Lesson 6's $(1, 1, -2)$.)</p>
+      </li>
+    </ol>
+
+    <h4>3 × 3: Nifty, bonds, midcap</h4>
+    <ol class="step-list kid-step">
+      <li>
+        <p class="k"><span class="kl">Move 1</span> Row 2 $-\ 12 \times$ row 1: $(0, -5, 15 - 12 = 3)$. Row 3 $-$ row 1: $(0, -1, 1.2 - 1 = 0.2)$. Row 3 $-\ 0.2 \times$ row 2: $(0, 0, 0.2 - 0.6 = -0.4)$. $U = \left[\begin{smallmatrix} 1 & 1 & 1 \\ 0 & -5 & 3 \\ 0 & 0 & -0.4 \end{smallmatrix}\right]$.</p>
+        <p class="k"><span class="kl">Move 2</span> Pivots in all three columns. <b>No free column.</b> Rank 3.</p>
+        <p class="k"><span class="kl">Moves 3–4</span> Nothing to choose, so the only do-nothing trade is $(0, 0, 0)$. Midcap brings something new; no fund repeats another.</p>
+      </li>
+    </ol>
+
+    <h4>How many special solutions?</h4>
+    <p>Every column is either a pivot column or a free column, and each free column gives one special solution. So:</p>
+    <div class="box method" id="m-count"><span class="label">Rule · n − r special solutions</span>
+      <p>With $n$ funds (columns) and rank $r$: number of free columns $= n - r$ = number of special solutions. Since there can't be more pivots than rows, $r \le m$. So if there are <b>more funds than rules</b> ($n > m$), at least one column is free and a do-nothing trade <b>always</b> exists.</p>
     </div>
     <table>
-      <tr><th>Matrix</th><th>$m$ rules</th><th>$n$ funds</th><th>rank $r$</th><th>$n - r$</th><th>Nullspace</th></tr>
-      <tr><td>Zero-cost $[1\ 1\ 1]$</td><td>1</td><td>3</td><td>1</td><td>2</td><td>a plane</td></tr>
-      <tr><td>Twins (2 × 2)</td><td>2</td><td>2</td><td>1</td><td>1</td><td>a line</td></tr>
+      <tr><th>Menu</th><th>$m$ rules</th><th>$n$ funds</th><th>rank $r$</th><th>$n - r$</th><th>Do-nothing trades</th></tr>
+      <tr><td>Nifty, twin (2 × 2)</td><td>2</td><td>2</td><td>1</td><td>1</td><td>a line</td></tr>
       <tr><td>Nifty, bonds, balanced</td><td>3</td><td>3</td><td>2</td><td>1</td><td>a line</td></tr>
       <tr><td>Nifty, bonds, midcap</td><td>3</td><td>3</td><td>3</td><td>0</td><td>only $0$</td></tr>
-      <tr><td>Nifty, ETF, bonds, balanced</td><td>3</td><td>4</td><td>2</td><td>2</td><td>a plane in $\mathbb{R}^4$</td></tr>
-      <tr><td>Nifty, bonds, midcap, balanced</td><td>3</td><td>4</td><td>3</td><td>1</td><td>a line in $\mathbb{R}^4$</td></tr>
+      <tr><td>Nifty, ETF, bonds, balanced</td><td>3</td><td>4</td><td>2</td><td>2</td><td>a plane</td></tr>
     </table>
-    <p><b>The last row, worked.</b> Nifty, bonds and midcap already give 3 pivots (topic 3), so balanced must be free. Set it to 1: the forced amounts come out as $(-0.5, -0.5, 0, 1)$, the same "build balanced yourself" trade. Check: budget $-0.5 - 0.5 + 0 + 1 = 0$ ✓; return $-6 - 3.5 + 0 + 9.5 = 0$ ✓; exposure $-0.5 + 0 + 0 + 0.5 = 0$ ✓.</p>
     <div class="box finance"><span class="label">Why a desk cares</span>
-      <p>Three things you control (budget, return, exposure) and four or more products: there is <b>guaranteed</b> to be a way to switch between products that changes nothing you measure. That's exactly where a desk looks for the cheaper route, and where hidden risks (things you <i>don't</i> measure) can creep in unnoticed.</p>
+      <p>Three things you measure and four or more products: there is <b>guaranteed</b> to be a way to switch between products that changes nothing you measure. That's where a desk looks for the cheaper route, and also where risks you <i>don't</i> measure can slip in unnoticed.</p>
     </div>
-    <div class="box intuition"><span class="label">In one line</span><p>Free variables = funds − pivots. More funds than rules ⇒ at least one do-nothing trade.</p></div>
+    <details class="check"><summary>Check yourself (MIT recitation): all solutions of $x - 5y + 2z = 0$.</summary>
+      <p>Move 1: one row, already a staircase. Move 2: pivot in column 1 ($x$); $y$ and $z$ are free; rank 1, so $3 - 1 = 2$ special solutions. Move 3: $y = 1, z = 0$ gives $x = 5$, so $(5, 1, 0)$; $y = 0, z = 1$ gives $x = -2$, so $(-2, 0, 1)$. Move 4: all $c(5, 1, 0) + d(-2, 0, 1)$, a plane.</p>
+    </details>
+    <div class="box intuition"><span class="label">In one line</span><p>Same four moves every time; the number of special solutions is funds minus pivots, $n - r$.</p></div>
 
     <!-- ====================================================== -->
-    <h3 class="topic" id="t6">6. The reduced form R and the nullspace matrix</h3>
-    <div class="box intuition"><span class="label">The whole idea in one line</span>
-      <p>Keep going after $U$: make each pivot 1 and clear <b>above</b> it too. Then the special solutions can be read straight off the matrix, no back substitution needed.</p>
-    </div>
-    <div class="box method" id="m-rref"><span class="label">Method · Reduced row echelon form R (Gauss–Jordan on U)</span>
-      <p>From $U$: divide each pivot row by its pivot, then subtract multiples of it from the rows <b>above</b> so every pivot column is all zeros except its 1. The result $R = \text{rref}(A)$ has the same nullspace as $A$ and $U$.</p>
+    <h3 class="topic" id="t7">7. The shortcut: the reduced form R</h3>
+    <p>In Move 2 we still had to solve row 2, then put that into row 1. If we push elimination two steps further, that solving is already done for us.</p>
+    <div class="box method" id="m-rref"><span class="label">Method · Reduced row echelon form R</span>
+      <p>Start from $U$. Divide each pivot row by its pivot (so every pivot becomes 1), then clear the entries <b>above</b> each pivot too (Gauss–Jordan, Lesson 3). The result is $R = \text{rref}(A)$: same do-nothing trades, simplest possible rules.</p>
     </div>
     <ol class="step-list kid-step">
       <li>
-        <p class="k"><span class="kl">Pivot 2 → 1</span> Row 2 $\div (-5)$: $0, 0, \;-5/(-5) = 1, \;-2.5/(-5) = 0.5$. Now row 2 $= (0, 0, 1, 0.5)$.</p>
-        <p class="k"><span class="kl">Clear above</span> Row 1 has a 1 in column 3. Row 1 $-\ 1 \times$ row 2: $1 - 0 = 1$, $\;1 - 0 = 1$, $\;1 - 1 = 0$, $\;1 - 0.5 = 0.5$. Now row 1 $= (1, 1, 0, 0.5)$.</p>
+        <p class="k"><span class="kl">Pivot 2 → 1</span> Row 2 $\div (-5)$: $0, \;0, \;-5/(-5) = 1, \;-2.5/(-5) = 0.5$. Row 2 $= (0, 0, 1, 0.5)$.</p>
+        <p class="k"><span class="kl">Clear above</span> Row 1 has a 1 above that pivot. Row 1 $-\ 1 \times$ row 2: $1 - 0 = 1$, $\;1 - 0 = 1$, $\;1 - 1 = 0$, $\;1 - 0.5 = 0.5$. Row 1 $= (1, 1, 0, 0.5)$.</p>
       </li>
     </ol>
-    $$ R = \begin{bmatrix} \boxed{1} & 1 & 0 & 0.5 \\ 0 & 0 & \boxed{1} & 0.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} \qquad \begin{aligned} \text{row 1: } & x_1 + x_2 + 0.5x_4 = 0 \\ \text{row 2: } & x_3 + 0.5x_4 = 0 \end{aligned} $$
-    <p>Each row now says "pivot amount $= -$(free amounts × these numbers)": $x_1 = -x_2 - 0.5x_4$ and $x_3 = -0.5x_4$. That's the forced-amount rule from topic 4, with no work left.</p>
-
-    <h4>Pivot columns first: R = [ I  F ]</h4>
-    <p>List the pivot columns (1, 3) first and the free columns (2, 4) after. The pivot part becomes an identity $I$, and the free part is a block $F$:</p>
-    $$ \begin{array}{c|cc|cc} & x_1 & x_3 & x_2 & x_4 \\ \hline \text{row 1} & 1 & 0 & 1 & 0.5 \\ \text{row 2} & 0 & 1 & 0 & 0.5 \end{array} \qquad I = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}, \quad F = \begin{bmatrix} 1 & 0.5 \\ 0 & 0.5 \end{bmatrix} $$
-    <div class="box method" id="m-nmatrix"><span class="label">Method · Nullspace matrix N = [ −F ; I ]</span>
-      <p>Stack $-F$ (the pivot amounts) on top of an identity (the free amounts, each set to 1 in turn). Its columns are exactly the special solutions, and $RN = 0$. Rows of $N$ are in the order pivot variables, then free variables.</p>
-    </div>
-    $$ N = \begin{bmatrix} -F \\ I \end{bmatrix} = \begin{array}{c} x_1 \\ x_3 \\ x_2 \\ x_4 \end{array}\!\begin{bmatrix} -1 & -0.5 \\ 0 & -0.5 \\ 1 & 0 \\ 0 & 1 \end{bmatrix} \;\xrightarrow{\text{back to order } x_1, x_2, x_3, x_4}\; s_1 = (-1, 1, 0, 0), \;\; s_2 = (-0.5, 0, -0.5, 1) \;✓ $$
+    $$ R = \begin{bmatrix} \boxed{1} & 1 & 0 & 0.5 \\ 0 & 0 & \boxed{1} & 0.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} \qquad \begin{aligned} \text{row 1: } & x_1 + x_2 + 0.5x_4 = 0 \;\Rightarrow\; x_1 = -x_2 - 0.5x_4 \\ \text{row 2: } & x_3 + 0.5x_4 = 0 \;\Rightarrow\; x_3 = -0.5x_4 \end{aligned} $$
+    <p>Each row now contains <b>one</b> pivot amount and only free amounts: it is already the Move 2 answer. So the special solutions can be read off directly:</p>
     <ol class="step-list kid-step">
       <li>
-        <p class="k"><span class="kl">Check $RN$</span> Row 1 · $s_1$: $1(-1) + 1(1) + 0(0) + 0.5(0) = 0$ ✓. Row 1 · $s_2$: $1(-0.5) + 1(0) + 0(-0.5) + 0.5(1) = 0$ ✓.</p>
-        <p class="k"><span class="kl"></span> Row 2 · $s_1$: $0 + 0 + 1(0) + 0.5(0) = 0$ ✓. Row 2 · $s_2$: $0 + 0 + 1(-0.5) + 0.5(1) = 0$ ✓. Row 3 is zero, so it gives 0 for both.</p>
-        <p class="k"><span class="kl">Why it works</span> $R$ times a trade = $I \times$ (pivot part) $+\ F \times$ (free part). With pivot part $-F$ and free part $I$: $I(-F) + FI = -F + F = 0$.</p>
+        <p class="k"><span class="kl">Reading rule</span> Set one free amount to 1. Each pivot amount is <b>minus</b> the number in that free column of $R$, in the pivot's row.</p>
+        <p class="k"><span class="kl">ETF = 1</span> ETF column of $R$ is $(1, 0)$ in rows 1, 2. So Nifty $= -1$, bonds $= 0$: $s_1 = (-1, 1, 0, 0)$ ✓.</p>
+        <p class="k"><span class="kl">Balanced = 1</span> Balanced column of $R$ is $(0.5, 0.5)$. So Nifty $= -0.5$, bonds $= -0.5$: $s_2 = (-0.5, 0, -0.5, 1)$ ✓.</p>
       </li>
     </ol>
-    <details class="more"><summary>For the curious: MIT's own example, and its transpose</summary>
-      <p>Strang's $A = \left[\begin{smallmatrix} 1 & 2 & 2 & 2 \\ 2 & 4 & 6 & 8 \\ 3 & 6 & 8 & 10 \end{smallmatrix}\right]$ reduces to $R = \left[\begin{smallmatrix} 1 & 2 & 0 & -2 \\ 0 & 0 & 1 & 2 \\ 0 & 0 & 0 & 0 \end{smallmatrix}\right]$: pivots in columns 1 and 3, $F = \left[\begin{smallmatrix} 2 & -2 \\ 0 & 2 \end{smallmatrix}\right]$, special solutions $(-2, 1, 0, 0)$ and $(2, 0, -2, 1)$. Its transpose (a $4 \times 3$) also has rank 2, with one special solution $(-1, -1, 1)$: column 3 = column 1 + column 2. Rank is the same for $A$ and $A^T$, a fact Lesson 10 explains.</p>
+    <div class="box method" id="m-nmatrix"><span class="label">Method · Nullspace matrix N</span>
+      <p>Put the special solutions side by side as columns. $N$ holds every do-nothing trade at once ($N\left[\begin{smallmatrix} c \\ d \end{smallmatrix}\right] = c\,s_1 + d\,s_2$), and $AN = 0$, $RN = 0$.</p>
+    </div>
+    $$ N = \begin{bmatrix} -1 & -0.5 \\ 1 & 0 \\ 0 & -0.5 \\ 0 & 1 \end{bmatrix} \begin{matrix} \leftarrow \text{Nifty} \\ \leftarrow \text{ETF} \\ \leftarrow \text{bonds} \\ \leftarrow \text{balanced} \end{matrix} $$
+    <p>Check $RN = 0$, each row of $R$ against each column of $N$:</p>
+    <table>
+      <tr><th></th><th>$s_1 = (-1, 1, 0, 0)$</th><th>$s_2 = (-0.5, 0, -0.5, 1)$</th></tr>
+      <tr><td>Row 1 of $R$: $(1, 1, 0, 0.5)$</td><td>$-1 + 1 + 0 + 0 = 0$ ✓</td><td>$-0.5 + 0 + 0 + 0.5 = 0$ ✓</td></tr>
+      <tr><td>Row 2 of $R$: $(0, 0, 1, 0.5)$</td><td>$0 + 0 + 0 + 0 = 0$ ✓</td><td>$0 + 0 - 0.5 + 0.5 = 0$ ✓</td></tr>
+      <tr><td>Row 3 of $R$: $(0, 0, 0, 0)$</td><td>$0$ ✓</td><td>$0$ ✓</td></tr>
+    </table>
+    <details class="more"><summary>For the curious: Strang's compact form R = [ I F ] and N = [ −F ; I ]</summary>
+      <p>List the pivot columns first (Nifty, bonds) and the free columns after (ETF, balanced). Then the pivot part of $R$ is the identity $I = \left[\begin{smallmatrix} 1 & 0 \\ 0 & 1 \end{smallmatrix}\right]$ and the free part is $F = \left[\begin{smallmatrix} 1 & 0.5 \\ 0 & 0.5 \end{smallmatrix}\right]$. The reading rule above says the pivot amounts are $-F$ and the free amounts are $I$, so in that order $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$, and $RN = I(-F) + F\,I = 0$.</p>
+      <p>MIT's lecture matrix $\left[\begin{smallmatrix} 1 & 2 & 2 & 2 \\ 2 & 4 & 6 & 8 \\ 3 & 6 & 8 & 10 \end{smallmatrix}\right]$ has the same shape as our menu: $R = \left[\begin{smallmatrix} 1 & 2 & 0 & -2 \\ 0 & 0 & 1 & 2 \\ 0 & 0 & 0 & 0 \end{smallmatrix}\right]$, pivots in columns 1 and 3, special solutions $(-2, 1, 0, 0)$ and $(2, 0, -2, 1)$.</p>
     </details>
-    <div class="box intuition"><span class="label">In one line</span><p>$R = [\,I \;\; F\,]$ (after moving pivot columns first), and the special solutions are the columns of $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</p></div>
-
     <details class="check"><summary>Check yourself (MIT problem 7.1): find $R$, the rank and the special solutions of $\left[\begin{smallmatrix} 1 & 5 & 7 & 9 \\ 0 & 4 & 1 & 7 \\ 2 & -2 & 11 & -3 \end{smallmatrix}\right]$.</summary>
-      <p>Row 3 $-\ 2 \times$ row 1: $(0, -12, -3, -21)$. Row 2 $\div 4$: $(0, 1, \tfrac14, \tfrac74)$. Row 3 $+\ 12 \times$ row 2: $(0, 0, 0, 0)$. Row 1 $-\ 5 \times$ row 2: $(1, 0, 7 - \tfrac54, 9 - \tfrac{35}{4}) = (1, 0, \tfrac{23}{4}, \tfrac14)$. So $R = \left[\begin{smallmatrix} 1 & 0 & 23/4 & 1/4 \\ 0 & 1 & 1/4 & 7/4 \\ 0 & 0 & 0 & 0 \end{smallmatrix}\right]$, rank 2, free columns 3 and 4, and $N$'s columns are $(-\tfrac{23}{4}, -\tfrac14, 1, 0)$ and $(-\tfrac14, -\tfrac74, 0, 1)$. Try it in the lab on the Examples tab.</p>
+      <p>Move 1: row 3 $-\ 2 \times$ row 1 $= (0, -12, -3, -21)$; row 3 $+\ 3 \times$ row 2 $= (0, 0, 0, 0)$. Shortcut: row 2 $\div 4 = (0, 1, \tfrac14, \tfrac74)$; row 1 $-\ 5 \times$ row 2 $= (1, 0, \tfrac{23}{4}, \tfrac14)$. So $R = \left[\begin{smallmatrix} 1 & 0 & 23/4 & 1/4 \\ 0 & 1 & 1/4 & 7/4 \\ 0 & 0 & 0 & 0 \end{smallmatrix}\right]$, rank 2, free columns 3 and 4. Reading rule: $(-\tfrac{23}{4}, -\tfrac14, 1, 0)$ and $(-\tfrac14, -\tfrac74, 0, 1)$. Try it in the lab on the Examples tab.</p>
     </details>
+    <div class="box intuition"><span class="label">In one line</span><p>$R$ is $U$ finished off: each row says "pivot amount $= -$(free amounts × numbers)", so the special solutions are read straight off it.</p></div>
 
     <!-- ====================================================== -->
     <!-- Summary: website only (left out of the PDF report) -->
     <div class="no-print">
-    <h3 class="topic" id="t7">7. Summary</h3>
+    <h3 class="topic" id="t8">8. Summary</h3>
     <div class="summary">
-      <h3>Key ideas</h3>
+      <h3>The recipe for Ax = 0</h3>
       <ol>
-        <li>Row operations keep the nullspace (but can change the column space). (<a href="#t1">topic 1</a>)</li>
-        <li>After elimination: pivot columns give forced (pivot) variables, the rest give free variables. (<a href="#t2">topic 2</a>, <a href="#t3">topic 3</a>)</li>
-        <li>Rank $r$ = number of pivots. (<a href="#t3">topic 3</a>)</li>
-        <li>Special solution: one free variable = 1, the others 0, back-substitute. $N(A)$ = all their mixes. (<a href="#t4">topic 4</a>)</li>
-        <li>There are $n - r$ special solutions; more columns than rows guarantees a non-zero nullspace. (<a href="#t5">topic 5</a>)</li>
-        <li>$R = \text{rref}(A) = [\,I \;\; F\,]$ (pivot columns first); $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$ and $RN = 0$. (<a href="#t6">topic 6</a>)</li>
+        <li><b>Simplify:</b> eliminate $A$ to the staircase $U$. Row operations don't change the do-nothing trades. (<a href="#t2">topic 2</a>)</li>
+        <li><b>Read the staircase:</b> pivot columns hold forced amounts, free columns hold amounts you choose. Rank $r$ = number of pivots. (<a href="#t3">topic 3</a>)</li>
+        <li><b>Special solutions:</b> one free amount $= 1$, the others $0$, solve for the rest. (<a href="#t4">topic 4</a>)</li>
+        <li><b>All of them:</b> $N(A)$ = every mix of the special solutions, and nothing else. (<a href="#t5">topic 5</a>)</li>
+        <li>There are $n - r$ special solutions; more funds than rules ⇒ always at least one. (<a href="#t6">topic 6</a>)</li>
+        <li>Shortcut: the reduced form $R$ lets you read the special solutions off directly. (<a href="#t7">topic 7</a>)</li>
       </ol>
     </div>
     <h4>Words in this lesson</h4>
     <dl class="vocab">
       <dt>Echelon form $U$</dt><dd>The staircase after elimination: each row starts further right; zero rows at the bottom.</dd>
-      <dt>Pivot column / variable</dt><dd>A column with a pivot; its unknown is forced by the free ones.</dd>
-      <dt>Free column / variable</dt><dd>A column with no pivot; its unknown can be any number.</dd>
-      <dt>Rank $r$</dt><dd>The number of pivots: the number of truly different columns.</dd>
-      <dt>Special solution</dt><dd>The solution of $Ax = 0$ with one free variable = 1 and the others 0.</dd>
+      <dt>Pivot</dt><dd>The first non-zero entry of a row of $U$.</dd>
+      <dt>Pivot column / variable</dt><dd>A column with a pivot; its amount is forced by the free amounts.</dd>
+      <dt>Free column / variable</dt><dd>A column with no pivot; its amount can be anything. It adds nothing new compared with the columns before it.</dd>
+      <dt>Rank $r$</dt><dd>The number of pivots: the funds that bring something new.</dd>
+      <dt>Special solution</dt><dd>The do-nothing trade with one free amount $= 1$ and the others $0$.</dd>
       <dt>Reduced row echelon form $R$</dt><dd>Pivots equal to 1 with zeros above and below them.</dd>
-      <dt>Nullspace matrix $N$</dt><dd>The matrix whose columns are the special solutions: $\left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</dd>
+      <dt>Nullspace matrix $N$</dt><dd>The special solutions side by side as columns.</dd>
     </dl>
     </div>
 
