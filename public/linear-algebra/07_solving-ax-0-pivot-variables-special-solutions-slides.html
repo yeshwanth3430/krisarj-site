@@ -70,118 +70,113 @@
 <section class="slide cover">
   <div class="kicker">Linear Algebra · Lesson 7</div>
   <h1>Solving Ax = 0</h1>
-  <p class="lead">The recipe for finding <b>every</b> do-nothing trade, even when you have more funds than rules.</p>
-  <p class="lead soft">Pivots, free variables, rank, special solutions.</p>
-  <div><span class="chip">Rank r</span><span class="chip">n − r special solutions</span><span class="chip">MIT 18.06, Lecture 7</span></div>
+  <p class="lead">Which trades change <b>nothing</b>? Simplify $A \to U \to R$, then read every answer off $R$.</p>
+  <p class="lead soft">Rank, pivot and free variables, special solutions.</p>
+  <div><span class="chip">A → U → R</span><span class="chip">n − r free</span><span class="chip">MIT 18.06, Lecture 7</span></div>
 </section>
 
 <!-- 2 -->
 <section class="slide">
-  <div class="kicker">The setup</div>
+  <div class="kicker">The question</div>
   <h2>Four funds, three rules</h2>
-  <p>Nifty, a Nifty ETF (its twin), bonds, balanced (half Nifty, half bonds). Rows: budget, return, exposure.</p>
+  <p>Nifty, Nifty ETF (its twin), bonds, balanced (half Nifty, half bonds). Rows: budget, return, exposure.</p>
   $$ A = \begin{bmatrix} 1 & 1 & 1 & 1 \\ 12 & 12 & 7 & 9.5 \\ 1 & 1 & 0 & 0.5 \end{bmatrix} $$
-  <p><b>Which trades change nothing?</b> Two jump out: swap Nifty for its twin, and build balanced from Nifty + bonds. Are there more? A four-move recipe answers for sure.</p>
+  <p>Two do-nothing trades jump out: swap Nifty for its twin, and build balanced from Nifty + bonds. <b>Are there more?</b></p>
 </section>
 
 <!-- 3 -->
 <section class="slide">
-  <div class="kicker">Move 1 · why it's safe</div>
-  <h2>Elimination rewrites the rules</h2>
-  <p>"Return − 12 × budget" asks: how much return <b>beyond</b> 12%? A trade answering 0 to both old questions answers $0 - 12 \times 0 = 0$ to the new one.</p>
-  <p>So $Ax = 0$ and $Ux = 0$ have the <b>same</b> solutions.</p>
-  <div class="box method"><span class="label">Careful</span><p>The column space <b>does</b> change. Use $U$ for the nullspace, never for $C(A)$.</p></div>
+  <div class="kicker">Step 1 · A → U</div>
+  <h2>Clear below the pivots</h2>
+  $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} $$
+  <p>Row 2 − 12 × row 1 asks: how much return <b>beyond</b> 12%? Row 3 ends up all zeros: exposure told us nothing new.</p>
+  <p class="soft" style="font-size:32px">Safe: a trade that answers 0 to the old rules answers 0 to the new ones.</p>
 </section>
 
 <!-- 4 -->
 <section class="slide">
-  <div class="kicker">Move 1</div>
-  <h2>Simplify to a staircase</h2>
-  $$ U = \begin{bmatrix} \boxed{1} & 1 & 1 & 1 \\ 0 & 0 & \boxed{-5} & -2.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} $$
-  <p>Column 2 has no pivot (the ETF copies Nifty), so skip it. Row 3 vanishes: exposure added no new information.</p>
-  <p><b>Pivot columns:</b> Nifty, bonds. <b>Free columns:</b> ETF, balanced. <b>Rank $r = 2$.</b></p>
+  <div class="kicker">Step 2 · U → R</div>
+  <h2>Pivots to 1, clear above</h2>
+  <p>Row 2 ÷ (−5), then row 1 − row 2:</p>
+  $$ R = \begin{bmatrix} \boxed{1} & 1 & 0 & 0.5 \\ 0 & 0 & \boxed{1} & 0.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} $$
+  <p>Row 1: $x_1 + x_2 + 0.5x_4 = 0$. Row 2: $x_3 + 0.5x_4 = 0$. Each rule now involves <b>one</b> pivot amount only.</p>
 </section>
 
 <!-- 5 -->
 <section class="slide">
-  <div class="kicker">Move 2</div>
-  <h2>Pivot = forced, free = your choice</h2>
-  <p>Choose the free amounts. The pivot amounts are then forced:</p>
-  $$ x_3 = -0.5\,x_4 \qquad x_1 = -x_2 - 0.5\,x_4 $$
-  <div class="box method"><span class="label">Rank</span><p>$r$ = number of pivots = number of genuinely different funds.</p></div>
+  <div class="kicker">The rank</div>
+  <h2>r = number of pivots = 2</h2>
+  <ul>
+    <li><b>2 of 3 rules</b> carry information</li>
+    <li><b>2 of 4 funds</b> bring something new (Nifty, bonds)</li>
+    <li><b>4 − 2 = 2</b> amounts are left free</li>
+  </ul>
 </section>
 
 <!-- 6 -->
 <section class="slide">
-  <div class="kicker">Move 3</div>
-  <h2>Special solutions</h2>
-  <p>One free variable = 1, the others 0:</p>
-  <ul>
-    <li>ETF = 1: $s_1 = (-1, 1, 0, 0)$: guess 1</li>
-    <li>Balanced = 1: $s_2 = (-0.5, 0, -0.5, 1)$: guess 2</li>
-  </ul>
-  <p>Check $s_2$: $-0.5 - 0.5 + 1 = 0$, $\;-6 - 3.5 + 9.5 = 0$, $\;-0.5 + 0.5 = 0$ ✓</p>
-  <p><b>Move 4:</b> every do-nothing trade is $c\,s_1 + d\,s_2$, and nothing else exists: a plane in $\mathbb{R}^4$.</p>
+  <div class="kicker">Pivot and free</div>
+  <h2>You pick, R decides</h2>
+  <p><b>Free</b> (no pivot): ETF, balanced. <b>Pivot</b>: Nifty, bonds.</p>
+  <p>Pick ETF = 3, balanced = 2. Read $R$:</p>
+  <p>bonds $= -0.5(2) = -1$, &nbsp; Nifty $= -3 - 0.5(2) = -4$</p>
+  <div class="box finance"><span class="label">Common sense agrees</span><p>Undo the ETF by selling 3 Nifty; undo balanced by selling 1 Nifty + 1 bonds.</p></div>
 </section>
 
 <!-- 7 -->
 <section class="slide">
-  <div class="kicker">Counting</div>
-  <h2>n − r special solutions</h2>
+  <div class="kicker">Two cases</div>
+  <h2>When is there a non-zero solution?</h2>
   <table>
-    <tr><th>Funds</th><th>m</th><th>n</th><th>r</th><th>n − r</th></tr>
-    <tr><td>Nifty, bonds, midcap</td><td>3</td><td>3</td><td>3</td><td>0</td></tr>
-    <tr><td>Nifty, bonds, balanced</td><td>3</td><td>3</td><td>2</td><td>1</td></tr>
-    <tr><td>Nifty, ETF, bonds, balanced</td><td>3</td><td>4</td><td>2</td><td>2</td></tr>
+    <tr><th>Menu</th><th>r</th><th>free</th><th>Non-zero?</th></tr>
+    <tr><td>Nifty, bonds</td><td>2</td><td>0</td><td>no: only 0</td></tr>
+    <tr><td>Nifty, bonds, midcap</td><td>3</td><td>0</td><td>no: only 0</td></tr>
+    <tr><td>Nifty, bonds, balanced</td><td>2</td><td>1</td><td>yes, ∞</td></tr>
+    <tr><td>Nifty, ETF, bonds, balanced</td><td>2</td><td>2</td><td>yes, ∞</td></tr>
   </table>
-  <div class="box finance"><span class="label">The rule</span><p>More funds than rules ($n > m$) ⇒ a do-nothing trade <b>always</b> exists.</p></div>
+  <p>A free column ⇒ yes. More funds than rules ⇒ always yes.</p>
 </section>
 
 <!-- 8 -->
 <section class="slide">
-  <div class="kicker">The reduced form</div>
-  <h2>R: clear above the pivots too</h2>
-  $$ R = \begin{bmatrix} \boxed{1} & 1 & 0 & 0.5 \\ 0 & 0 & \boxed{1} & 0.5 \\ 0 & 0 & 0 & 0 \end{bmatrix} $$
-  <p>Pivot columns first: $R = [\,I \;\; F\,]$ with</p>
-  $$ F = \begin{bmatrix} 1 & 0.5 \\ 0 & 0.5 \end{bmatrix} $$
+  <div class="kicker">Special solutions</div>
+  <h2>Read them off R</h2>
+  <p>One free amount = 1, the other 0. Pivot amounts = <b>minus</b> that column of $R$:</p>
+  <ul>
+    <li>ETF = 1: column $(1, 0)$ → $s_1 = (-1, 1, 0, 0)$: guess 1</li>
+    <li>Balanced = 1: column $(0.5, 0.5)$ → $s_2 = (-0.5, 0, -0.5, 1)$: guess 2</li>
+  </ul>
+  <p>Every do-nothing trade is $c\,s_1 + d\,s_2$, and nothing else exists.</p>
 </section>
 
 <!-- 9 -->
 <section class="slide">
-  <div class="kicker">Read it off</div>
-  <h2>The nullspace matrix</h2>
-  $$ N = \begin{bmatrix} -F \\ I \end{bmatrix} = \begin{array}{c} x_1 \\ x_3 \\ x_2 \\ x_4 \end{array}\!\begin{bmatrix} -1 & -0.5 \\ 0 & -0.5 \\ 1 & 0 \\ 0 & 1 \end{bmatrix} $$
-  <p>Its columns are the special solutions, and $RN = I(-F) + F\,I = 0$. No back substitution needed.</p>
+  <div class="kicker">In markets</div>
+  <h2>Four products, three scenarios</h2>
+  <p>Futures, 20,000 call, 20,000 put, 19,900 call. $R$ has one free column (the put) and one special solution:</p>
+  $$ (1, -1, 1, 0) $$
+  <p>Long future, short call, long put pays 0 everywhere: <b>put–call parity</b>.</p>
 </section>
 
 <!-- 10 -->
 <section class="slide">
-  <div class="kicker">In markets</div>
-  <h2>Four products, three scenarios</h2>
-  <p>Futures, 20,000 call, 20,000 put, 19,900 call. The recipe finds one free column (the put) and one special solution:</p>
-  $$ (1, -1, 1, 0) $$
-  <p>Long future, short call, long put pays 0 everywhere: <b>put–call parity</b>. The 19,900 call is in no do-nothing trade: it's the only one paying at 20,000.</p>
-</section>
-
-<!-- 11 -->
-<section class="slide">
   <div class="kicker">Recap</div>
   <h2>Key takeaways</h2>
   <ol class="lead" style="font-size:36px">
-    <li>Simplify: elimination keeps the do-nothing trades.</li>
-    <li>Pivot amounts are forced, free ones chosen.</li>
-    <li>Special solution: one free = 1, others 0.</li>
-    <li>All of them: mixes of the special solutions.</li>
-    <li>$n - r$ of them; $n > m$ ⇒ always one.</li>
-    <li>$R = [\,I \;\; F\,]$, $N = \left[\begin{smallmatrix} -F \\ I \end{smallmatrix}\right]$.</li>
+    <li>$A \to U \to R$ keeps the do-nothing trades.</li>
+    <li>Rank $r$ = number of pivots.</li>
+    <li>Pivot amounts are decided by $R$; free ones you choose.</li>
+    <li>Free column ⇒ non-zero solutions; none ⇒ only 0.</li>
+    <li>Special solution: one free = 1, pivots = −column of $R$.</li>
+    <li>All solutions: mixes of the special solutions.</li>
   </ol>
 </section>
 
-<!-- 12 -->
+<!-- 11 -->
 <section class="slide cover">
   <div class="kicker">Quant from First Principles</div>
   <h1 style="font-size:76px">The full interactive lesson is free</h1>
-  <p class="lead">A pivot and special-solution lab for any matrix up to 3 × 5, and worked hedging and options examples:</p>
+  <p class="lead">A lab that takes any matrix up to 3 × 5 from A to U to R and finds every special solution, plus worked hedging and options examples:</p>
   <p class="lead"><b>learn.krisarj.com</b></p>
   <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
 </section>
