@@ -58,6 +58,13 @@ const LESSONS = [
     page: "linear-algebra/07_solving-ax-0-pivot-variables-special-solutions.html",
     slides: "linear-algebra/07_solving-ax-0-pivot-variables-special-solutions-slides.html",
     plots: {}
+  },
+  {
+    slug: "la-08-solving-ax-b-row-reduced-form-r",
+    title: "Linear Algebra · Lesson 8 · Solving Ax = b: Row Reduced Form R",
+    page: "linear-algebra/08_solving-ax-b-row-reduced-form-r.html",
+    slides: "linear-algebra/08_solving-ax-b-row-reduced-form-r-slides.html",
+    plots: {}
   }
 ];
 

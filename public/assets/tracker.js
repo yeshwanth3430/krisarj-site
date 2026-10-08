@@ -23,7 +23,8 @@
     { key: "la-03-1", subject: "la", topic: 3, topicName: "Inverses & transposes", title: "Multiplication and Inverse Matrices", url: "linear-algebra/03_multiplication-and-inverse-matrices.html" },
     { key: "la-03-2", subject: "la", topic: 3, topicName: "Inverses & transposes", title: "Transposes, Permutations, Vector Spaces", url: "linear-algebra/05_transposes-permutations-vector-spaces.html" },
     { key: "la-04-1", subject: "la", topic: 4, topicName: "Vector spaces, column space & nullspace", title: "Column Space and Nullspace", url: "linear-algebra/06_column-space-and-nullspace.html" },
-    { key: "la-04-2", subject: "la", topic: 4, topicName: "Vector spaces, column space & nullspace", title: "Solving Ax = 0: Pivot Variables, Special Solutions", url: "linear-algebra/07_solving-ax-0-pivot-variables-special-solutions.html" }
+    { key: "la-04-2", subject: "la", topic: 4, topicName: "Vector spaces, column space & nullspace", title: "Solving Ax = 0: Pivot Variables, Special Solutions", url: "linear-algebra/07_solving-ax-0-pivot-variables-special-solutions.html" },
+    { key: "la-04-3", subject: "la", topic: 4, topicName: "Vector spaces, column space & nullspace", title: "Solving Ax = b: Row Reduced Form R", url: "linear-algebra/08_solving-ax-b-row-reduced-form-r.html" }
   ];
   var DONE_AFTER_MS = 2 * 60 * 1000;   // auto-complete: reached the end of the notes and spent 2+ minutes
 

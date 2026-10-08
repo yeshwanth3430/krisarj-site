@@ -64,6 +64,7 @@ LIVE = {
     5: "05_transposes-permutations-vector-spaces.html",
     6: "06_column-space-and-nullspace.html",
     7: "07_solving-ax-0-pivot-variables-special-solutions.html",
+    8: "08_solving-ax-b-row-reduced-form-r.html",
 }
 
 assert len(LECTURES) == 31 and sorted(sum((t[2] for t in TOPICS), [])) == list(range(1, 32))
