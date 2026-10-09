@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Independence, Basis, Dimension · Slides</title>
+<meta name="description" content="Linear Algebra Lesson 9 as a slide carousel: independence, span, basis and dimension, and bases of the column space and null space, on portfolio, hedging and options examples.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<style>
+  /* One slide = one 1080 × 1350 page (LinkedIn's portrait carousel size). Always light. */
+  @page { size: 1080px 1350px; margin: 0; }
+  html, body { margin: 0; background: #e9e5dc; }
+  body { font: 34px/1.5 var(--serif); color: var(--ink); }
+  .slide {
+    position: relative; overflow: hidden; box-sizing: border-box;
+    width: 1080px; height: 1350px; margin: 0 auto 24px; padding: 96px 84px 130px;
+    background: var(--paper); display: flex; flex-direction: column;
+    font-size: 38px; line-height: 1.45;   /* set here, so print styles for the notes don't shrink it */
+    break-after: page; page-break-after: always;
+  }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .kicker { font: 600 22px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .slide h1 { font: 700 82px/1.06 var(--sans); letter-spacing: -.02em; margin: 22px 0 30px; }
+  .slide h2 { font: 700 60px/1.12 var(--sans); letter-spacing: -.015em; margin: 14px 0 34px; padding: 0; border: 0; }
+  .slide p { margin: 0 0 26px; }
+  .slide ul, .slide ol { margin: 0 0 26px; padding-left: 40px; }
+  .slide li { margin: 0 0 14px; }
+  .lead { font-size: 44px; line-height: 1.38; }
+  .soft { color: var(--ink-soft); }
+  .slide table { display: table; width: 100%; font-size: 32px; margin: 10px 0 28px; }
+  .slide th { font-size: 24px; }
+  .slide th, .slide td { padding: 12px 16px; }
+  .slide .box { font-size: 34px; margin: 10px 0 26px; padding: 18px 24px; }
+  .slide .box > .label { font-size: 18px; }
+  .slide figure.fig { width: 100%; max-width: 660px; align-self: center; margin: 6px 0 0; padding: 18px; }
+  .slide .figs { width: 100%; }
+  .slide .figs figure.fig { max-width: none; }
+  .slide figure.fig figcaption { font-size: 26px; }
+  .slide .fig .tick { font-size: 12px; }
+  .slide .figs { gap: 22px; }
+  .slide img.plot { display: block; align-self: center; max-width: 100%; max-height: 440px; width: auto; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .slide .katex { font-size: 1.04em; }
+  .answer { font-size: 1em; }
+  .foot {
+    position: absolute; left: 84px; right: 84px; bottom: 48px;
+    display: flex; justify-content: space-between; gap: 20px;
+    padding-top: 18px; border-top: 2px solid var(--rule);
+    font: 500 21px/1 var(--sans); color: var(--ink-soft);
+  }
+  .cover { justify-content: center; }
+  .cover h1 { font-size: 104px; }
+  .cover .lead { font-size: 44px; }
+  .chip { display: inline-block; font: 600 24px/1 var(--sans); color: var(--accent); border: 2px solid var(--accent); border-radius: 999px; padding: 12px 20px; margin: 0 10px 12px 0; }
+  .center { text-align: center; }
+  .grow { flex: 1; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  @media screen and (max-width: 1100px) { .slide { zoom: .5; } }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide cover">
+  <div class="kicker">Linear Algebra · Lesson 9</div>
+  <h1>Independence, Basis and Dimension</h1>
+  <p class="lead">Which funds are <b>genuinely different</b>? What's the smallest menu that still reaches everything?</p>
+  <p class="lead soft">How many independent bets does a menu really offer?</p>
+  <div><span class="chip">Basis</span><span class="chip">n = r + (n − r)</span><span class="chip">MIT 18.06, Lecture 9</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">Independence</div>
+  <h2>No fund can be rebuilt from the others</h2>
+  <p>$c_1v_1 + \cdots + c_nv_n = 0$ only when every $c = 0$.</p>
+  <p><b>Dependent</b> example:</p>
+  $$ -\tfrac12\begin{bmatrix} 1 \\ 12 \\ 1 \end{bmatrix} - \tfrac12\begin{bmatrix} 1 \\ 7 \\ 0 \end{bmatrix} + \begin{bmatrix} 1 \\ 9.5 \\ 0.5 \end{bmatrix} = 0 $$
+  <p>Balanced $= \tfrac12$ Nifty $+ \tfrac12$ bonds. Dependent = a do-nothing trade exists.</p>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="kicker">The test</div>
+  <h2>Put them in columns, count pivots</h2>
+  <p>Columns independent ⇔ $N(A) = \{0\}$ ⇔ no free variables ⇔ <b>rank = n</b>.</p>
+  <table>
+    <tr><th>Funds</th><th>Pivots</th><th>Independent?</th></tr>
+    <tr><td>Nifty, bonds, midcap</td><td>3 of 3</td><td>yes</td></tr>
+    <tr><td>Nifty, bonds, balanced</td><td>2 of 3</td><td>no</td></tr>
+  </table>
+  <p>More vectors than entries ($n &gt; m$) ⇒ always dependent.</p>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">Span and basis</div>
+  <h2>Reach everything, waste nothing</h2>
+  <p><b>Span:</b> all combinations = every reachable target.</p>
+  <p><b>Basis:</b> independent <b>and</b> spanning: the smallest complete menu.</p>
+  <div class="box finance"><span class="label">Standard basis = Arrow–Debreu</span><p>$(1, 0, 0), (0, 1, 0), (0, 0, 1)$: each pays 1 in exactly one scenario.</p></div>
+  <p>Nifty, bonds, midcap are another basis of $\mathbb{R}^3$.</p>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="kicker">Dimension</div>
+  <h2>Every basis has the same size</h2>
+  <p>That number is the <b>dimension</b>: the number of genuinely different directions.</p>
+  <ul>
+    <li>$\mathbb{R}^3$: dimension 3</li>
+    <li>The plane $R = 7B + 5E$: dimension 2</li>
+  </ul>
+  <p>Matrices have a rank; spaces have a dimension: $\text{rank}(A) = \dim C(A)$.</p>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">Bases of C(A) and N(A)</div>
+  <h2>Pivot columns and special solutions</h2>
+  <p><b>Basis of $C(A)$:</b> the pivot columns <b>of $A$</b>. $\dim = r$.</p>
+  <p><b>Basis of $N(A)$:</b> the special solutions. $\dim = n - r$.</p>
+  <div class="box method"><span class="label">Careful</span><p>Use $A$'s columns, not $R$'s: row operations change the column space.</p></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">Five funds</div>
+  <h2>Only 3 real directions</h2>
+  $$ R = \begin{bmatrix} \boxed{1} & 1 & 0 & 0.5 & 0 \\ 0 & 0 & \boxed{1} & 0.5 & 0 \\ 0 & 0 & 0 & 0 & \boxed{1} \end{bmatrix} $$
+  <p>Nifty, ETF, bonds, balanced, midcap → pivots: Nifty, bonds, midcap.</p>
+  <p>$\dim C(A) = 3$ (every target), $\dim N(A) = 2$ (ETF = Nifty; balanced = mix).</p>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="kicker">The count</div>
+  <h2>n = r + (n − r)</h2>
+  <p>Every fund is either a <b>new direction</b> (pivot) or a <b>redundancy</b> (free).</p>
+  $$ 5 \text{ funds} = 3 \text{ directions} + 2 \text{ redundancies} $$
+  <div class="box finance"><span class="label">As a trader</span><p>50 products driven by 3 risk factors: at most 3 independent bets, at least 47 redundant routes.</p></div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="kicker">In markets</div>
+  <h2>A basis of payoffs</h2>
+  <p>Futures, 20,000 call, 20,000 put, 19,900 call over 3 scenarios:</p>
+  <ul>
+    <li>Basis of $C(A)$: futures, 20,000 call, 19,900 call (dim 3)</li>
+    <li>Basis of $N(A)$: $(1, -1, 1, 0)$, put–call parity (dim 1)</li>
+  </ul>
+  <p>The put is redundant given futures and the call.</p>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="kicker">Recap</div>
+  <h2>Key takeaways</h2>
+  <ol class="lead" style="font-size:36px">
+    <li>Independent ⇔ rank $= n$ ⇔ $N(A) = \{0\}$.</li>
+    <li>Basis = independent + spans.</li>
+    <li>Dimension = vectors in any basis.</li>
+    <li>Basis of $C(A)$: pivot columns of $A$.</li>
+    <li>Basis of $N(A)$: special solutions.</li>
+    <li>$n = r + (n - r)$.</li>
+  </ol>
+</section>
+
+<!-- 11 -->
+<section class="slide cover">
+  <div class="kicker">Quant from First Principles</div>
+  <h1 style="font-size:76px">The full interactive lesson is free</h1>
+  <p class="lead">A fund picker, a basis and dimension lab for any vectors, and worked hedging and options examples:</p>
+  <p class="lead"><b>learn.krisarj.com</b></p>
+  <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
+</section>
+
+<script>
+// Footer with page numbers on every slide.
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  slides.forEach(function (s, i) {
+    var f = document.createElement("div");
+    f.className = "foot";
+    f.innerHTML = "<span>Quant from First Principles · learn.krisarj.com</span><span>" + (i + 1) + " / " + slides.length + "</span>";
+    s.appendChild(f);
+  });
+})();
+window.addEventListener("load", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {
+    delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>

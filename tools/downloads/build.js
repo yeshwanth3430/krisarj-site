@@ -65,6 +65,13 @@ const LESSONS = [
     page: "linear-algebra/08_solving-ax-b-row-reduced-form-r.html",
     slides: "linear-algebra/08_solving-ax-b-row-reduced-form-r-slides.html",
     plots: {}
+  },
+  {
+    slug: "la-09-independence-basis-and-dimension",
+    title: "Linear Algebra · Lesson 9 · Independence, Basis and Dimension",
+    page: "linear-algebra/09_independence-basis-and-dimension.html",
+    slides: "linear-algebra/09_independence-basis-and-dimension-slides.html",
+    plots: {}
   }
 ];
 

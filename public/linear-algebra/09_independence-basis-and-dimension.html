@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Independence, Basis and Dimension · Topic 5 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 5, Lesson 9: linear independence, span, basis and dimension, step by step: which funds are genuinely different, the smallest complete menu, and how many independent directions a menu really has, on portfolio, hedging and options examples.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-05-1">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-05.html">Topic 5</a> / <b>Independence, Basis and Dimension</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 9</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 5 · Lesson 9 (MIT 18.06, Lecture 9)</p>
+  <h1>Independence, Basis and Dimension</h1>
+  <p class="subtitle">Which funds are genuinely different? What is the smallest menu that still reaches everything? And how many independent directions does a menu really have? Three words answer it: independence, basis, dimension.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-09-independence-basis-and-dimension-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-09-independence-basis-and-dimension-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F09_independence-basis-and-dimension" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">Conditions and important concepts</a></li>
+        <li><a href="#t2">Procedure</a></li>
+        <li><a href="#t3">2 × 2 examples</a></li>
+        <li><a href="#t4">3 × 3 examples</a></li>
+        <li><a href="#t5">Bigger example: five funds</a></li>
+        <li><a href="#t6">Connection: rank, dimension and n − r</a></li>
+        <li><a href="#t7">Final memory table</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">Conditions and important concepts</a><span>13 short definitions: independence, dependence, span, basis, dimension, bases of $C(A)$ and $N(A)$.</span></li>
+      <li><a href="#t2">Procedure</a><span>How to test independence, and how to find a basis and the dimension.</span></li>
+      <li><a href="#t3">2 × 2 examples</a><span>Nifty and bonds (independent); Nifty and its twin (dependent).</span></li>
+      <li><a href="#t4">3 × 3 examples</a><span>Nifty, bonds, midcap (a basis of $\mathbb{R}^3$); Nifty, bonds, balanced (dependent: bases of $C(A)$ and $N(A)$).</span></li>
+      <li><a href="#t5">Bigger example: five funds</a><span>Five funds, three genuinely different directions. With a fund picker.</span></li>
+      <li><a href="#t6">Connection: rank, dimension and n − r</a><span>Every fund is either a new direction or a redundancy.</span></li>
+      <li><a href="#t7">Final memory table</a><span>Every concept, its test and an example.</span></li>
+    </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-indep">Independence</a> <a href="#m-indtest">Independence test</a> <a href="#m-span">Span</a> <a href="#m-basis">Basis</a> <a href="#m-dim">Dimension</a> <a href="#m-basisC">Basis of C(A)</a> <a href="#m-basisN">Basis of N(A)</a></p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="07_solving-ax-0-pivot-variables-special-solutions.html#t1">Note 1: Ax = 0</a> (Lesson 7): R, pivots, rank, free variables, special solutions.</li>
+      <li><a href="05_transposes-permutations-vector-spaces.html#t7">The column space</a> (Lesson 5) and <a href="06_column-space-and-nullspace.html#t2">the null space</a> (Lesson 6).</li>
+      <li><a href="03_multiplication-and-inverse-matrices.html#ex2">Arrow–Debreu building blocks</a> (Lesson 3).</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box finance"><span class="label">The funds used in the examples</span>
+      <table>
+        <tr><th>Fund</th><th>Column: what ₹1 lakh does to (budget, return, exposure)</th></tr>
+        <tr><td>Nifty</td><td>$(1, 12, 1)$</td></tr>
+        <tr><td>Nifty ETF (a twin of Nifty)</td><td>$(1, 12, 1)$</td></tr>
+        <tr><td>Bonds</td><td>$(1, 7, 0)$</td></tr>
+        <tr><td>Balanced (half Nifty, half bonds)</td><td>$(1, 9.5, 0.5)$</td></tr>
+        <tr><td>Midcap</td><td>$(1, 15, 1.2)$</td></tr>
+      </table>
+      <p>In this lesson each fund is a <b>vector</b> (its column). The questions are about the funds themselves: are they genuinely different, and how many do you really need?</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. Conditions and important concepts</h3>
+
+    <h4>1. What is linear independence?</h4>
+    <div class="box method" id="m-indep"><span class="label">Definition · Linearly independent vectors</span>
+      <p>Vectors $v_1, v_2, \dots, v_n$ are <b>independent</b> if $c_1v_1 + c_2v_2 + \cdots + c_nv_n = 0$ happens <b>only</b> when every $c$ is 0.</p>
+    </div>
+    <p>In money terms:</p>
+    $$ \boxed{\text{Independent funds: no fund can be rebuilt from the others.}} $$
+    <p>The only mix of them that changes nothing is "hold none of them".</p>
+
+    <h4>2. What is dependence?</h4>
+    <p>Vectors are <b>dependent</b> if some mix with not-all-zero $c$'s gives 0. Example: Nifty, bonds, balanced:</p>
+    $$ -\tfrac12\begin{bmatrix} 1 \\ 12 \\ 1 \end{bmatrix} - \tfrac12\begin{bmatrix} 1 \\ 7 \\ 0 \end{bmatrix} + 1\begin{bmatrix} 1 \\ 9.5 \\ 0.5 \end{bmatrix} = \begin{bmatrix} -0.5 - 0.5 + 1 \\ -6 - 3.5 + 9.5 \\ -0.5 + 0 + 0.5 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \\ 0 \end{bmatrix} $$
+    <p>That mix is a do-nothing trade, and it shows balanced $= \tfrac12$ Nifty $+ \tfrac12$ bonds. So:</p>
+    $$ \boxed{\text{Dependent} = \text{a do-nothing trade exists} = \text{some fund is a mix of the others.}} $$
+
+    <h4>3. The independence test</h4>
+    <p>Put the vectors as the columns of a matrix $A$. A mix $c_1v_1 + \cdots + c_nv_n$ is just $Ac$, so the question "is there a non-zero $c$ with $Ac = 0$?" is the null space question from Note 1:</p>
+    <div class="box method" id="m-indtest"><span class="label">Rule · The independence test</span>
+      <p>The columns of $A$ are independent $\iff$ $N(A) = \{0\}$ $\iff$ no free variables $\iff$ every column is a pivot column $\iff$ $\text{rank} = n$.</p>
+    </div>
+
+    <h4>4. The picture</h4>
+    <p><b>Two</b> vectors are dependent exactly when they lie on the same line (one is a multiple of the other): Nifty and its twin. <b>Three</b> vectors in $\mathbb{R}^3$ are dependent exactly when they lie in the same plane: Nifty, bonds and balanced all lie in the plane $R = 7B + 5E$ (Lesson 5).</p>
+
+    <h4>5. Too many vectors are always dependent</h4>
+    <p>More than $m$ vectors in $\mathbb{R}^m$ are always dependent: $n &gt; m$ means a free variable (Note 1). Example: any 4 funds measured by 3 rules.</p>
+    $$ \boxed{n &gt; m \;\Rightarrow\; \text{dependent}} $$
+
+    <h4>6. What is span?</h4>
+    <div class="box method" id="m-span"><span class="label">Definition · Span</span>
+      <p>Vectors $v_1, \dots, v_k$ <b>span</b> a space when the space consists of <b>all</b> their combinations. The columns of $A$ span the column space $C(A)$.</p>
+    </div>
+    <p>In money terms: the span is every target the funds can reach. Nifty and bonds span the plane $R = 7B + 5E$.</p>
+
+    <h4>7. What is a basis?</h4>
+    <div class="box method" id="m-basis"><span class="label">Definition · Basis</span>
+      <p>A <b>basis</b> for a space is a set of vectors that are (1) <b>independent</b> and (2) <b>span</b> the space.</p>
+    </div>
+    $$ \boxed{\text{Basis} = \text{reaches everything (span)} + \text{no waste (independent).}} $$
+    <p>In money terms: the smallest complete menu. Drop any fund and you lose something; add any fund and it's redundant.</p>
+
+    <h4>8. The standard basis</h4>
+    <p>The simplest basis of $\mathbb{R}^3$:</p>
+    $$ \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}, \quad \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix}, \quad \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix} $$
+    <p>Independent: $c_1(1, 0, 0) + c_2(0, 1, 0) + c_3(0, 0, 1) = (c_1, c_2, c_3)$, which is 0 only if every $c$ is 0. Spanning: any $(b_1, b_2, b_3)$ is $b_1$ of the first $+\ b_2$ of the second $+\ b_3$ of the third. In markets these are the <b>Arrow–Debreu securities</b> from Lesson 3: each pays 1 in exactly one scenario.</p>
+
+    <h4>9. A space has many bases</h4>
+    <p>Nifty, bonds, midcap are also a basis of $\mathbb{R}^3$ (3 pivots, worked below). In general:</p>
+    $$ \boxed{n \text{ vectors in } \mathbb{R}^n \text{ form a basis} \iff \text{their matrix is invertible} \iff n \text{ pivots}} $$
+
+    <h4>10. Dimension</h4>
+    <div class="box method" id="m-dim"><span class="label">Definition · Dimension</span>
+      <p>Every basis of a space has the <b>same number</b> of vectors. That number is the <b>dimension</b> of the space.</p>
+    </div>
+    <p>$\mathbb{R}^3$ has dimension 3 (both bases above have 3 vectors). The plane $R = 7B + 5E$ has dimension 2. In money terms: the number of genuinely different directions you can trade.</p>
+
+    <h4>11. Basis of the column space C(A)</h4>
+    <div class="box method" id="m-basisC"><span class="label">Method · Basis of C(A) = the pivot columns of A</span>
+      <p>Reduce $A$ to $R$, see which columns have pivots, then take <b>those columns of the original $A$</b>. They form a basis of $C(A)$, and $\dim C(A) = \text{rank}$.</p>
+    </div>
+    <div class="box pitfall"><span class="label">Important</span>
+      <p>Use the columns of $A$, <b>not</b> the columns of $R$. Row operations keep the null space but change the column space (Note 1). An example is in the 3 × 3 section.</p>
+    </div>
+
+    <h4>12. Basis of the null space N(A)</h4>
+    <div class="box method" id="m-basisN"><span class="label">Method · Basis of N(A) = the special solutions</span>
+      <p>The special solutions (one free variable $= 1$, the others $0$) are independent and span $N(A)$. So they are a basis, and $\dim N(A) = n - \text{rank}$.</p>
+    </div>
+    <p>Why independent: each special solution has a 1 in its own free slot where all the others have 0, so no mix of them can be zero unless every coefficient is.</p>
+
+    <h4>13. Rank vs dimension</h4>
+    <p>Matrices have a <b>rank</b>; spaces have a <b>dimension</b>. They meet here:</p>
+    $$ \boxed{\text{rank}(A) = \text{number of pivot columns} = \dim C(A)} $$
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. Procedure</h3>
+    <h4>A. Are these vectors independent?</h4>
+    <table>
+      <tr><th>Step</th><th>What to do</th></tr>
+      <tr><td>1</td><td>Put the vectors as the columns of $A$.</td></tr>
+      <tr><td>2</td><td>Row reduce $A \to R$.</td></tr>
+      <tr><td>3</td><td>Count the pivots.</td></tr>
+      <tr><td>4</td><td>Pivots $=$ number of vectors → <b>independent</b>. Fewer → <b>dependent</b>, and each special solution shows one dependency (which vector is a mix of which).</td></tr>
+    </table>
+    <h4>B. Basis and dimension of C(A) and N(A)</h4>
+    <table>
+      <tr><th>Step</th><th>What to do</th></tr>
+      <tr><td>1</td><td>Row reduce $A \to R$ and mark the pivot columns.</td></tr>
+      <tr><td>2</td><td>Basis of $C(A)$: the pivot columns <b>of $A$</b>. $\dim C(A) = r$.</td></tr>
+      <tr><td>3</td><td>Basis of $N(A)$: the special solutions. $\dim N(A) = n - r$.</td></tr>
+      <tr><td>4</td><td>Check: $\dim C(A) + \dim N(A) = r + (n - r) = n$.</td></tr>
+    </table>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. 2 × 2 examples</h3>
+    <p>Budget and return only.</p>
+
+    <h4>Example A: independent (a basis of R²)</h4>
+    <p>Nifty $(1, 12)$ and bonds $(1, 7)$:</p>
+    $$ A = \begin{bmatrix} 1 & 1 \\ 12 & 7 \end{bmatrix} $$
+    <ul>
+      <li>Row 2 $-\ 12 \times$ row 1: $(0, \;7 - 12 = -5)$.</li>
+      <li>Row 2 $\div (-5)$: $(0, 1)$. Row 1 $-$ row 2: $(1, 0)$.</li>
+    </ul>
+    $$ R = \begin{bmatrix} \boxed{1} & 0 \\ 0 & \boxed{1} \end{bmatrix} \qquad \text{2 pivots} = \text{2 vectors} $$
+    <p>Therefore <b>independent</b>. Two independent vectors in $\mathbb{R}^2$ also span it, so Nifty and bonds are a <b>basis of $\mathbb{R}^2$</b>: every (budget, return) target is reachable in exactly one way. $\dim C(A) = 2$, $\dim N(A) = 0$.</p>
+
+    <h4>Example B: dependent</h4>
+    <p>Nifty $(1, 12)$ and its twin $(1, 12)$:</p>
+    $$ A = \begin{bmatrix} 1 & 1 \\ 12 & 12 \end{bmatrix} \;\xrightarrow{\text{row 2} - 12 \times \text{row 1}}\; R = \begin{bmatrix} \boxed{1} & 1 \\ 0 & 0 \end{bmatrix} \qquad \text{1 pivot} &lt; \text{2 vectors} $$
+    <p>Therefore <b>dependent</b>. The special solution $(-1, 1)$ says $-1 \cdot \text{Nifty} + 1 \cdot \text{twin} = 0$: the twin is a copy. Both vectors lie on one line.</p>
+    <ul>
+      <li>Basis of $C(A)$: column 1 of $A$, $(1, 12)$. $\dim C(A) = 1$ (a line).</li>
+      <li>Basis of $N(A)$: $(-1, 1)$. $\dim N(A) = 1$.</li>
+      <li>Check: $1 + 1 = 2 = n$ ✓.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. 3 × 3 examples</h3>
+
+    <h4>Example A: Nifty, bonds, midcap: a basis of R³</h4>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 15 \\ 1 & 0 & 1.2 \end{bmatrix} $$
+    <ul>
+      <li>A → U: row 2 $-\ 12 \times$ row 1 → $(0, -5, 3)$; row 3 $-$ row 1 → $(0, -1, 0.2)$; row 3 $-\ 0.2 \times$ row 2 → $(0, 0, 0.2 - 0.6) = (0, 0, -0.4)$.</li>
+      <li>U → R: row 3 $\div (-0.4)$ → $(0, 0, 1)$; row 2 $-\ 3 \times$ row 3 → $(0, -5, 0)$, then $\div (-5)$ → $(0, 1, 0)$; row 1 $-$ row 2 $-$ row 3 → $(1, 0, 0)$.</li>
+    </ul>
+    $$ R = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} \qquad \text{3 pivots} = \text{3 vectors} $$
+    <p>Therefore <b>independent</b>, and three independent vectors in $\mathbb{R}^3$ span it: a <b>basis of $\mathbb{R}^3$</b>. Every (budget, return, exposure) target has exactly one portfolio, e.g. $(10, 111, 7.4)$ → $(5, 3, 2)$ (Lesson 8). $\dim C(A) = 3$, $\dim N(A) = 0$.</p>
+
+    <h4>Example B: Nifty, bonds, balanced: dependent</h4>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 12 & 7 & 9.5 \\ 1 & 0 & 0.5 \end{bmatrix} $$
+    <ul>
+      <li>A → U: row 2 $-\ 12 \times$ row 1 → $(0, -5, -2.5)$; row 3 $-$ row 1 → $(0, -1, -0.5)$; row 3 $-\ 0.2 \times$ row 2 → $(0, 0, 0)$.</li>
+      <li>U → R: row 2 $\div (-5)$ → $(0, 1, 0.5)$; row 1 $-$ row 2 → $(1, 0, 0.5)$.</li>
+    </ul>
+    $$ R = \begin{bmatrix} \boxed{1} & 0 & 0.5 \\ 0 & \boxed{1} & 0.5 \\ 0 & 0 & 0 \end{bmatrix} \qquad \text{2 pivots} &lt; \text{3 vectors} $$
+    <p>Therefore <b>dependent</b>. The special solution $(-0.5, -0.5, 1)$ says balanced $= 0.5\,$Nifty $+ 0.5\,$bonds.</p>
+    <ul>
+      <li><b>Basis of $C(A)$:</b> pivot columns 1 and 2 <b>of $A$</b>: Nifty $(1, 12, 1)$ and bonds $(1, 7, 0)$. $\dim C(A) = 2$: the plane $R = 7B + 5E$.</li>
+      <li><b>Basis of $N(A)$:</b> $(-0.5, -0.5, 1)$. $\dim N(A) = 1$.</li>
+      <li>Check: $2 + 1 = 3 = n$ ✓.</li>
+    </ul>
+    <div class="box pitfall"><span class="label">Why not the columns of R?</span>
+      <p>$R$'s pivot columns are $(1, 0, 0)$ and $(0, 1, 0)$. They span the plane "third entry $= 0$". But $C(A)$ contains $(10, 105, 7)$ (₹7L Nifty + ₹3L bonds), whose third entry is 7. Different planes. Row operations changed the columns, so only $A$'s own pivot columns span $C(A)$.</p>
+    </div>
+    <details class="check"><summary>Check yourself (MIT problem 9.2): find a basis for the plane $x - 2y + 3z = 0$ in $\mathbb{R}^3$.</summary>
+      <p>The plane is $N\big([\,1 \;\; -2 \;\; 3\,]\big)$. $R = [\,1 \;\; -2 \;\; 3\,]$ already: pivot $x$, free $y$ and $z$. Special solutions: $y = 1$ gives $x = 2$, so $(2, 1, 0)$; $z = 1$ gives $x = -3$, so $(-3, 0, 1)$. That's a basis; the plane has dimension 2.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. Bigger example: five funds</h3>
+    <p>All five funds, three rules. Five vectors in $\mathbb{R}^3$, so (concept 5) they <b>must</b> be dependent. How many genuinely different directions are there?</p>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 & 1 & 1 \\ 12 & 12 & 7 & 9.5 & 15 \\ 1 & 1 & 0 & 0.5 & 1.2 \end{bmatrix} \begin{matrix} \\ \\ \\ \end{matrix} \quad \text{(Nifty, ETF, bonds, balanced, midcap)} $$
+    <p><b>A → U:</b></p>
+    <ul>
+      <li>Row 2 $-\ 12 \times$ row 1: $0, \;0, \;7 - 12 = -5, \;9.5 - 12 = -2.5, \;15 - 12 = 3$ → $(0, 0, -5, -2.5, 3)$.</li>
+      <li>Row 3 $-\ 1 \times$ row 1: $0, \;0, \;-1, \;-0.5, \;1.2 - 1 = 0.2$ → $(0, 0, -1, -0.5, 0.2)$.</li>
+      <li>Column 2 (ETF): nothing left to pivot on. Skip.</li>
+      <li>Row 3 $-\ 0.2 \times$ row 2: $0, \;0, \;0, \;-0.5 + 0.5 = 0, \;0.2 - 0.6 = -0.4$ → $(0, 0, 0, 0, -0.4)$.</li>
+      <li>Column 4 (balanced): nothing left to pivot on. Skip. Column 5 (midcap): pivot $-0.4$.</li>
+    </ul>
+    <p><b>U → R:</b></p>
+    <ul>
+      <li>Row 3 $\div (-0.4)$: $(0, 0, 0, 0, 1)$.</li>
+      <li>Row 2 $-\ 3 \times$ row 3: $(0, 0, -5, -2.5, 0)$; then $\div (-5)$: $(0, 0, 1, 0.5, 0)$.</li>
+      <li>Row 1 $-$ row 3 $-$ row 2: $1, \;1, \;1 - 1 = 0, \;1 - 0.5 = 0.5, \;1 - 1 = 0$ → $(1, 1, 0, 0.5, 0)$.</li>
+    </ul>
+    $$ R = \begin{bmatrix} \boxed{1} & 1 & 0 & 0.5 & 0 \\ 0 & 0 & \boxed{1} & 0.5 & 0 \\ 0 & 0 & 0 & 0 & \boxed{1} \end{bmatrix} $$
+    <p>Pivot columns: 1, 3, 5 (Nifty, bonds, midcap). Free: 2, 4 (ETF, balanced). Rank $= 3$.</p>
+    <ul>
+      <li><b>Independent?</b> No: 3 pivots $&lt;$ 5 vectors.</li>
+      <li><b>Basis of $C(A)$:</b> Nifty $(1, 12, 1)$, bonds $(1, 7, 0)$, midcap $(1, 15, 1.2)$. Three independent vectors in $\mathbb{R}^3$, so $C(A) = \mathbb{R}^3$: $\dim C(A) = 3$.</li>
+      <li><b>Basis of $N(A)$:</b> special solutions $s_1 = (-1, 1, 0, 0, 0)$ (ETF $=$ Nifty) and $s_2 = (-0.5, 0, -0.5, 1, 0)$ (balanced $=$ half Nifty $+$ half bonds). $\dim N(A) = 5 - 3 = 2$.</li>
+      <li>Check: $3 + 2 = 5 = n$ ✓.</li>
+    </ul>
+    <p>Check $s_2$ in $A$: budget $-0.5 + 0 - 0.5 + 1 + 0 = 0$ ✓; return $-6 + 0 - 3.5 + 9.5 + 0 = 0$ ✓; exposure $-0.5 + 0 + 0 + 0.5 + 0 = 0$ ✓.</p>
+    $$ \boxed{\text{5 funds, but only 3 genuinely different directions.}} $$
+    <p>Drop the ETF and balanced and you lose <b>nothing</b>: Nifty, bonds, midcap still reach every target. That smallest complete menu is a basis.</p>
+    <h4>Try it: pick a menu</h4>
+    <div id="picker" class="lab-controls"></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. Connection: rank, dimension and n − r</h3>
+    <p>Every column of $A$ is either a pivot column or a free column. So:</p>
+    $$ \boxed{\underbrace{n}_{\text{funds}} = \underbrace{r}_{\dim C(A):\ \text{new directions}} + \underbrace{(n - r)}_{\dim N(A):\ \text{redundancies}}} $$
+    <table>
+      <tr><th>Menu</th><th>$n$</th><th>$\dim C(A) = r$</th><th>$\dim N(A) = n - r$</th><th>Independent?</th></tr>
+      <tr><td>Nifty, bonds</td><td>2</td><td>2</td><td>0</td><td>yes</td></tr>
+      <tr><td>Nifty, twin</td><td>2</td><td>1</td><td>1</td><td>no</td></tr>
+      <tr><td>Nifty, bonds, midcap</td><td>3</td><td>3</td><td>0</td><td>yes (basis of $\mathbb{R}^3$)</td></tr>
+      <tr><td>Nifty, bonds, balanced</td><td>3</td><td>2</td><td>1</td><td>no</td></tr>
+      <tr><td>All five</td><td>5</td><td>3</td><td>2</td><td>no</td></tr>
+    </table>
+    <p>How this ties the last lessons together:</p>
+    <table>
+      <tr><th>Earlier idea</th><th>In this lesson's words</th></tr>
+      <tr><td>Column space $C(A)$ (Lesson 5)</td><td>the span of the columns; basis = pivot columns; dimension = rank</td></tr>
+      <tr><td>Null space $N(A)$ (Lesson 6)</td><td>basis = special solutions; dimension = $n - r$</td></tr>
+      <tr><td>Exactly one solution of $Ax = b$ (Lesson 8)</td><td>happens when the columns are a basis of the target space ($r = m = n$)</td></tr>
+      <tr><td>A do-nothing trade exists (Lesson 7)</td><td>the columns are dependent</td></tr>
+    </table>
+    <div class="box finance"><span class="label">Reading it as a trader</span>
+      <p>$\dim C(A)$ is the number of <b>independent bets</b> the menu offers; adding funds beyond that adds no new exposure, only alternative routes. $\dim N(A)$ counts those alternative routes. A desk looking at 50 products driven by 3 risk factors has at most 3 independent bets, and at least 47 redundancies.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t7">7. Final memory table</h3>
+    <table>
+      <tr><th>Concept</th><th>Meaning</th><th>Test / how to find it</th><th>Example</th></tr>
+      <tr><td><b>Independent</b></td><td>no vector is a mix of the others</td><td>rank $= n$ (no free variables), $N(A) = \{0\}$</td><td>Nifty, bonds, midcap</td></tr>
+      <tr><td><b>Dependent</b></td><td>some non-zero mix $= 0$</td><td>rank $&lt; n$; special solutions show how</td><td>balanced $= \tfrac12$ Nifty $+ \tfrac12$ bonds</td></tr>
+      <tr><td><b>Span</b></td><td>all combinations</td><td>columns of $A$ span $C(A)$</td><td>Nifty, bonds span $R = 7B + 5E$</td></tr>
+      <tr><td><b>Basis</b></td><td>independent + spans</td><td>for $\mathbb{R}^n$: $n$ pivots (invertible)</td><td>Nifty, bonds, midcap for $\mathbb{R}^3$</td></tr>
+      <tr><td><b>Dimension</b></td><td>vectors in any basis</td><td>count them</td><td>$\dim \mathbb{R}^3 = 3$</td></tr>
+      <tr><td><b>Basis of $C(A)$</b></td><td>reachable targets</td><td>pivot columns <b>of $A$</b>; $\dim = r$</td><td>five funds: Nifty, bonds, midcap</td></tr>
+      <tr><td><b>Basis of $N(A)$</b></td><td>do-nothing trades</td><td>special solutions; $\dim = n - r$</td><td>five funds: $s_1$, $s_2$</td></tr>
+      <tr><td><b>Key count</b></td><td></td><td>$n = r + (n - r)$</td><td>$5 = 3 + 2$</td></tr>
+    </table>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: a basis of hedges</a></li>
+        <li><a href="#ex2">Lot sizes: a basis of payoffs</a></li>
+        <li><a href="#ex3">Basis and dimension lab</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, a basis of hedges</h3>
+    <p>Rows: (market, currency, rates). Hedges: Nifty fut $(1, 0, 0)$, IT fut $(1, 1, 0)$, Bank Nifty fut $(1, 0, 1)$, IT-minus-Nifty spread $(0, 1, 0)$.</p>
+
+    <h4>2 × 2: Nifty and IT futures, market and currency</h4>
+    <p>$\left[\begin{smallmatrix} 1 & 1 \\ 0 & 1 \end{smallmatrix}\right]$: row 1 $-$ row 2 gives $R = I$. 2 pivots: independent, a basis of the (market, currency) space.</p>
+
+    <h4>3 × 3: the three futures</h4>
+    $$ A = \begin{bmatrix} 1 & 1 & 1 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} \;\xrightarrow{\text{row 1} - \text{row 2} - \text{row 3}}\; R = I $$
+    <p>3 pivots: independent, a <b>basis of the risk space</b> $\mathbb{R}^3$. Any (market, currency, rates) exposure is hedged in exactly one way.</p>
+
+    <h4>3 × 4: add the spread</h4>
+    <p>Four vectors in $\mathbb{R}^3$: must be dependent. $R = \left[\begin{smallmatrix} 1 & 0 & 0 & -1 \\ 0 & 1 & 0 & 1 \\ 0 & 0 & 1 & 0 \end{smallmatrix}\right]$ (Lesson 7): pivots in columns 1, 2, 3.</p>
+    <ul>
+      <li>Basis of $C(A)$: the three futures (columns 1–3 of $A$). $\dim = 3$.</li>
+      <li>Basis of $N(A)$: $(1, -1, 0, 1)$: spread $=$ IT fut $-$ Nifty fut. $\dim = 1$.</li>
+      <li>$3 + 1 = 4$ ✓. The spread adds a route, not a new risk direction.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, a basis of payoffs</h3>
+    <p>Rows: Nifty ends at 19,800 / 20,000 / 20,200 (points per lot).</p>
+
+    <h4>The standard basis: Arrow–Debreu securities</h4>
+    <p>$(1, 0, 0)$, $(0, 1, 0)$, $(0, 0, 1)$: each pays 1 point in exactly one scenario. Independent and spanning: the standard basis of the payoff space (Lesson 3 built them from options).</p>
+
+    <h4>2 × 2: futures and the 20,000 call, two scenarios</h4>
+    <p>$\left[\begin{smallmatrix} -200 & 0 \\ 200 & 200 \end{smallmatrix}\right]$: row 2 $+$ row 1 → $(0, 200)$. 2 pivots: independent, a basis for payoffs at 19,800 and 20,200.</p>
+
+    <h4>3 × 4: futures, 20,000 call, 20,000 put, 19,900 call</h4>
+    <p>$R = \left[\begin{smallmatrix} 1 & 0 & -1 & 0 \\ 0 & 1 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{smallmatrix}\right]$ (Lesson 7): pivots in columns 1, 2, 4.</p>
+    <ul>
+      <li>Basis of $C(A)$: futures $(-200, 0, 200)$, 20,000 call $(0, 0, 200)$, 19,900 call $(0, 100, 300)$. $\dim = 3$: every payoff over these scenarios can be built.</li>
+      <li>Basis of $N(A)$: $(1, -1, 1, 0)$, put–call parity. $\dim = 1$.</li>
+      <li>$3 + 1 = 4$ ✓. The put is redundant given futures and the call.</li>
+    </ul>
+    <details class="check"><summary>Check yourself (MIT problem 9.1): the largest number of independent vectors among $v_1 = (1, -1, 0, 0)$, $v_2 = (1, 0, -1, 0)$, $v_3 = (1, 0, 0, -1)$, $v_4 = (0, 1, -1, 0)$, $v_5 = (0, 1, 0, -1)$, $v_6 = (0, 0, 1, -1)$.</summary>
+      <p>$v_4 = v_2 - v_1$, $v_5 = v_3 - v_1$, $v_6 = v_3 - v_2$, so they add nothing new. Reducing $[\,v_1 \;\; v_2 \;\; v_3\,]$ gives 3 pivots, so $v_1, v_2, v_3$ are independent. The answer is <b>3</b> (the rank of the 4 × 6 matrix). Try it in the lab below.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Basis and dimension lab</h3>
+    <p>Enter vectors as <b>columns</b> (up to 5 entries each, up to 6 vectors). The lab reduces to $R$, says whether they're independent, and gives a basis and the dimension of the column space and the null space.</p>
+    <div id="basislab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="08_solving-ax-b-row-reduced-form-r.html">← Lesson 8: Solving Ax = b</a>
+    <span class="off">Next: Lesson 10 (coming soon)</span>
+  </nav>
+  </div>
+</main>
+<script>
+// Interactive pieces: Notes topic 5 (fund picker) and the Examples tab (basis and dimension lab).
+window.addEventListener("load", function () {
+  function km(el) { if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false }); }
+  function t(v) {
+    if (Math.abs(v) < 1e-9) return "0";
+    var r = Math.round(v);
+    if (Math.abs(v - r) < 1e-9) return String(r);
+    if (Math.abs(v * 1000 - Math.round(v * 1000)) < 1e-6) return String(Math.round(v * 1000) / 1000);
+    for (var q = 2; q <= 64; q++) { var p = Math.round(v * q); if (Math.abs(v * q - p) < 1e-7) return (p < 0 ? "-" : "") + "\\tfrac{" + Math.abs(p) + "}{" + q + "}"; }
+    return String(Math.round(v * 1e4) / 1e4);
+  }
+  function vec(v) { return "(" + v.map(t).join(", ") + ")"; }
+  function mat(M, piv) {
+    return "\\begin{bmatrix}" + M.map(function (r, i) {
+      return r.map(function (v, j) { return piv && piv.some(function (p) { return p[0] === i && p[1] === j; }) ? "\\boxed{" + t(v) + "}" : t(v); }).join(" & ");
+    }).join(" \\\\ ") + "\\end{bmatrix}";
+  }
+  // Reduced row echelon form: returns R, the pivot positions and the special solutions.
+  function rref(A0) {
+    var M = A0.map(function (r) { return r.slice(); }), m = M.length, n = M[0].length, piv = [], row = 0;
+    var scale = Math.max(1, Math.max.apply(null, M.map(function (r) { return Math.max.apply(null, r.map(Math.abs)); })));
+    var zero = function (v) { return Math.abs(v) < 1e-9 * scale; };
+    for (var col = 0; col < n && row < m; col++) {
+      var p = -1; for (var i = row; i < m; i++) if (!zero(M[i][col])) { p = i; break; }
+      if (p < 0) continue;
+      var tmp = M[p]; M[p] = M[row]; M[row] = tmp;
+      var pv = M[row][col]; for (var k = 0; k < n; k++) M[row][k] /= pv;
+      for (var i2 = 0; i2 < m; i2++) { if (i2 === row) continue; var l = M[i2][col]; if (zero(l)) continue; for (var k2 = 0; k2 < n; k2++) M[i2][k2] -= l * M[row][k2]; }
+      M.forEach(function (r) { r.forEach(function (v, k3) { if (zero(v)) r[k3] = 0; }); });
+      piv.push([row, col]); row++;
+    }
+    var pc = piv.map(function (q) { return q[1]; }), free = [];
+    for (var j = 0; j < n; j++) if (pc.indexOf(j) < 0) free.push(j);
+    var sp = free.map(function (f) { var x = new Array(n).fill(0); x[f] = 1; piv.forEach(function (q) { x[q[1]] = -M[q[0]][f]; }); return x; });
+    return { R: M, piv: piv, pc: pc, free: free, sp: sp };
+  }
+
+  // ---- Notes, topic 5: pick a menu of funds ----
+  (function () {
+    var root = document.getElementById("picker"); if (!root) return;
+    var funds = [["Nifty", [1, 12, 1]], ["ETF", [1, 12, 1]], ["Bonds", [1, 7, 0]], ["Balanced", [1, 9.5, 0.5]], ["Midcap", [1, 15, 1.2]]];
+    var on = [true, true, true, true, true];
+    root.innerHTML = '<div class="lab-row">' + funds.map(function (f, i) { return '<label><input type="checkbox" class="pk" data-i="' + i + '" checked> ' + f[0] + "</label>"; }).join("") + '</div><div class="pk-out mixer-out"></div>';
+    var out = root.querySelector(".pk-out");
+    function update() {
+      root.querySelectorAll(".pk").forEach(function (el) { on[+el.dataset.i] = el.checked; });
+      var chosen = funds.filter(function (_, i) { return on[i]; });
+      if (!chosen.length) { out.innerHTML = '<p class="lab-warn">Pick at least one fund.</p>'; return; }
+      var A = [0, 1, 2].map(function (i) { return chosen.map(function (f) { return f[1][i]; }); });
+      var res = rref(A), n = chosen.length, r = res.piv.length;
+      var h = "<p>$A = " + mat(A) + " \\;\\to\\; R = " + mat(res.R, res.piv) + "$</p>";
+      h += "<p>Rank $r = " + r + "$ with " + n + " fund" + (n > 1 ? "s" : "") + ": <b>" + (r === n ? "independent" : "dependent") + "</b>.</p>";
+      h += "<p><b>Basis of $C(A)$</b> (pivot columns of $A$): " + res.pc.map(function (j) { return chosen[j][0]; }).join(", ") + ". $\\dim C(A) = " + r + "$" + (r === 3 ? ": every target in $\\mathbb{R}^3$ is reachable." : r === 2 ? ": a plane of targets." : ": a line of targets.") + "</p>";
+      if (res.sp.length) {
+        h += "<p><b>Basis of $N(A)$</b> (special solutions): " + res.sp.map(function (s, k) {
+          return "$s_" + (k + 1) + " = " + vec(s) + "$ (" + chosen[res.free[k]][0] + " is a mix of the funds before it)";
+        }).join("; ") + ". $\\dim N(A) = " + (n - r) + "$.</p>";
+      } else h += "<p><b>$N(A) = \\{0\\}$</b>: no fund can be rebuilt from the others. $\\dim N(A) = 0$.</p>";
+      h += '<p class="answer">Check: ' + r + " + " + (n - r) + " = " + n + " funds.</p>";
+      out.innerHTML = h; km(out);
+    }
+    root.addEventListener("change", update); update();
+  })();
+
+  // ---- Examples tab: basis and dimension lab (vectors as columns) ----
+  (function () {
+    var root = document.getElementById("basislab"); if (!root) return;
+    var presets = [
+      { label: "Portfolio · all five funds", rows: ["budget", "return", "exposure"], cols: ["Nifty", "ETF", "Bonds", "Balanced", "Midcap"], A: [[1, 1, 1, 1, 1], [12, 12, 7, 9.5, 15], [1, 1, 0, 0.5, 1.2]] },
+      { label: "Portfolio · Nifty, bonds, balanced", rows: ["budget", "return", "exposure"], cols: ["Nifty", "Bonds", "Balanced"], A: [[1, 1, 1], [12, 7, 9.5], [1, 0, 0.5]] },
+      { label: "Hedging · 3 futures + spread", rows: ["market", "currency", "rates"], cols: ["Nifty fut", "IT fut", "Bank fut", "Spread"], A: [[1, 1, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]] },
+      { label: "Lot sizes · fut, 20,000 C, 20,000 P, 19,900 C", rows: ["19,800", "20,000", "20,200"], cols: ["Futures", "20,000 C", "20,000 P", "19,900 C"], A: [[-200, 0, 200, 0], [0, 0, 0, 100], [200, 200, 0, 300]] },
+      { label: "MIT lecture example (3 × 4)", rows: ["row 1", "row 2", "row 3"], cols: ["v₁", "v₂", "v₃", "v₄"], A: [[1, 2, 3, 1], [1, 1, 2, 1], [1, 2, 3, 1]] },
+      { label: "MIT problem 9.1 (six vectors in R⁴)", rows: ["1", "2", "3", "4"], cols: ["v₁", "v₂", "v₃", "v₄", "v₅", "v₆"], A: [[1, 1, 1, 0, 0, 0], [-1, 0, 0, 1, 1, 0], [0, -1, 0, -1, 0, 1], [0, 0, -1, 0, -1, -1]] },
+      { label: "MIT recitation (four vectors in R⁵)", rows: ["1", "2", "3", "4", "5"], cols: ["v₁", "v₂", "v₃", "v₄"], A: [[1, 1, 0, 2], [1, 2, 1, 3], [-2, 0, 3, 0], [0, -4, -3, -2], [-1, 1, 2, 0]] }
+    ];
+    root.innerHTML = '<div class="lab-controls"><div class="lab-row"><label>Example <select class="bl-pick">' +
+      presets.map(function (p, i) { return '<option value="' + i + '">' + p.label + "</option>"; }).join("") +
+      '</select></label><button type="button" class="lab-btn bl-reset">Reset numbers</button></div>' +
+      '<div class="lab-row"><label>Entries per vector (rows) <select class="bl-m"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>' +
+      '<label>Number of vectors (columns) <select class="bl-n"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label></div>' +
+      '<div class="bl-grid"></div></div><div class="bl-out"></div>';
+    var pick = root.querySelector(".bl-pick"), mSel = root.querySelector(".bl-m"), nSel = root.querySelector(".bl-n"), grid = root.querySelector(".bl-grid"), out = root.querySelector(".bl-out");
+    var rows, cols;
+    function load() { var P = presets[+pick.value]; mSel.value = String(P.A.length); nSel.value = String(P.A[0].length); rows = P.rows.slice(); cols = P.cols.slice(); draw(P.A); }
+    function current() { var A = []; grid.querySelectorAll("input").forEach(function (el) { var x = parseFloat(el.value); (A[+el.dataset.i] = A[+el.dataset.i] || [])[+el.dataset.j] = isFinite(x) ? x : 0; }); return A; }
+    function resize() {
+      var o = current(), m = +mSel.value, n = +nSel.value, A = [];
+      for (var i = 0; i < m; i++) { A.push([]); for (var j = 0; j < n; j++) A[i].push(o[i] && o[i][j] !== undefined ? o[i][j] : 0); }
+      while (rows.length < m) rows.push(String(rows.length + 1)); while (cols.length < n) cols.push("v" + (cols.length + 1));
+      draw(A);
+    }
+    function draw(A) {
+      var m = A.length, n = A[0].length, h = '<table class="lab-table sl-table"><tr><th></th>';
+      for (var j = 0; j < n; j++) h += "<th>" + cols[j] + "</th>";
+      h += "</tr>";
+      for (var i = 0; i < m; i++) { h += "<tr><th>" + rows[i] + "</th>"; for (var j2 = 0; j2 < n; j2++) h += '<td><input type="number" step="any" data-i="' + i + '" data-j="' + j2 + '" value="' + A[i][j2] + '"></td>'; h += "</tr>"; }
+      grid.innerHTML = h + "</table>"; update();
+    }
+    function update() {
+      var A = current(), n = A[0].length, res = rref(A), r = res.piv.length;
+      var h = "<h4>1. Reduce</h4><p>$A = " + mat(A) + " \\;\\to\\; R = " + mat(res.R, res.piv) + "$</p>";
+      h += "<p>Pivot columns: " + (res.pc.length ? res.pc.map(function (j) { return cols[j]; }).join(", ") : "none") + ". Rank $r = " + r + "$.</p>";
+      h += "<h4>2. Independent?</h4>" + (r === n ? '<p class="answer">Yes: ' + r + " pivots = " + n + " vectors.</p>" : '<p class="lab-warn">No: ' + r + " pivot" + (r === 1 ? "" : "s") + " &lt; " + n + " vectors. The special solutions below show the dependencies.</p>");
+      h += "<h4>3. Basis of the column space</h4><p>Pivot columns <b>of $A$</b>: " + res.pc.map(function (j) { return cols[j] + " $= " + vec(A.map(function (row) { return row[j]; })) + "$"; }).join("; ") + ".</p><p class=\"answer\">$\\dim C(A) = " + r + "$</p>";
+      h += "<h4>4. Basis of the null space</h4>" + (res.sp.length ? "<p>" + res.sp.map(function (s, k) { return "$s_" + (k + 1) + " = " + vec(s) + "$"; }).join(", ") + "</p>" : "<p>$N(A) = \\{0\\}$: no special solutions.</p>") + '<p class="answer">$\\dim N(A) = ' + (n - r) + "$. Check: $" + r + " + " + (n - r) + " = " + n + "$ ✓</p>";
+      out.innerHTML = h; km(out);
+    }
+    pick.addEventListener("change", load); root.querySelector(".bl-reset").addEventListener("click", load);
+    mSel.addEventListener("change", resize); nSel.addEventListener("change", resize); grid.addEventListener("input", update);
+    load();
+  })();
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=10"></script>
+</body>
+</html>

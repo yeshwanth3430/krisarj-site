@@ -14,8 +14,8 @@
           ["Inverses & transposes", "one recipe for every payoff", "live", "linear-algebra/topic-03.html"] ] },
         { name: "The four subspaces", topics: [
           ["Vector spaces, column space & nullspace", "what you can build, what is free", "live", "linear-algebra/topic-04.html"],
-          ["Independence, rank & the four subspaces", "is the market complete?", "next"],
-          ["Graphs & networks", "price loops and arbitrage", "soon"] ] },
+          ["Independence, rank & the four subspaces", "is the market complete?", "live", "linear-algebra/topic-05.html"],
+          ["Graphs & networks", "price loops and arbitrage", "next"] ] },
         { name: "Geometry & fitting", topics: [
           ["Orthogonality & projections", "the best possible hedge", "soon"],
           ["Least squares & Gram–Schmidt", "beta and clean factors", "soon"],
