@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Four Fundamental Subspaces · Topic 5 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 5, Lesson 10: the four fundamental subspaces of a matrix (column space, null space, row space, left null space), their bases and dimensions, explained step by step on portfolio, hedging and options examples: reachable targets, do-nothing trades, what you can measure, and the hidden link between your rules.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-05-2">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-05.html">Topic 5</a> / <b>The Four Fundamental Subspaces</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 10</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 5 · Lesson 10 (MIT 18.06, Lecture 10)</p>
+  <h1>The Four Fundamental Subspaces</h1>
+  <p class="subtitle">Every matrix carries four spaces: the targets you can reach, the trades that do nothing, everything you can measure, and the hidden link between your rules. One row reduction finds all four.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-10-the-four-fundamental-subspaces-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-10-the-four-fundamental-subspaces-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F10_the-four-fundamental-subspaces" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">Conditions and important concepts</a></li>
+        <li><a href="#t2">Procedure: all four in one go</a></li>
+        <li><a href="#t3">2 × 2 example</a></li>
+        <li><a href="#t4">3 × 3 example</a></li>
+        <li><a href="#t5">Bigger example: four funds</a></li>
+        <li><a href="#t6">Connection: the big picture</a></li>
+        <li><a href="#t7">Final memory table</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">Conditions and important concepts</a><span>13 short definitions: the four subspaces, where they live, their dimensions, how to find each basis, and what the left null space tells you.</span></li>
+      <li><a href="#t2">Procedure: all four in one go</a><span>Reduce $[A \mid I]$ to $[R \mid E]$ and read off all four.</span></li>
+      <li><a href="#t3">2 × 2 example</a><span>Nifty and its twin: return is always 12 × budget.</span></li>
+      <li><a href="#t4">3 × 3 example</a><span>Nifty, bonds, balanced: the hidden link $R = 7B + 5E$ found as the left null space.</span></li>
+      <li><a href="#t5">Bigger example: four funds</a><span>All four subspaces non-trivial. With a menu picker.</span></li>
+      <li><a href="#t6">Connection: the big picture</a><span>The two pairs that add up to $n$ and $m$; adding midcap removes the hidden link.</span></li>
+      <li><a href="#t7">Final memory table</a><span>All four side by side.</span></li>
+    </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-four">The four subspaces</a> <a href="#m-dims">Dimensions r, n − r, r, m − r</a> <a href="#m-rowbasis">Row space basis from R</a> <a href="#m-E">[A | I] → [R | E]</a> <a href="#m-leftnull">Left null space basis</a> <a href="#m-test">Left null space test for b</a></p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="09_independence-basis-and-dimension.html#t1">Basis and dimension</a> (Lesson 9): bases of $C(A)$ and $N(A)$, rank $= \dim C(A)$.</li>
+      <li><a href="07_solving-ax-0-pivot-variables-special-solutions.html#t1">R and special solutions</a> (Lesson 7) and <a href="08_solving-ax-b-row-reduced-form-r.html#t1">the zero-row test</a> (Lesson 8).</li>
+      <li><a href="05_transposes-permutations-vector-spaces.html#t2">Transposes</a> (Lesson 5) and <a href="03_multiplication-and-inverse-matrices.html#t7">Gauss–Jordan on [A | I]</a> (Lesson 3).</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box finance"><span class="label">The funds used in the examples</span>
+      <p>Columns (what ₹1 lakh does to budget, return, exposure): Nifty $(1, 12, 1)$, Nifty ETF $(1, 12, 1)$, bonds $(1, 7, 0)$, balanced $(1, 9.5, 0.5)$, midcap $(1, 15, 1.2)$. Rows are the rules: budget, return, exposure. So $A$ is $m \times n$ with $m$ = number of rules, $n$ = number of funds.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. Conditions and important concepts</h3>
+
+    <h4>1. The four subspaces</h4>
+    <p>Any $m \times n$ matrix $A$ gives four subspaces. Two you already know; two are new:</p>
+    <div class="box method" id="m-four"><span class="label">Definition · The four fundamental subspaces</span>
+      <table>
+        <tr><th>Subspace</th><th>Made of</th><th>Lives in</th><th>In money terms</th></tr>
+        <tr><td>Column space $C(A)$</td><td>all combinations of the columns</td><td>$\mathbb{R}^m$</td><td>targets you can reach</td></tr>
+        <tr><td>Null space $N(A)$</td><td>all $x$ with $Ax = 0$</td><td>$\mathbb{R}^n$</td><td>trades that do nothing</td></tr>
+        <tr><td>Row space $C(A^T)$</td><td>all combinations of the rows</td><td>$\mathbb{R}^n$</td><td>everything you can measure about a trade</td></tr>
+        <tr><td>Left null space $N(A^T)$</td><td>all $y$ with $A^Ty = 0$</td><td>$\mathbb{R}^m$</td><td>combinations of rules that are always zero: a hidden link</td></tr>
+      </table>
+    </div>
+
+    <h4>2. Column space C(A) (known)</h4>
+    <p>All mixes of the funds' columns: the targets $b$ for which $Ax = b$ can be solved. Basis: the pivot columns of $A$.</p>
+
+    <h4>3. Null space N(A) (known)</h4>
+    <p>All trades $x$ with $Ax = 0$: they change no rule. Basis: the special solutions.</p>
+
+    <h4>4. Row space C(Aᵀ) (new)</h4>
+    <p>All combinations of the <b>rows</b> of $A$. A row is a rule; a combination of rows is a new rule, like "return $- 12 \times$ budget". So:</p>
+    $$ \boxed{\text{Row space} = \text{every measurement you can build from your rules.}} $$
+    <p>The rows of $A$ are the columns of $A^T$, so the row space is $C(A^T)$.</p>
+
+    <h4>5. Left null space N(Aᵀ) (new)</h4>
+    <p>All $y$ with $A^Ty = 0$. Taking the transpose of both sides, that is $y^TA = 0$: a row vector $y^T$ on the <b>left</b> of $A$ giving zero, hence the name. In words: a combination of the rules (weights $y$ on the rows) that comes out to <b>zero for every fund</b>.</p>
+    $$ \boxed{\text{Left null space} = \text{combinations of rules that are always zero: a hidden link between the rules.}} $$
+
+    <h4>6. Where they live</h4>
+    <p>$N(A)$ and $C(A^T)$ are made of vectors with $n$ entries (one per fund): they live in $\mathbb{R}^n$. $C(A)$ and $N(A^T)$ are made of vectors with $m$ entries (one per rule): they live in $\mathbb{R}^m$.</p>
+
+    <h4>7. Dimensions</h4>
+    <div class="box method" id="m-dims"><span class="label">Rule · Dimensions of the four subspaces</span>
+      <p>For an $m \times n$ matrix of rank $r$:</p>
+      $$ \dim C(A) = r \qquad \dim N(A) = n - r \qquad \dim C(A^T) = r \qquad \dim N(A^T) = m - r $$
+    </div>
+
+    <h4>8. Row rank = column rank</h4>
+    <p>The row space and the column space have the <b>same dimension</b> $r$, even though they live in different places. Reason: every pivot sits in one pivot row and one pivot column, so both are counted by the same pivots.</p>
+
+    <h4>9. Basis of the row space: the rows of R</h4>
+    <div class="box method" id="m-rowbasis"><span class="label">Method · Row space basis = the non-zero rows of R</span>
+      <p>Row operations replace rows by combinations of rows, and can be undone. So $A$ and $R$ have the <b>same row space</b>, and the first $r$ (non-zero) rows of $R$ are a basis.</p>
+    </div>
+    <div class="box pitfall"><span class="label">Important</span>
+      <p>For the <b>row</b> space you may use $R$'s rows. For the <b>column</b> space you must use $A$'s own pivot columns (Lesson 9). Row operations keep the row space but change the column space.</p>
+    </div>
+
+    <h4>10. Finding the left null space: E</h4>
+    <div class="box method" id="m-E"><span class="label">Method · Reduce [A | I] to [R | E]</span>
+      <p>Put the identity next to $A$ and row reduce the whole thing. The right block becomes the matrix $E$ that records every row operation, so $EA = R$. (If $A$ is square and invertible, $R = I$ and $E = A^{-1}$, as in Gauss–Jordan.)</p>
+    </div>
+    <div class="box method" id="m-leftnull"><span class="label">Method · Left null space basis = the rows of E next to the zero rows of R</span>
+      <p>If row $i$ of $R$ is all zeros, then (row $i$ of $E$) $\times A$ = row $i$ of $R$ = 0. So the last $m - r$ rows of $E$ are a basis of $N(A^T)$.</p>
+    </div>
+
+    <h4>11. What the left null space tells you: which targets are reachable</h4>
+    <p>If $y^TA = 0$, then for any portfolio $x$: $y^T(Ax) = (y^TA)x = 0$. So every reachable target $b = Ax$ must have $y^Tb = 0$. And that is also enough:</p>
+    <div class="box method" id="m-test"><span class="label">Rule · The left null space test</span>
+      <p>$Ax = b$ is solvable $\iff$ $y^Tb = 0$ for every $y$ in $N(A^T)$. This is Lesson 8's zero-row test, written as a vector.</p>
+    </div>
+
+    <h4>12. The two pairs</h4>
+    <p>The dimensions add up in pairs:</p>
+    $$ \boxed{\dim C(A^T) + \dim N(A) = r + (n - r) = n} \qquad \boxed{\dim C(A) + \dim N(A^T) = r + (m - r) = m} $$
+
+    <h4>13. Square and invertible</h4>
+    <p>If $A$ is $n \times n$ with rank $n$: $C(A) = C(A^T) = \mathbb{R}^n$, and $N(A) = N(A^T) = \{0\}$. No do-nothing trade, no hidden link, every target reachable in one way.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. Procedure: all four in one go</h3>
+    <table>
+      <tr><th>Step</th><th>What to do</th><th>Gives</th></tr>
+      <tr><td>1</td><td>Write $[A \mid I]$ ($I$ is $m \times m$).</td><td></td></tr>
+      <tr><td>2</td><td>Row reduce to $[R \mid E]$.</td><td>$R$, $E$ with $EA = R$</td></tr>
+      <tr><td>3</td><td>Count the pivots.</td><td>rank $r$</td></tr>
+      <tr><td>4</td><td>Pivot columns <b>of $A$</b>.</td><td>basis of $C(A)$, dim $r$</td></tr>
+      <tr><td>5</td><td>Special solutions from $R$.</td><td>basis of $N(A)$, dim $n - r$</td></tr>
+      <tr><td>6</td><td>Non-zero rows <b>of $R$</b>.</td><td>basis of $C(A^T)$, dim $r$</td></tr>
+      <tr><td>7</td><td>Rows of $E$ next to the zero rows of $R$.</td><td>basis of $N(A^T)$, dim $m - r$</td></tr>
+      <tr><td>8</td><td>Check $r + (n - r) = n$ and $r + (m - r) = m$.</td><td></td></tr>
+    </table>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. 2 × 2 example</h3>
+    <p>Nifty and its twin ETF, with the budget and return rules:</p>
+    $$ [\,A \mid I\,] = \left[\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 12 & 12 & 0 & 1 \end{array}\right] \;\xrightarrow{\text{row 2} - 12 \times \text{row 1}}\; \left[\begin{array}{cc|cc} 1 & 1 & 1 & 0 \\ 0 & 0 & -12 & 1 \end{array}\right] = [\,R \mid E\,] $$
+    <p>(Row 2: $12 - 12 = 0$, $12 - 12 = 0$, $0 - 12(1) = -12$, $1 - 12(0) = 1$.) One pivot: $r = 1$, $m = n = 2$.</p>
+    <table>
+      <tr><th>Subspace</th><th>Basis</th><th>Dim</th><th>Meaning</th></tr>
+      <tr><td>$C(A)$</td><td>$(1, 12)$ (column 1 of $A$)</td><td>1</td><td>only targets with return $= 12 \times$ budget</td></tr>
+      <tr><td>$N(A)$</td><td>$(-1, 1)$</td><td>1</td><td>swap Nifty for its twin</td></tr>
+      <tr><td>$C(A^T)$</td><td>$(1, 1)$ (row 1 of $R$)</td><td>1</td><td>the only real measurement: total Nifty held, $x_1 + x_2$</td></tr>
+      <tr><td>$N(A^T)$</td><td>$(-12, 1)$ (row 2 of $E$)</td><td>1</td><td>the hidden link: $-12 \cdot \text{budget} + \text{return} = 0$</td></tr>
+    </table>
+    <p><b>Check the left null vector:</b> $y^TA = (-12, 1)\left[\begin{smallmatrix} 1 & 1 \\ 12 & 12 \end{smallmatrix}\right] = (-12 + 12,\ -12 + 12) = (0, 0)$ ✓. So every reachable target has return $= 12 \times$ budget: $(10, 120)$ passes ($-120 + 120 = 0$), $(10, 105)$ fails ($-120 + 105 = -15$), exactly Lesson 8's answer.</p>
+    <p><b>Check the pairs:</b> $1 + 1 = 2 = n$ ✓, $1 + 1 = 2 = m$ ✓.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. 3 × 3 example</h3>
+    <p>Nifty, bonds, balanced, all three rules:</p>
+    $$ [\,A \mid I\,] = \left[\begin{array}{ccc|ccc} 1 & 1 & 1 & 1 & 0 & 0 \\ 12 & 7 & 9.5 & 0 & 1 & 0 \\ 1 & 0 & 0.5 & 0 & 0 & 1 \end{array}\right] $$
+    <p>The same five row operations as Lesson 7. The $A$ part changes exactly as before; here is what happens to the identity part:</p>
+    <table>
+      <tr><th>Row operation</th><th>$A$ part (as before)</th><th>Identity part becomes</th></tr>
+      <tr><td>Row 2 $-\ 12 \times$ row 1</td><td>$(0, -5, -2.5)$</td><td>row 2: $(0 - 12, 1 - 0, 0 - 0) = (-12, 1, 0)$</td></tr>
+      <tr><td>Row 3 $-\ 1 \times$ row 1</td><td>$(0, -1, -0.5)$</td><td>row 3: $(0 - 1, 0, 1) = (-1, 0, 1)$</td></tr>
+      <tr><td>Row 3 $-\ 0.2 \times$ row 2</td><td>$(0, 0, 0)$</td><td>row 3: $(-1 + 2.4,\ 0 - 0.2,\ 1) = (1.4, -0.2, 1)$</td></tr>
+      <tr><td>Row 2 $\div (-5)$</td><td>$(0, 1, 0.5)$</td><td>row 2: $(-12/-5,\ 1/-5,\ 0) = (2.4, -0.2, 0)$</td></tr>
+      <tr><td>Row 1 $-\ 1 \times$ row 2</td><td>$(1, 0, 0.5)$</td><td>row 1: $(1 - 2.4,\ 0 + 0.2,\ 0) = (-1.4, 0.2, 0)$</td></tr>
+    </table>
+    $$ [\,R \mid E\,] = \left[\begin{array}{ccc|ccc} \boxed{1} & 0 & 0.5 & -1.4 & 0.2 & 0 \\ 0 & \boxed{1} & 0.5 & 2.4 & -0.2 & 0 \\ 0 & 0 & 0 & 1.4 & -0.2 & 1 \end{array}\right] \qquad r = 2,\; m = n = 3 $$
+    <table>
+      <tr><th>Subspace</th><th>Basis</th><th>Dim</th><th>Meaning</th></tr>
+      <tr><td>$C(A)$</td><td>Nifty $(1, 12, 1)$, bonds $(1, 7, 0)$</td><td>2</td><td>the plane of reachable targets</td></tr>
+      <tr><td>$N(A)$</td><td>$(-0.5, -0.5, 1)$</td><td>1</td><td>build balanced from Nifty and bonds</td></tr>
+      <tr><td>$C(A^T)$</td><td>$(1, 0, 0.5)$, $(0, 1, 0.5)$ (rows of $R$)</td><td>2</td><td>"Nifty content" $x_1 + 0.5x_3$ and "bond content" $x_2 + 0.5x_3$</td></tr>
+      <tr><td>$N(A^T)$</td><td>$(1.4, -0.2, 1)$, or $\times 5$: $(7, -1, 5)$</td><td>1</td><td>the hidden link $7B - R + 5E = 0$</td></tr>
+    </table>
+    <h4>Reading the row space</h4>
+    <p>The two rows of $R$ are two measurements of a trade: how much Nifty it really holds (Nifty plus half the balanced) and how much bonds it really holds. Every rule is a combination of them:</p>
+    <ul>
+      <li>Budget $(1, 1, 1) = 1 \cdot (1, 0, 0.5) + 1 \cdot (0, 1, 0.5)$ ✓ ($0.5 + 0.5 = 1$).</li>
+      <li>Return $(12, 7, 9.5) = 12 \cdot (1, 0, 0.5) + 7 \cdot (0, 1, 0.5)$ ✓ ($6 + 3.5 = 9.5$).</li>
+      <li>Exposure $(1, 0, 0.5) = 1 \cdot (1, 0, 0.5)$ ✓.</li>
+    </ul>
+    <p>Three rules, but only <b>two</b> independent measurements: that's $\dim C(A^T) = 2$.</p>
+    <h4>Reading the left null space</h4>
+    <p>Check $y = (7, -1, 5)$ against every fund (each column of $A$):</p>
+    <ul>
+      <li>Nifty: $7(1) - 1(12) + 5(1) = 7 - 12 + 5 = 0$ ✓</li>
+      <li>Bonds: $7(1) - 1(7) + 5(0) = 0$ ✓</li>
+      <li>Balanced: $7(1) - 1(9.5) + 5(0.5) = 7 - 9.5 + 2.5 = 0$ ✓</li>
+    </ul>
+    <p>So for <b>every</b> portfolio, $7 \cdot \text{budget} - \text{return} + 5 \cdot \text{exposure} = 0$, which is $R = 7B + 5E$. The left null space found the hidden link between the rules, and with it the test for targets:</p>
+    <ul>
+      <li>$(10, 105, 7)$: $70 - 105 + 35 = 0$ ✓ reachable.</li>
+      <li>$(10, 105, 5)$: $70 - 105 + 25 = -10$ ✗ not reachable.</li>
+    </ul>
+    <p><b>Check the pairs:</b> $2 + 1 = 3 = n$ ✓, $2 + 1 = 3 = m$ ✓.</p>
+    <details class="more"><summary>For the curious: and with midcap instead of balanced?</summary>
+      <p>Nifty, bonds, midcap is invertible ($r = 3$), so $R = I$ and $E = A^{-1}$. $C(A) = C(A^T) = \mathbb{R}^3$ and $N(A) = N(A^T) = \{0\}$: no do-nothing trade, no hidden link, every target reachable exactly once.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. Bigger example: four funds</h3>
+    <p>Nifty, ETF, bonds, balanced: $m = 3$ rules, $n = 4$ funds. Row reduction uses the same five operations, so $E$ comes out the same as in the 3 × 3 example:</p>
+    $$ [\,R \mid E\,] = \left[\begin{array}{cccc|ccc} \boxed{1} & 1 & 0 & 0.5 & -1.4 & 0.2 & 0 \\ 0 & 0 & \boxed{1} & 0.5 & 2.4 & -0.2 & 0 \\ 0 & 0 & 0 & 0 & 1.4 & -0.2 & 1 \end{array}\right] \qquad r = 2 $$
+    <p>Now <b>all four</b> subspaces are non-trivial:</p>
+    <table>
+      <tr><th>Subspace</th><th>Lives in</th><th>Basis</th><th>Dim</th></tr>
+      <tr><td>$C(A)$</td><td>$\mathbb{R}^3$</td><td>Nifty $(1, 12, 1)$, bonds $(1, 7, 0)$</td><td>$r = 2$</td></tr>
+      <tr><td>$N(A)$</td><td>$\mathbb{R}^4$</td><td>$(-1, 1, 0, 0)$, $(-0.5, 0, -0.5, 1)$</td><td>$n - r = 2$</td></tr>
+      <tr><td>$C(A^T)$</td><td>$\mathbb{R}^4$</td><td>$(1, 1, 0, 0.5)$, $(0, 0, 1, 0.5)$</td><td>$r = 2$</td></tr>
+      <tr><td>$N(A^T)$</td><td>$\mathbb{R}^3$</td><td>$(1.4, -0.2, 1)$</td><td>$m - r = 1$</td></tr>
+    </table>
+    <p><b>Meaning.</b> The row space now measures "Nifty content" $x_1 + x_2 + 0.5x_4$ (Nifty, plus the ETF, plus half the balanced) and "bond content" $x_3 + 0.5x_4$. The do-nothing trades are exactly the trades that leave both measurements at 0: check $s_1 = (-1, 1, 0, 0)$: $-1 + 1 + 0 = 0$ and $0 + 0 = 0$ ✓; $s_2 = (-0.5, 0, -0.5, 1)$: $-0.5 + 0 + 0.5 = 0$ and $-0.5 + 0.5 = 0$ ✓. The left null vector checks out for the ETF too: $7(1) - 12 + 5(1) = 0$ ✓.</p>
+    <p><b>Check the pairs:</b> $2 + 2 = 4 = n$ ✓, $2 + 1 = 3 = m$ ✓.</p>
+    <h4>Try it: pick a menu and see all four</h4>
+    <div id="picker4" class="lab-controls"></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. Connection: the big picture</h3>
+    $$ \underbrace{\mathbb{R}^n}_{\text{trades}} \;:\; \underbrace{C(A^T)}_{\dim r\ (\text{measured})} \;+\; \underbrace{N(A)}_{\dim n - r\ (\text{invisible})} \qquad\qquad \underbrace{\mathbb{R}^m}_{\text{targets}} \;:\; \underbrace{C(A)}_{\dim r\ (\text{reachable})} \;+\; \underbrace{N(A^T)}_{\dim m - r\ (\text{hidden links})} $$
+    <p>On the <b>trade side</b> ($\mathbb{R}^n$): each direction is either something your rules can see (row space) or something they can't (null space). On the <b>target side</b> ($\mathbb{R}^m$): each direction is either reachable (column space) or blocked by a hidden link (left null space).</p>
+    <table>
+      <tr><th>Menu</th><th>$m$</th><th>$n$</th><th>$r$</th><th>$\dim N(A)$</th><th>$\dim N(A^T)$</th><th>So</th></tr>
+      <tr><td>Nifty, twin (2 rules)</td><td>2</td><td>2</td><td>1</td><td>1</td><td>1</td><td>return locked to 12 × budget</td></tr>
+      <tr><td>Nifty, bonds, balanced</td><td>3</td><td>3</td><td>2</td><td>1</td><td>1</td><td>$R = 7B + 5E$ locked</td></tr>
+      <tr><td>Nifty, ETF, bonds, balanced</td><td>3</td><td>4</td><td>2</td><td>2</td><td>1</td><td>$R = 7B + 5E$ locked</td></tr>
+      <tr><td>All five (+ midcap)</td><td>3</td><td>5</td><td>3</td><td>2</td><td>0</td><td>no hidden link: every target reachable</td></tr>
+      <tr><td>Nifty, bonds, midcap</td><td>3</td><td>3</td><td>3</td><td>0</td><td>0</td><td>every target, exactly one way</td></tr>
+    </table>
+    <div class="box finance"><span class="label">Reading it as a trader</span>
+      <p>The left null space is the market's <b>hidden constraint</b>: with only Nifty-and-bond-like products, return and exposure can't be chosen separately. Adding a product with a genuinely new direction (midcap) kills the left null space and frees every target. A market where $N(A^T) = \{0\}$, i.e. the products' payoffs span every scenario, is what finance calls a <b>complete market</b>.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t7">7. Final memory table</h3>
+    <table>
+      <tr><th></th><th>Column space $C(A)$</th><th>Null space $N(A)$</th><th>Row space $C(A^T)$</th><th>Left null space $N(A^T)$</th></tr>
+      <tr><td><b>Made of</b></td><td>mixes of columns</td><td>$x$ with $Ax = 0$</td><td>mixes of rows</td><td>$y$ with $y^TA = 0$</td></tr>
+      <tr><td><b>Lives in</b></td><td>$\mathbb{R}^m$</td><td>$\mathbb{R}^n$</td><td>$\mathbb{R}^n$</td><td>$\mathbb{R}^m$</td></tr>
+      <tr><td><b>Dimension</b></td><td>$r$</td><td>$n - r$</td><td>$r$</td><td>$m - r$</td></tr>
+      <tr><td><b>Basis</b></td><td>pivot columns of $A$</td><td>special solutions</td><td>non-zero rows of $R$</td><td>rows of $E$ at $R$'s zero rows</td></tr>
+      <tr><td><b>Money meaning</b></td><td>reachable targets</td><td>do-nothing trades</td><td>what the rules can measure</td><td>hidden links between rules</td></tr>
+      <tr><td><b>Example (4 funds)</b></td><td>Nifty, bonds</td><td>$s_1$, $s_2$</td><td>Nifty content, bond content</td><td>$(7, -1, 5)$</td></tr>
+    </table>
+    <p>Pairs: $r + (n - r) = n$ and $r + (m - r) = m$. Find everything with one reduction: $[A \mid I] \to [R \mid E]$.</p>
+    <details class="check"><summary>Check yourself (MIT problem 10.1): A is $m \times n$ of rank $r$, and some $Ax = b$ has no solution. Which inequalities must hold? Why does $A^Ty = 0$ have non-zero solutions?</summary>
+      <p>$r \le m$ and $r \le n$ always. "Some $b$ unreachable" means $C(A) \ne \mathbb{R}^m$, so $r &lt; m$. Then $\dim N(A^T) = m - r &gt; 0$, so the left null space has non-zero vectors: the hidden link that blocks those targets.</p>
+    </details>
+    <details class="check"><summary>Check yourself (MIT lecture): the four subspaces of $\left[\begin{smallmatrix} 1 & 2 & 3 & 1 \\ 1 & 1 & 2 & 1 \\ 1 & 2 & 3 & 1 \end{smallmatrix}\right]$.</summary>
+      <p>$R = \left[\begin{smallmatrix} 1 & 0 & 1 & 1 \\ 0 & 1 & 1 & 0 \\ 0 & 0 & 0 & 0 \end{smallmatrix}\right]$, $E = \left[\begin{smallmatrix} -1 & 2 & 0 \\ 1 & -1 & 0 \\ -1 & 0 & 1 \end{smallmatrix}\right]$, $r = 2$. $C(A)$: columns 1, 2 of $A$ (dim 2). $N(A)$: $(-1, -1, 1, 0)$, $(-1, 0, 0, 1)$ (dim 2). $C(A^T)$: $(1, 0, 1, 1)$, $(0, 1, 1, 0)$ (dim 2). $N(A^T)$: $(-1, 0, 1)$ (dim 1): row 3 minus row 1 is zero, since rows 1 and 3 are equal.</p>
+    </details>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: an unhedgeable risk</a></li>
+        <li><a href="#ex2">Lot sizes: a scenario you can't touch</a></li>
+        <li><a href="#ex3">Four subspaces lab</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, an unhedgeable risk</h3>
+    <p>Rows: (market, currency, rates). With only Nifty fut $(1, 0, 0)$ and IT fut $(1, 1, 0)$:</p>
+    $$ [\,A \mid I\,] = \left[\begin{array}{cc|ccc} 1 & 1 & 1 & 0 & 0 \\ 0 & 1 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 & 1 \end{array}\right] \;\xrightarrow{\text{row 1} - \text{row 2}}\; \left[\begin{array}{cc|ccc} 1 & 0 & 1 & -1 & 0 \\ 0 & 1 & 0 & 1 & 0 \\ 0 & 0 & 0 & 0 & 1 \end{array}\right] $$
+    <table>
+      <tr><th>Subspace</th><th>Basis</th><th>Dim</th><th>Meaning</th></tr>
+      <tr><td>$C(A)$</td><td>$(1, 0, 0)$, $(1, 1, 0)$</td><td>2</td><td>exposures with rates $= 0$</td></tr>
+      <tr><td>$N(A)$</td><td>none</td><td>0</td><td>no redundant hedge</td></tr>
+      <tr><td>$C(A^T)$</td><td>$(1, 0)$, $(0, 1)$</td><td>2</td><td>both amounts can be measured</td></tr>
+      <tr><td>$N(A^T)$</td><td>$(0, 0, 1)$</td><td>1</td><td>"rates exposure" is always 0</td></tr>
+    </table>
+    <p>The left null vector says it plainly: no mix of these hedges ever touches rates. A target with rates exposure 2 fails the test ($0 \cdot 10 + 0 \cdot 3 + 1 \cdot 2 = 2 \ne 0$). Add Bank Nifty futures $(1, 0, 1)$ and the left null space disappears ($r = 3 = m$): every exposure becomes hedgeable. With all four hedges (adding the spread), $r = 3$ still, $N(A^T) = \{0\}$ and $N(A)$ has dimension 1: $(1, -1, 0, 1)$.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, a scenario you can't touch</h3>
+    <p>Rows: Nifty ends at 19,800 / 20,000 / 20,200 (points per lot). With only futures $(-200, 0, 200)$ and the 20,000 call $(0, 0, 200)$:</p>
+    <table>
+      <tr><th>Subspace</th><th>Basis</th><th>Dim</th><th>Meaning</th></tr>
+      <tr><td>$C(A)$</td><td>$(-200, 0, 200)$, $(0, 0, 200)$</td><td>2</td><td>payoffs that are 0 at 20,000</td></tr>
+      <tr><td>$N(A)$</td><td>none</td><td>0</td><td>no redundant product</td></tr>
+      <tr><td>$C(A^T)$</td><td>$(1, 0)$, $(0, 1)$</td><td>2</td><td>both lot counts can be measured</td></tr>
+      <tr><td>$N(A^T)$</td><td>$(0, 1, 0)$</td><td>1</td><td>"payoff at 20,000" is always 0</td></tr>
+    </table>
+    <p>Check the left null vector: $(0, 1, 0) \cdot (-200, 0, 200) = 0$ ✓ and $(0, 1, 0) \cdot (0, 0, 200) = 0$ ✓. Neither product pays at exactly 20,000, so a client payoff $(0, 100, 0)$ is unreachable. Adding the 19,900 call $(0, 100, 300)$ removes the hidden link: the market for these three scenarios becomes <b>complete</b>.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Four subspaces lab</h3>
+    <p>Enter any matrix up to 4 × 5. The lab reduces $[A \mid I]$ to $[R \mid E]$ and gives a basis and the dimension of all four subspaces, with checks.</p>
+    <div id="fourlab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="09_independence-basis-and-dimension.html">← Lesson 9: Independence, Basis and Dimension</a>
+    <span class="off">Next: Lesson 11 (coming soon)</span>
+  </nav>
+  </div>
+</main>
+<script>
+// Interactive pieces: Notes topic 5 (menu picker) and the Examples tab (four subspaces lab).
+window.addEventListener("load", function () {
+  function km(el) { if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false }); }
+  function t(v) {
+    if (Math.abs(v) < 1e-9) return "0";
+    var r = Math.round(v);
+    if (Math.abs(v - r) < 1e-9) return String(r);
+    if (Math.abs(v * 1000 - Math.round(v * 1000)) < 1e-6) return String(Math.round(v * 1000) / 1000);
+    for (var q = 2; q <= 64; q++) { var p = Math.round(v * q); if (Math.abs(v * q - p) < 1e-7) return (p < 0 ? "-" : "") + "\\tfrac{" + Math.abs(p) + "}{" + q + "}"; }
+    return String(Math.round(v * 1e4) / 1e4);
+  }
+  function vec(v) { return "(" + v.map(t).join(", ") + ")"; }
+  function mat(M) { return "\\begin{bmatrix}" + M.map(function (r) { return r.map(t).join(" & "); }).join(" \\\\ ") + "\\end{bmatrix}"; }
+  // Reduce [A | I] to [R | E]; return R, E, pivots and bases of the four subspaces.
+  function four(A0) {
+    var m = A0.length, n = A0[0].length;
+    var M = A0.map(function (r, i) { return r.concat(Array.from({ length: m }, function (_, j) { return i === j ? 1 : 0; })); });
+    var scale = Math.max(1, Math.max.apply(null, A0.map(function (r) { return Math.max.apply(null, r.map(Math.abs)); })));
+    var zero = function (v) { return Math.abs(v) < 1e-9 * scale; }, piv = [], row = 0;
+    for (var col = 0; col < n && row < m; col++) {
+      var p = -1; for (var i = row; i < m; i++) if (!zero(M[i][col])) { p = i; break; }
+      if (p < 0) continue;
+      var tmp = M[p]; M[p] = M[row]; M[row] = tmp;
+      var pv = M[row][col]; for (var k = 0; k < n + m; k++) M[row][k] /= pv;
+      for (var i2 = 0; i2 < m; i2++) { if (i2 === row) continue; var l = M[i2][col]; if (zero(l)) continue; for (var k2 = 0; k2 < n + m; k2++) M[i2][k2] -= l * M[row][k2]; }
+      M.forEach(function (r) { r.forEach(function (v, k3) { if (Math.abs(v) < 1e-10) r[k3] = 0; }); });
+      piv.push([row, col]); row++;
+    }
+    var R = M.map(function (r) { return r.slice(0, n); }), E = M.map(function (r) { return r.slice(n); });
+    var pc = piv.map(function (q) { return q[1]; }), r = piv.length, free = [];
+    for (var j = 0; j < n; j++) if (pc.indexOf(j) < 0) free.push(j);
+    var nul = free.map(function (f) { var x = new Array(n).fill(0); x[f] = 1; piv.forEach(function (q) { x[q[1]] = -R[q[0]][f]; }); return x; });
+    return { m: m, n: n, r: r, R: R, E: E, pc: pc, col: pc.map(function (j) { return A0.map(function (rw) { return rw[j]; }); }), nul: nul, row: R.slice(0, r), left: E.slice(r) };
+  }
+  function nice(v) { // scale a left-null vector to whole numbers when possible
+    for (var s = 1; s <= 60; s++) { var w = v.map(function (a) { return a * s; }); if (w.every(function (a) { return Math.abs(a - Math.round(a)) < 1e-7; })) return w; }
+    return v;
+  }
+  function report(F, A, names, rowsNames) {
+    var h = "<p>$[R \\mid E]$: $R = " + mat(F.R) + "$, $\\;E = " + mat(F.E) + "$. Rank $r = " + F.r + "$ ($m = " + F.m + "$ rules, $n = " + F.n + "$ columns).</p>";
+    h += '<table><tr><th>Subspace</th><th>Basis</th><th>Dim</th></tr>';
+    h += "<tr><td>$C(A)$ in $\\mathbb{R}^" + F.m + "$</td><td>" + (F.col.length ? F.pc.map(function (j, k) { return (names ? names[j] + " " : "") + "$" + vec(F.col[k]) + "$"; }).join(", ") : "only $0$") + "</td><td>$" + F.r + "$</td></tr>";
+    h += "<tr><td>$N(A)$ in $\\mathbb{R}^" + F.n + "$</td><td>" + (F.nul.length ? F.nul.map(function (s) { return "$" + vec(s) + "$"; }).join(", ") : "only $0$") + "</td><td>$" + (F.n - F.r) + "$</td></tr>";
+    h += "<tr><td>$C(A^T)$ in $\\mathbb{R}^" + F.n + "$</td><td>" + (F.row.length ? F.row.map(function (s) { return "$" + vec(s) + "$"; }).join(", ") : "only $0$") + "</td><td>$" + F.r + "$</td></tr>";
+    h += "<tr><td>$N(A^T)$ in $\\mathbb{R}^" + F.m + "$</td><td>" + (F.left.length ? F.left.map(function (s) { var w = nice(s); return "$" + vec(w) + "$"; }).join(", ") : "only $0$") + "</td><td>$" + (F.m - F.r) + "$</td></tr></table>";
+    if (F.left.length && rowsNames) {
+      h += "<p><b>Hidden link" + (F.left.length > 1 ? "s" : "") + ":</b> " + F.left.map(function (s) {
+        var w = nice(s); return "$" + w.map(function (a, i) { return (i && a >= 0 ? "+ " : "") + t(a) + "\\,\\text{" + rowsNames[i] + "}"; }).join(" ") + " = 0$";
+      }).join("; ") + " for every portfolio. Check against each column: " + F.left.map(function (s) {
+        var w = nice(s); return A[0].map(function (_, j) { var v = A.reduce(function (acc, rw, i) { return acc + w[i] * rw[j]; }, 0); return t(v); }).join(", ");
+      }).join("; ") + " ✓</p>";
+    } else if (!F.left.length) h += '<p class="answer">No hidden link: every target in $\\mathbb{R}^' + F.m + "$ is reachable.</p>";
+    h += '<p class="answer">Pairs: $' + F.r + " + " + (F.n - F.r) + " = " + F.n + "$ and $" + F.r + " + " + (F.m - F.r) + " = " + F.m + "$ ✓</p>";
+    return h;
+  }
+
+  // ---- Notes, topic 5: pick a menu ----
+  (function () {
+    var root = document.getElementById("picker4"); if (!root) return;
+    var funds = [["Nifty", [1, 12, 1]], ["ETF", [1, 12, 1]], ["Bonds", [1, 7, 0]], ["Balanced", [1, 9.5, 0.5]], ["Midcap", [1, 15, 1.2]]];
+    var init = [true, true, true, true, false];
+    root.innerHTML = '<div class="lab-row">' + funds.map(function (f, i) { return '<label><input type="checkbox" class="p4" data-i="' + i + '"' + (init[i] ? " checked" : "") + "> " + f[0] + "</label>"; }).join("") + '</div><div class="p4-out mixer-out"></div>';
+    var out = root.querySelector(".p4-out");
+    function update() {
+      var chosen = funds.filter(function (_, i) { return root.querySelector('.p4[data-i="' + i + '"]').checked; });
+      if (!chosen.length) { out.innerHTML = '<p class="lab-warn">Pick at least one fund.</p>'; return; }
+      var A = [0, 1, 2].map(function (i) { return chosen.map(function (f) { return f[1][i]; }); });
+      out.innerHTML = "<p>$A = " + mat(A) + "$</p>" + report(four(A), A, chosen.map(function (f) { return f[0]; }), ["budget", "return", "exposure"]);
+      km(out);
+    }
+    root.addEventListener("change", update); update();
+  })();
+
+  // ---- Examples tab: four subspaces lab ----
+  (function () {
+    var root = document.getElementById("fourlab"); if (!root) return;
+    var presets = [
+      { label: "Portfolio · Nifty, ETF, bonds, balanced", rows: ["budget", "return", "exposure"], cols: ["Nifty", "ETF", "Bonds", "Balanced"], A: [[1, 1, 1, 1], [12, 12, 7, 9.5], [1, 1, 0, 0.5]] },
+      { label: "Portfolio · Nifty, bonds, balanced", rows: ["budget", "return", "exposure"], cols: ["Nifty", "Bonds", "Balanced"], A: [[1, 1, 1], [12, 7, 9.5], [1, 0, 0.5]] },
+      { label: "Portfolio · all five funds", rows: ["budget", "return", "exposure"], cols: ["Nifty", "ETF", "Bonds", "Balanced", "Midcap"], A: [[1, 1, 1, 1, 1], [12, 12, 7, 9.5, 15], [1, 1, 0, 0.5, 1.2]] },
+      { label: "Hedging · Nifty fut + IT fut", rows: ["market", "currency", "rates"], cols: ["Nifty fut", "IT fut"], A: [[1, 1], [0, 1], [0, 0]] },
+      { label: "Lot sizes · futures + 20,000 call", rows: ["at 19,800", "at 20,000", "at 20,200"], cols: ["Futures", "20,000 C"], A: [[-200, 0], [0, 0], [200, 200]] },
+      { label: "MIT lecture example (3 × 4)", rows: ["row 1", "row 2", "row 3"], cols: ["x₁", "x₂", "x₃", "x₄"], A: [[1, 2, 3, 1], [1, 1, 2, 1], [1, 2, 3, 1]] }
+    ];
+    root.innerHTML = '<div class="lab-controls"><div class="lab-row"><label>Example <select class="fl-pick">' +
+      presets.map(function (p, i) { return '<option value="' + i + '">' + p.label + "</option>"; }).join("") +
+      '</select></label><button type="button" class="lab-btn fl-reset">Reset numbers</button></div>' +
+      '<div class="lab-row"><label>Rows (m) <select class="fl-m"><option>1</option><option>2</option><option>3</option><option>4</option></select></label>' +
+      '<label>Columns (n) <select class="fl-n"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label></div>' +
+      '<div class="fl-grid"></div></div><div class="fl-out"></div>';
+    var pick = root.querySelector(".fl-pick"), mSel = root.querySelector(".fl-m"), nSel = root.querySelector(".fl-n"), grid = root.querySelector(".fl-grid"), out = root.querySelector(".fl-out");
+    var rows, cols;
+    function load() { var P = presets[+pick.value]; mSel.value = String(P.A.length); nSel.value = String(P.A[0].length); rows = P.rows.slice(); cols = P.cols.slice(); draw(P.A); }
+    function current() { var A = []; grid.querySelectorAll("input").forEach(function (el) { var x = parseFloat(el.value); (A[+el.dataset.i] = A[+el.dataset.i] || [])[+el.dataset.j] = isFinite(x) ? x : 0; }); return A; }
+    function resize() {
+      var o = current(), m = +mSel.value, n = +nSel.value, A = [];
+      for (var i = 0; i < m; i++) { A.push([]); for (var j = 0; j < n; j++) A[i].push(o[i] && o[i][j] !== undefined ? o[i][j] : 0); }
+      while (rows.length < m) rows.push("row " + (rows.length + 1)); while (cols.length < n) cols.push("x" + (cols.length + 1));
+      draw(A);
+    }
+    function draw(A) {
+      var m = A.length, n = A[0].length, h = '<table class="lab-table sl-table"><tr><th></th>';
+      for (var j = 0; j < n; j++) h += "<th>" + cols[j] + "</th>";
+      h += "</tr>";
+      for (var i = 0; i < m; i++) { h += "<tr><th>" + rows[i] + "</th>"; for (var j2 = 0; j2 < n; j2++) h += '<td><input type="number" step="any" data-i="' + i + '" data-j="' + j2 + '" value="' + A[i][j2] + '"></td>'; h += "</tr>"; }
+      grid.innerHTML = h + "</table>"; update();
+    }
+    function update() { var A = current(); out.innerHTML = report(four(A), A, cols.slice(0, A[0].length), rows.slice(0, A.length)); km(out); }
+    pick.addEventListener("change", load); root.querySelector(".fl-reset").addEventListener("click", load);
+    mSel.addEventListener("change", resize); nSel.addEventListener("change", resize); grid.addEventListener("input", update);
+    load();
+  })();
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=11"></script>
+</body>
+</html>

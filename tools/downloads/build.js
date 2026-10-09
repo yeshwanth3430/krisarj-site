@@ -72,6 +72,13 @@ const LESSONS = [
     page: "linear-algebra/09_independence-basis-and-dimension.html",
     slides: "linear-algebra/09_independence-basis-and-dimension-slides.html",
     plots: {}
+  },
+  {
+    slug: "la-10-the-four-fundamental-subspaces",
+    title: "Linear Algebra · Lesson 10 · The Four Fundamental Subspaces",
+    page: "linear-algebra/10_the-four-fundamental-subspaces.html",
+    slides: "linear-algebra/10_the-four-fundamental-subspaces-slides.html",
+    plots: {}
   }
 ];
 

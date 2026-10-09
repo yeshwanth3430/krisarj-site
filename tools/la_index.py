@@ -66,6 +66,7 @@ LIVE = {
     7: "07_solving-ax-0-pivot-variables-special-solutions.html",
     8: "08_solving-ax-b-row-reduced-form-r.html",
     9: "09_independence-basis-and-dimension.html",
+    10: "10_the-four-fundamental-subspaces.html",
 }
 
 assert len(LECTURES) == 31 and sorted(sum((t[2] for t in TOPICS), [])) == list(range(1, 32))
