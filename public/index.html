@@ -21,15 +21,21 @@
   <nav class="tabs" role="tablist" aria-label="Home sections">
     <span class="tabs-title">Quant from First Principles</span>
     <button role="tab" data-tab="roadmap" aria-selected="true">Mathematics for Finance</button>
+    <button role="tab" data-tab="er" aria-selected="false">Equity Research</button>
   </nav>
   <div class="tab-body">
-  <p class="meta">Learning series · Mathematics for Finance</p>
+  <p class="meta">Learning series</p>
   <h1>Quant from First Principles</h1>
-  <p class="subtitle">The mathematics of quantitative finance, one subject at a time, explained from zero with interactive Nifty options labs.</p>
+  <p class="subtitle">The mathematics of quantitative finance and the craft of equity research, one subject at a time, explained from zero.</p>
 
   <section class="tab-panel" data-panel="roadmap">
   <div id="roadmap-root"></div>
   <noscript><p>The roadmap needs JavaScript. See the <a href="linear-algebra/index.html">Linear Algebra topics</a>.</p></noscript>
+  </section>
+
+  <section class="tab-panel" data-panel="er" hidden>
+  <div id="er-root"></div>
+  <noscript><p>The Equity Research roadmap needs JavaScript.</p></noscript>
   </section>
 
 
@@ -42,6 +48,7 @@
   <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
 </div></footer>
 <script defer src="assets/roadmap.js?v=7"></script>
+<script defer src="assets/er-roadmap.js?v=1"></script>
 <script src="assets/tracker.js?v=12"></script>
 </body>
 </html>
