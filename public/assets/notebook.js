@@ -223,3 +223,28 @@
     });
   } catch (e) {}
 })();
+
+// Sidebar open / close: an arrow button at the left of the top bar (desktop only). Remembered across pages.
+(function () {
+  var KEY = "qn-sidebar";
+  function get() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+  if (get() === "closed") document.documentElement.classList.add("sb-closed");
+  function init() {
+    var bar = document.querySelector(".topbar"), side = document.querySelector(".page.tabbed .tabs");
+    if (!bar || !side) return;
+    document.documentElement.classList.add("has-sidebar");
+    var b = document.createElement("button");
+    b.className = "sb-toggle"; b.type = "button";
+    b.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
+    function label() { var closed = document.documentElement.classList.contains("sb-closed"); b.setAttribute("aria-label", closed ? "Open sidebar" : "Close sidebar"); b.title = closed ? "Open sidebar" : "Close sidebar"; b.setAttribute("aria-expanded", closed ? "false" : "true"); }
+    b.addEventListener("click", function () {
+      var closed = document.documentElement.classList.toggle("sb-closed");
+      set(closed ? "closed" : "open"); label();
+      setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 250);   // let charts re-fit
+    });
+    label();
+    bar.insertBefore(b, bar.firstChild);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();

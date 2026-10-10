@@ -389,3 +389,22 @@ details.more[open] > summary { margin-bottom: 8px; }
 .methods .label { font: 700 11px/1.4 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-right: 4px; }
 .methods a { padding: 4px 10px; border: 1px solid var(--mth-b); border-radius: 999px; color: var(--mth-b); background: var(--mth-bg); }
 .methods a:hover { text-decoration: none; filter: brightness(.95); }
+
+/* ---------- Sidebar open / close toggle (desktop) ---------- */
+.sb-toggle {
+  display: none; flex: 0 0 auto; align-items: center; justify-content: center;
+  width: 30px; height: 30px; margin: -4px 2px -4px -4px; padding: 0;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--paper-2); color: var(--ink-soft);
+  cursor: pointer; font: 600 16px/1 var(--sans);
+}
+.sb-toggle:hover { color: var(--accent); border-color: var(--accent); }
+.sb-toggle svg { width: 16px; height: 16px; transition: transform .2s; }
+.sb-closed .sb-toggle svg { transform: rotate(180deg); }
+@media (min-width: 861px) {
+  .has-sidebar .sb-toggle { display: inline-flex; }
+  .tabs { transition: transform .2s; }
+  .page.tabbed { transition: padding-left .2s; }
+  .sb-closed .tabs { transform: translateX(-100%); }
+  .sb-closed .page.tabbed { padding-left: 48px; }
+  .sb-closed .page.tabbed ~ .site-foot .in { margin-left: 48px; }
+}
