@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matrix Spaces and Rank 1 · Slides</title>
+<meta name="description" content="Linear Algebra Lesson 11 as a slide carousel: matrix spaces, covariance as a symmetric matrix, rank one matrices as single-factor models, and small world graphs.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<style>
+  /* One slide = one 1080 × 1350 page (LinkedIn's portrait carousel size). Always light. */
+  @page { size: 1080px 1350px; margin: 0; }
+  html, body { margin: 0; background: #e9e5dc; }
+  body { font: 34px/1.5 var(--serif); color: var(--ink); }
+  .slide {
+    position: relative; overflow: hidden; box-sizing: border-box;
+    width: 1080px; height: 1350px; margin: 0 auto 24px; padding: 96px 84px 130px;
+    background: var(--paper); display: flex; flex-direction: column;
+    font-size: 38px; line-height: 1.45;   /* set here, so print styles for the notes don't shrink it */
+    break-after: page; page-break-after: always;
+  }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .kicker { font: 600 22px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .slide h1 { font: 700 82px/1.06 var(--sans); letter-spacing: -.02em; margin: 22px 0 30px; }
+  .slide h2 { font: 700 60px/1.12 var(--sans); letter-spacing: -.015em; margin: 14px 0 34px; padding: 0; border: 0; }
+  .slide p { margin: 0 0 26px; }
+  .slide ul, .slide ol { margin: 0 0 26px; padding-left: 40px; }
+  .slide li { margin: 0 0 14px; }
+  .lead { font-size: 44px; line-height: 1.38; }
+  .soft { color: var(--ink-soft); }
+  .slide table { display: table; width: 100%; font-size: 32px; margin: 10px 0 28px; }
+  .slide th { font-size: 24px; }
+  .slide th, .slide td { padding: 12px 16px; }
+  .slide .box { font-size: 34px; margin: 10px 0 26px; padding: 18px 24px; }
+  .slide .box > .label { font-size: 18px; }
+  .slide figure.fig { width: 100%; max-width: 660px; align-self: center; margin: 6px 0 0; padding: 18px; }
+  .slide .figs { width: 100%; }
+  .slide .figs figure.fig { max-width: none; }
+  .slide figure.fig figcaption { font-size: 26px; }
+  .slide .fig .tick { font-size: 12px; }
+  .slide .figs { gap: 22px; }
+  .slide img.plot { display: block; align-self: center; max-width: 100%; max-height: 440px; width: auto; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .slide .katex { font-size: 1.04em; }
+  .answer { font-size: 1em; }
+  .foot {
+    position: absolute; left: 84px; right: 84px; bottom: 48px;
+    display: flex; justify-content: space-between; gap: 20px;
+    padding-top: 18px; border-top: 2px solid var(--rule);
+    font: 500 21px/1 var(--sans); color: var(--ink-soft);
+  }
+  .cover { justify-content: center; }
+  .cover h1 { font-size: 104px; }
+  .cover .lead { font-size: 44px; }
+  .chip { display: inline-block; font: 600 24px/1 var(--sans); color: var(--accent); border: 2px solid var(--accent); border-radius: 999px; padding: 12px 20px; margin: 0 10px 12px 0; }
+  .center { text-align: center; }
+  .grow { flex: 1; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  @media screen and (max-width: 1100px) { .slide { zoom: .5; } }
+</style>
+</head>
+<body>
+
+<section class="slide cover">
+  <div class="kicker">Linear Algebra · Lesson 11</div>
+  <h1>Matrix Spaces; Rank 1; Small World Graphs</h1>
+  <p class="lead">Matrices can be vectors too. A covariance matrix lives in one such space, and a single-factor market is a <b>rank one</b> matrix.</p>
+  <div><span class="chip">dim S = n(n+1)/2</span><span class="chip">A = uvᵀ</span><span class="chip">MIT 18.06, Lecture 11</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Matrix spaces</div>
+  <h2>Anything you can add and scale</h2>
+  <p>All 3 × 3 matrices form a space $M$ of <b>dimension 9</b> (basis: 9 matrices with a single 1).</p>
+  <table>
+    <tr><th>Subspace</th><th>Dimension</th></tr>
+    <tr><td>Symmetric $S$</td><td>6</td></tr>
+    <tr><td>Upper triangular $U$</td><td>6</td></tr>
+    <tr><td>Diagonal $D = S \cap U$</td><td>3</td></tr>
+  </table>
+  <p>$\dim S + \dim U = \dim(S + U) + \dim(S \cap U)$: $6 + 6 = 9 + 3$.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">In markets</div>
+  <h2>Covariance lives in S</h2>
+  <p>A covariance matrix is symmetric. For $n$ assets you need</p>
+  $$ \frac{n(n+1)}{2} \text{ numbers} $$
+  <ul>
+    <li>2 assets: 3 (two variances, one covariance)</li>
+    <li>3 assets: 6</li>
+    <li>50 stocks: <b>1,275</b></li>
+  </ul>
+  <p>Diagonal covariance = uncorrelated assets.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">Rank one</div>
+  <h2>A column times a row</h2>
+  $$ \begin{bmatrix} 1 \\ 1.2 \\ 0.5 \end{bmatrix}\begin{bmatrix} -10 & 5 & 20 \end{bmatrix} = \begin{bmatrix} -10 & 5 & 20 \\ -12 & 6 & 24 \\ -5 & 2.5 & 10 \end{bmatrix} $$
+  <p>Betas × market returns: every row a multiple of one row. <b>One factor drives everything ⇒ rank 1.</b></p>
+</section>
+
+<section class="slide">
+  <div class="kicker">Building blocks</div>
+  <h2>Rank r = r rank-one pieces</h2>
+  <p>Add a small-cap factor to midcap: $+ (0, 1, 0)^T(4, -2, 6)$. Midcap's row becomes $(-8, 4, 30)$, no longer a multiple of Nifty's.</p>
+  <p><b>Two factors ⇒ rank 2.</b></p>
+  <p>Rank 1 + rank 1 is usually rank 2, so rank-one matrices are <b>not</b> a subspace.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">The market model</div>
+  <h2>Cov = σ²ββᵀ + D</h2>
+  $$ \underbrace{\begin{bmatrix} 400 & 480 & 0 \\ 480 & 576 & 0 \\ 0 & 0 & 0 \end{bmatrix}}_{400\,\beta\beta^T \text{ (rank 1)}} + \underbrace{\begin{bmatrix} 0 & 0 & 0 \\ 0 & 324 & 0 \\ 0 & 0 & 25 \end{bmatrix}}_{D} $$
+  $$ = \begin{bmatrix} 400 & 480 & 0 \\ 480 & 900 & 0 \\ 0 & 0 & 25 \end{bmatrix} $$
+  <div class="box finance"><span class="label">50 stocks</span><p>Full covariance: 1,275 numbers. One factor: 50 + 1 + 50 = <b>101</b>.</p></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Small world graphs</div>
+  <h2>How far apart are two brokers?</h2>
+  <p>Nodes = brokers, edges = direct trading links. <b>Distance</b> = fewest links between two nodes.</p>
+  <p>The adjacency matrix $A$ has a 1 for each link; $(A^2)_{ij}$ counts <b>two-step</b> paths.</p>
+  <p>In finance networks, distance is how many hops a shock takes to spread.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">Recap</div>
+  <h2>Key takeaways</h2>
+  <ol class="lead" style="font-size:36px">
+    <li>Matrices form vector spaces: 3 × 3 has dim 9.</li>
+    <li>Symmetric: $n(n+1)/2$, where covariance lives.</li>
+    <li>Rank one $= uv^T$: a single-factor model.</li>
+    <li>Rank $r$ = $r$ rank-one pieces = $r$ factors.</li>
+    <li>Graphs: distance, adjacency, $A^2$.</li>
+  </ol>
+</section>
+
+<section class="slide cover">
+  <div class="kicker">Quant from First Principles</div>
+  <h1 style="font-size:76px">The full interactive lesson is free</h1>
+  <p class="lead">A factor builder, a rank one lab, and worked hedging and options examples:</p>
+  <p class="lead"><b>learn.krisarj.com</b></p>
+  <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
+</section>
+
+<script>
+// Footer with page numbers on every slide.
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  slides.forEach(function (s, i) {
+    var f = document.createElement("div");
+    f.className = "foot";
+    f.innerHTML = "<span>Quant from First Principles · learn.krisarj.com</span><span>" + (i + 1) + " / " + slides.length + "</span>";
+    s.appendChild(f);
+  });
+})();
+window.addEventListener("load", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {
+    delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>

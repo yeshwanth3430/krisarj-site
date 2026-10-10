@@ -15,9 +15,9 @@
         { name: "The four subspaces", topics: [
           ["Vector spaces, column space & nullspace", "what you can build, what is free", "live", "linear-algebra/topic-04.html"],
           ["Independence, rank & the four subspaces", "is the market complete?", "live", "linear-algebra/topic-05.html"],
-          ["Graphs & networks", "price loops and arbitrage", "next"] ] },
+          ["Graphs & networks", "price loops and arbitrage", "live", "linear-algebra/topic-06.html"] ] },
         { name: "Geometry & fitting", topics: [
-          ["Orthogonality & projections", "the best possible hedge", "soon"],
+          ["Orthogonality & projections", "the best possible hedge", "next"],
           ["Least squares & Gram–Schmidt", "beta and clean factors", "soon"],
           ["Determinants & Cramer's rule", "redundant products, exact lots", "soon"] ] },
         { name: "Eigenvalues & beyond", topics: [

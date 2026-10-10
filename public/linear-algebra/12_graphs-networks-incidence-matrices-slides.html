@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graphs and Incidence Matrices · Slides</title>
+<meta name="description" content="Linear Algebra Lesson 12 as a slide carousel: incidence matrices on a network of Nifty spot and futures, loops, Euler's formula and loop arbitrage.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<style>
+  /* One slide = one 1080 × 1350 page (LinkedIn's portrait carousel size). Always light. */
+  @page { size: 1080px 1350px; margin: 0; }
+  html, body { margin: 0; background: #e9e5dc; }
+  body { font: 34px/1.5 var(--serif); color: var(--ink); }
+  .slide {
+    position: relative; overflow: hidden; box-sizing: border-box;
+    width: 1080px; height: 1350px; margin: 0 auto 24px; padding: 96px 84px 130px;
+    background: var(--paper); display: flex; flex-direction: column;
+    font-size: 38px; line-height: 1.45;   /* set here, so print styles for the notes don't shrink it */
+    break-after: page; page-break-after: always;
+  }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--accent); }
+  .kicker { font: 600 22px/1.3 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .slide h1 { font: 700 82px/1.06 var(--sans); letter-spacing: -.02em; margin: 22px 0 30px; }
+  .slide h2 { font: 700 60px/1.12 var(--sans); letter-spacing: -.015em; margin: 14px 0 34px; padding: 0; border: 0; }
+  .slide p { margin: 0 0 26px; }
+  .slide ul, .slide ol { margin: 0 0 26px; padding-left: 40px; }
+  .slide li { margin: 0 0 14px; }
+  .lead { font-size: 44px; line-height: 1.38; }
+  .soft { color: var(--ink-soft); }
+  .slide table { display: table; width: 100%; font-size: 32px; margin: 10px 0 28px; }
+  .slide th { font-size: 24px; }
+  .slide th, .slide td { padding: 12px 16px; }
+  .slide .box { font-size: 34px; margin: 10px 0 26px; padding: 18px 24px; }
+  .slide .box > .label { font-size: 18px; }
+  .slide figure.fig { width: 100%; max-width: 660px; align-self: center; margin: 6px 0 0; padding: 18px; }
+  .slide .figs { width: 100%; }
+  .slide .figs figure.fig { max-width: none; }
+  .slide figure.fig figcaption { font-size: 26px; }
+  .slide .fig .tick { font-size: 12px; }
+  .slide .figs { gap: 22px; }
+  .slide img.plot { display: block; align-self: center; max-width: 100%; max-height: 440px; width: auto; border: 1px solid var(--rule); border-radius: 12px; background: #fff; }
+  .slide .katex { font-size: 1.04em; }
+  .answer { font-size: 1em; }
+  .foot {
+    position: absolute; left: 84px; right: 84px; bottom: 48px;
+    display: flex; justify-content: space-between; gap: 20px;
+    padding-top: 18px; border-top: 2px solid var(--rule);
+    font: 500 21px/1 var(--sans); color: var(--ink-soft);
+  }
+  .cover { justify-content: center; }
+  .cover h1 { font-size: 104px; }
+  .cover .lead { font-size: 44px; }
+  .chip { display: inline-block; font: 600 24px/1 var(--sans); color: var(--accent); border: 2px solid var(--accent); border-radius: 999px; padding: 12px 20px; margin: 0 10px 12px 0; }
+  .center { text-align: center; }
+  .grow { flex: 1; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  @media screen and (max-width: 1100px) { .slide { zoom: .5; } }
+</style>
+</head>
+<body>
+
+<section class="slide cover">
+  <div class="kicker">Linear Algebra · Lesson 12</div>
+  <h1>Graphs, Networks, Incidence Matrices</h1>
+  <p class="lead">Turn a network of prices into a matrix. Loops become the <b>left null space</b>, and a loop that doesn't add to zero is an <b>arbitrage</b>.</p>
+  <div><span class="chip">nodes − edges + loops = 1</span><span class="chip">Aᵀy = 0</span><span class="chip">MIT 18.06, Lecture 12</span></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">The network</div>
+  <h2>Contracts and spreads</h2>
+  <p><b>Nodes:</b> Nifty spot, Oct, Nov, Dec futures (20,000 / 20,100 / 20,250 / 20,400).</p>
+  <p><b>Edges:</b> quoted spreads, e.g. Oct − spot = 100.</p>
+  <p>Incidence matrix: one row per edge, $-1$ at the start node, $+1$ at the end node. Then</p>
+  $$ Ax = \text{the spread on every edge.} $$
+</section>
+
+<section class="slide">
+  <div class="kicker">The null space</div>
+  <h2>Only relative prices matter</h2>
+  <p>$Ax = 0$ ⇒ all prices equal: $N(A) = c(1, 1, 1, 1)$.</p>
+  <p>Add 50 points to every price and <b>no spread changes</b>.</p>
+  <div class="box method"><span class="label">Ground a node</span><p>Fix spot = 20,000 (the numeraire) and the spreads decide every other price. Rank = $n - 1$.</p></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Loops</div>
+  <h2>Positions that cancel</h2>
+  <p>Hold $y_i$ lots of spread $i$. Then $A^Ty$ = net position in each contract.</p>
+  <p>$A^Ty = 0$ (Kirchhoff's law): flat in every contract. Its solutions are <b>loops</b>:</p>
+  $$ y = (1, 1, -1, 0, 0) $$
+  <p>buy spot→Oct, buy Oct→Nov, sell spot→Nov: net zero in every contract.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">Counting</div>
+  <h2>Euler's formula</h2>
+  <p>Loops $= \dim N(A^T) = m - (n - 1)$. So</p>
+  $$ \text{nodes} - \text{edges} + \text{loops} = 1 $$
+  <p>4 contracts, 5 spreads: $4 - 5 + 2 = 1$ ✓. Two independent loops.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">The test</div>
+  <h2>No arbitrage = every loop sums to 0</h2>
+  <p>Quotes come from real prices ⇔ $e \in C(A)$ ⇔ $y^Te = 0$ for every loop (Lesson 10's test).</p>
+  <p>Consistent: $100 + 150 - 250 = 0$ ✓</p>
+  <p>Mispriced spot→Nov at 240: $100 + 150 - 240 = 10$ ✗</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">The trade</div>
+  <h2>Trade the loop</h2>
+  <p>Buy the direct spot→Nov spread at 240, sell spot→Oct and Oct→Nov (worth 250).</p>
+  <div class="box finance"><span class="label">Result</span><p>Net 0 lots in every contract ($A^Ty = 0$), <b>10 points</b> locked in.</p></div>
+  <p>Currency triangles work the same way with logs: $83 \times 1.08 = 89.64$, so a ₹90/€ quote is 0.4% off.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">Recap</div>
+  <h2>Four subspaces of a network</h2>
+  <table>
+    <tr><th>Space</th><th>Dim</th><th>Meaning</th></tr>
+    <tr><td>$N(A)$</td><td>1</td><td>shift all prices</td></tr>
+    <tr><td>$C(A)$</td><td>$n - 1$</td><td>consistent quotes</td></tr>
+    <tr><td>$C(A^T)$</td><td>$n - 1$</td><td>positions from spreads</td></tr>
+    <tr><td>$N(A^T)$</td><td>$m - n + 1$</td><td>loops: the arbitrage test</td></tr>
+  </table>
+</section>
+
+<section class="slide cover">
+  <div class="kicker">Quant from First Principles</div>
+  <h1 style="font-size:76px">The full interactive lesson is free</h1>
+  <p class="lead">A spread checker, a network lab that finds loops and arbitrage, and worked currency and lot-size examples:</p>
+  <p class="lead"><b>learn.krisarj.com</b></p>
+  <p class="soft" style="font-size:24px;margin-top:40px">Based on MIT OpenCourseWare 18.06 Linear Algebra (Prof. Gilbert Strang), used under CC BY-NC-SA 4.0; these slides are shared under the same licence. Not affiliated with or endorsed by MIT. Educational only, not investment advice.</p>
+</section>
+
+<script>
+// Footer with page numbers on every slide.
+(function () {
+  var slides = document.querySelectorAll(".slide");
+  slides.forEach(function (s, i) {
+    var f = document.createElement("div");
+    f.className = "foot";
+    f.innerHTML = "<span>Quant from First Principles · learn.krisarj.com</span><span>" + (i + 1) + " / " + slides.length + "</span>";
+    s.appendChild(f);
+  });
+})();
+window.addEventListener("load", function () {
+  if (window.renderMathInElement) renderMathInElement(document.body, {
+    delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }],
+    throwOnError: false
+  });
+});
+</script>
+</body>
+</html>

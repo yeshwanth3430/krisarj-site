@@ -14,7 +14,7 @@ TOPICS = [  # (name, topic page or None, lecture numbers)
     ("Inverses &amp; transposes", "topic-03.html", [3, 5]),
     ("Vector spaces, column space &amp; nullspace", "topic-04.html", [6, 7, 8]),
     ("Independence, rank &amp; the four subspaces", "topic-05.html", [9, 10]),
-    ("Graphs &amp; networks", None, [11, 12]),
+    ("Graphs &amp; networks", "topic-06.html", [11, 12]),
     ("Orthogonality &amp; projections", None, [13, 14]),
     ("Least squares &amp; Gram–Schmidt", None, [15, 16]),
     ("Determinants &amp; Cramer's rule", None, [17, 18, 19]),
@@ -67,6 +67,8 @@ LIVE = {
     8: "08_solving-ax-b-row-reduced-form-r.html",
     9: "09_independence-basis-and-dimension.html",
     10: "10_the-four-fundamental-subspaces.html",
+    11: "11_matrix-spaces-rank-1-small-world-graphs.html",
+    12: "12_graphs-networks-incidence-matrices.html",
 }
 
 assert len(LECTURES) == 31 and sorted(sum((t[2] for t in TOPICS), [])) == list(range(1, 32))

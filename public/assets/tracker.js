@@ -26,7 +26,9 @@
     { key: "la-04-2", subject: "la", topic: 4, topicName: "Vector spaces, column space & nullspace", title: "Solving Ax = 0: Pivot Variables, Special Solutions", url: "linear-algebra/07_solving-ax-0-pivot-variables-special-solutions.html" },
     { key: "la-04-3", subject: "la", topic: 4, topicName: "Vector spaces, column space & nullspace", title: "Solving Ax = b: Row Reduced Form R", url: "linear-algebra/08_solving-ax-b-row-reduced-form-r.html" },
     { key: "la-05-1", subject: "la", topic: 5, topicName: "Independence, rank & the four subspaces", title: "Independence, Basis and Dimension", url: "linear-algebra/09_independence-basis-and-dimension.html" },
-    { key: "la-05-2", subject: "la", topic: 5, topicName: "Independence, rank & the four subspaces", title: "The Four Fundamental Subspaces", url: "linear-algebra/10_the-four-fundamental-subspaces.html" }
+    { key: "la-05-2", subject: "la", topic: 5, topicName: "Independence, rank & the four subspaces", title: "The Four Fundamental Subspaces", url: "linear-algebra/10_the-four-fundamental-subspaces.html" },
+    { key: "la-06-1", subject: "la", topic: 6, topicName: "Graphs & networks", title: "Matrix Spaces; Rank 1; Small World Graphs", url: "linear-algebra/11_matrix-spaces-rank-1-small-world-graphs.html" },
+    { key: "la-06-2", subject: "la", topic: 6, topicName: "Graphs & networks", title: "Graphs, Networks, Incidence Matrices", url: "linear-algebra/12_graphs-networks-incidence-matrices.html" }
   ];
   var DONE_AFTER_MS = 2 * 60 * 1000;   // auto-complete: reached the end of the notes and spent 2+ minutes
 

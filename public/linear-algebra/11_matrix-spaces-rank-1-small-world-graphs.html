@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matrix Spaces; Rank 1; Small World Graphs · Topic 6 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 6, Lesson 11: spaces whose vectors are matrices (covariance matrices live in the symmetric ones), rank one matrices as single-factor models, and small world graphs, explained step by step on portfolio, hedging and options examples.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-06-1">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-06.html">Topic 6</a> / <b>Matrix Spaces; Rank 1; Small World Graphs</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 11</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 6 · Lesson 11 (MIT 18.06, Lecture 11)</p>
+  <h1>Matrix Spaces; Rank 1; Small World Graphs</h1>
+  <p class="subtitle">Vectors don't have to be columns of numbers. Whole matrices can be vectors too, and a covariance matrix lives in one such space. Then the simplest matrices of all, rank one, which is what a single-factor market looks like. And a first look at graphs.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-11-matrix-spaces-rank-1-small-world-graphs-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-11-matrix-spaces-rank-1-small-world-graphs-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F11_matrix-spaces-rank-1-small-world-graphs" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">Conditions and important concepts</a></li>
+        <li><a href="#t2">Procedure</a></li>
+        <li><a href="#t3">2 × 2 examples</a></li>
+        <li><a href="#t4">3 × 3 examples</a></li>
+        <li><a href="#t5">Bigger example: the market model</a></li>
+        <li><a href="#t6">Small world graphs</a></li>
+        <li><a href="#t7">Final memory table</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">Conditions and important concepts</a><span>12 short definitions: matrix spaces, symmetric / upper / diagonal subspaces, rank one matrices, graphs.</span></li>
+      <li><a href="#t2">Procedure</a><span>Find the dimension of a matrix space; test for rank one and split it into $uv^T$.</span></li>
+      <li><a href="#t3">2 × 2 examples</a><span>A two-asset covariance matrix; a one-factor return table.</span></li>
+      <li><a href="#t4">3 × 3 examples</a><span>A three-asset covariance matrix; one factor (rank 1) and two factors (rank 2).</span></li>
+      <li><a href="#t5">Bigger example: the market model</a><span>Covariance $= \sigma^2\beta\beta^T + D$. 1,275 numbers become 101. With a factor builder.</span></li>
+      <li><a href="#t6">Small world graphs</a><span>A broker network: distances, the adjacency matrix and two-step links.</span></li>
+      <li><a href="#t7">Final memory table</a><span>Everything on one screen.</span></li>
+    </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-matspace">Matrix spaces</a> <a href="#m-sym">Symmetric matrices S</a> <a href="#m-sumdim">dim(S + U) formula</a> <a href="#m-rank1">Rank one: uvᵀ</a> <a href="#m-factor">Single-factor model</a> <a href="#m-graph">Graphs and distance</a> <a href="#m-adj">Adjacency matrix</a></p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="09_independence-basis-and-dimension.html#t1">Basis and dimension</a> (Lesson 9) and <a href="10_the-four-fundamental-subspaces.html#t1">the four subspaces</a> (Lesson 10).</li>
+      <li><a href="05_transposes-permutations-vector-spaces.html#t3">Symmetric matrices and covariance</a> (Lesson 5).</li>
+      <li><a href="03_multiplication-and-inverse-matrices.html#t3">Columns times rows</a> (Lesson 3): a column times a row is a whole matrix.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box finance"><span class="label">The numbers used in the examples</span>
+      <p><b>Betas</b> (how much a fund moves when the market moves 1%): Nifty 1, midcap 1.2, balanced 0.5, bonds 0. <b>Market returns</b> in three scenarios (bad, normal, good year): $-10\%$, $5\%$, $20\%$. <b>Market variance</b> $\sigma^2 = 400$ (a 20% volatility, since $20^2 = 400$).</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. Conditions and important concepts</h3>
+
+    <h4>1. Vectors don't have to be columns</h4>
+    <p>A vector space only needs two moves: <b>add</b> two of its things and <b>scale</b> one by a number, without leaving the space (Lesson 5). Matrices can do that. So can functions. So:</p>
+    $$ \boxed{\text{Anything you can add and scale can be a "vector".}} $$
+
+    <h4>2. The space M of all 3 × 3 matrices</h4>
+    <div class="box method" id="m-matspace"><span class="label">Definition · Matrix space M</span>
+      <p>$M$ = all $3 \times 3$ matrices. Adding two gives a $3 \times 3$ matrix; scaling gives one; the zero matrix is in it. It has <b>dimension 9</b>: you choose 9 numbers.</p>
+    </div>
+    <p>A basis: the 9 matrices with a single 1 and zeros elsewhere, $E_{11}, E_{12}, \dots, E_{33}$ ($E_{ij}$ has its 1 in row $i$, column $j$). Every matrix is $\sum a_{ij}E_{ij}$, and no $E_{ij}$ is a mix of the others. $M$ behaves just like $\mathbb{R}^9$.</p>
+
+    <h4>3. Symmetric matrices S: where covariance lives</h4>
+    <div class="box method" id="m-sym"><span class="label">Definition · The subspace S of symmetric matrices</span>
+      <p>$S$ = all $3 \times 3$ matrices with $A^T = A$. Sums and multiples of symmetric matrices are symmetric, so $S$ is a subspace. <b>Dimension 6</b>: choose the 3 diagonal entries and the 3 entries above the diagonal; the 3 below are copies.</p>
+    </div>
+    <p>A covariance matrix is symmetric (Lesson 5), so it lives in $S$. For $n$ assets you need</p>
+    $$ \boxed{\dim S = \frac{n(n+1)}{2}} \qquad n = 3: \; 6 \qquad n = 50: \; \frac{50 \times 51}{2} = 1275 $$
+
+    <h4>4. Upper triangular matrices U</h4>
+    <p>All $3 \times 3$ matrices with zeros below the diagonal. A subspace of dimension 6 (3 diagonal + 3 above). Basis: $E_{11}, E_{12}, E_{13}, E_{22}, E_{23}, E_{33}$.</p>
+
+    <h4>5. Diagonal matrices D = S ∩ U</h4>
+    <p>Matrices that are both symmetric and upper triangular must have zeros off the diagonal. Dimension 3. A diagonal covariance matrix means the assets are <b>uncorrelated</b>: only their own variances, no covariances.</p>
+
+    <h4>6. Union vs sum</h4>
+    <p>$S \cup U$ ("symmetric <b>or</b> upper triangular") is <b>not</b> a subspace: adding a symmetric matrix to an upper triangular one usually gives neither. The <b>sum</b> $S + U$ (all $s + u$) is a subspace, and here it is all of $M$.</p>
+    <div class="box method" id="m-sumdim"><span class="label">Rule · Dimensions of a sum and an intersection</span>
+      $$ \dim S + \dim U = \dim(S + U) + \dim(S \cap U) \qquad 6 + 6 = 9 + 3 \;✓ $$
+    </div>
+
+    <h4>7. Rank one matrices</h4>
+    <div class="box method" id="m-rank1"><span class="label">Rule · Every rank one matrix is uvᵀ</span>
+      <p>A matrix has rank 1 exactly when it is a column times a row: $A = uv^T$. Every column is a multiple of $u$; every row is a multiple of $v^T$.</p>
+    </div>
+    $$ \begin{bmatrix} 1 & 4 & 5 \\ 2 & 8 & 10 \end{bmatrix} = \begin{bmatrix} 1 \\ 2 \end{bmatrix} \begin{bmatrix} 1 & 4 & 5 \end{bmatrix} \qquad \text{(MIT's example)} $$
+
+    <h4>8. Spotting rank one</h4>
+    <p>Eliminate: if only <b>one</b> non-zero row survives, the rank is 1. Equivalently, every row is a multiple of the first non-zero row. For a $2 \times 2$: $ad - bc = 0$ (and not all zero).</p>
+
+    <h4>9. Rank one in markets: one factor</h4>
+    <div class="box method" id="m-factor"><span class="label">Model · Single-factor returns</span>
+      <p>If every fund's return is its beta times the market's return, then the table of returns (funds × scenarios) is $\beta\, r_m^T$: a column of betas times a row of market returns. <b>One factor drives everything ⇒ the table has rank 1.</b></p>
+    </div>
+
+    <h4>10. Rank one matrices are building blocks</h4>
+    <p>A matrix of rank $r$ can be written as a sum of $r$ rank-one matrices. In markets: an $r$-factor model. But the sum of two rank-one matrices is usually rank 2, so the set of rank-one matrices is <b>not</b> a subspace (and neither is "all rank 4 matrices", MIT's example).</p>
+    $$ \begin{bmatrix} 1 \\ 0 \end{bmatrix}\begin{bmatrix} 1 & 0 \end{bmatrix} + \begin{bmatrix} 0 \\ 1 \end{bmatrix}\begin{bmatrix} 0 & 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} \quad \text{rank } 1 + \text{rank } 1 = \text{rank } 2 $$
+
+    <h4>11. A subspace from a rule: zero-cost trades with four funds</h4>
+    <p>All $(v_1, v_2, v_3, v_4)$ with $v_1 + v_2 + v_3 + v_4 = 0$ is the null space of $A = [\,1 \;\; 1 \;\; 1 \;\; 1\,]$. Rank 1, so its dimension is $4 - 1 = 3$, with basis $(-1, 1, 0, 0)$, $(-1, 0, 1, 0)$, $(-1, 0, 0, 1)$: switch Nifty into each other fund. The other three subspaces: $C(A) = \mathbb{R}^1$, row space of dimension 1, left null space $\{0\}$.</p>
+
+    <h4>12. Graphs</h4>
+    <div class="box method" id="m-graph"><span class="label">Definition · Graph and distance</span>
+      <p>A <b>graph</b> is a set of <b>nodes</b> joined by <b>edges</b>. The <b>distance</b> between two nodes is the smallest number of edges on a path between them. A "small world" graph has short distances even with many nodes ("six degrees of separation").</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. Procedure</h3>
+    <h4>A. Dimension of a matrix space</h4>
+    <table>
+      <tr><th>Step</th><th>What to do</th></tr>
+      <tr><td>1</td><td>Check it's a subspace: the zero matrix is in it, and sums and multiples stay in it.</td></tr>
+      <tr><td>2</td><td>Count how many entries you can choose freely; the rest are forced.</td></tr>
+      <tr><td>3</td><td>Basis: one matrix per free choice (a 1 in that spot, plus whatever copies it forces).</td></tr>
+      <tr><td>4</td><td>Dimension = number of basis matrices.</td></tr>
+    </table>
+    <h4>B. Is it rank one? Split it into uvᵀ</h4>
+    <table>
+      <tr><th>Step</th><th>What to do</th></tr>
+      <tr><td>1</td><td>Take the first non-zero row: that's $v^T$.</td></tr>
+      <tr><td>2</td><td>For each row, find the number that turns $v^T$ into it: those numbers form $u$.</td></tr>
+      <tr><td>3</td><td>If some row isn't a multiple of $v^T$, the rank is more than 1.</td></tr>
+      <tr><td>4</td><td>Check $uv^T = A$ entry by entry.</td></tr>
+    </table>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. 2 × 2 examples</h3>
+
+    <h4>Example A: a two-asset covariance matrix (dimension 3)</h4>
+    <p>Nifty variance 400, bonds variance 25, covariance 30:</p>
+    $$ \text{Cov} = \begin{bmatrix} 400 & 30 \\ 30 & 25 \end{bmatrix} = 400\begin{bmatrix} 1 & 0 \\ 0 & 0 \end{bmatrix} + 25\begin{bmatrix} 0 & 0 \\ 0 & 1 \end{bmatrix} + 30\begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix} $$
+    <p>Check entry by entry: top-left $400 + 0 + 0 = 400$ ✓, bottom-right $0 + 25 + 0 = 25$ ✓, both off-diagonal $0 + 0 + 30 = 30$ ✓. The three matrices on the right are a basis of the $2 \times 2$ symmetric matrices, so that space has <b>dimension 3</b> $= \tfrac{2 \times 3}{2}$: two variances and one covariance.</p>
+
+    <h4>Example B: a one-factor return table (rank 1)</h4>
+    <p>Nifty (beta 1) and midcap (beta 1.2), market return $-10\%$ in a bad year and $20\%$ in a good year:</p>
+    $$ \begin{bmatrix} 1 \\ 1.2 \end{bmatrix}\begin{bmatrix} -10 & 20 \end{bmatrix} = \begin{bmatrix} 1(-10) & 1(20) \\ 1.2(-10) & 1.2(20) \end{bmatrix} = \begin{bmatrix} -10 & 20 \\ -12 & 24 \end{bmatrix} $$
+    <ul>
+      <li>Elimination: row 2 $-\ 1.2 \times$ row 1 $= (-12 + 12,\ 24 - 24) = (0, 0)$. One non-zero row: <b>rank 1</b>.</li>
+      <li>$ad - bc = (-10)(24) - (20)(-12) = -240 + 240 = 0$ ✓.</li>
+      <li>Meaning: midcap's row is just $1.2 \times$ Nifty's row. One factor (the market) explains the whole table.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. 3 × 3 examples</h3>
+
+    <h4>Example A: a three-asset covariance matrix (dimension 6)</h4>
+    <p>Nifty, midcap, bonds:</p>
+    $$ \text{Cov} = \begin{bmatrix} 400 & 480 & 0 \\ 480 & 900 & 0 \\ 0 & 0 & 25 \end{bmatrix} $$
+    <p>Six numbers decide it: the variances 400, 900, 25 and the covariances 480 (Nifty–midcap), 0 (Nifty–bonds), 0 (midcap–bonds). A basis of $S$: $E_{11}$, $E_{22}$, $E_{33}$, $E_{12} + E_{21}$, $E_{13} + E_{31}$, $E_{23} + E_{32}$. So</p>
+    $$ \text{Cov} = 400E_{11} + 900E_{22} + 25E_{33} + 480(E_{12} + E_{21}) + 0(E_{13} + E_{31}) + 0(E_{23} + E_{32}). $$
+
+    <h4>Example B: one factor, three funds (rank 1)</h4>
+    $$ R = \beta\, r_m^T = \begin{bmatrix} 1 \\ 1.2 \\ 0.5 \end{bmatrix}\begin{bmatrix} -10 & 5 & 20 \end{bmatrix} = \begin{bmatrix} -10 & 5 & 20 \\ -12 & 6 & 24 \\ -5 & 2.5 & 10 \end{bmatrix} \begin{matrix} \leftarrow \text{Nifty} \\ \leftarrow \text{midcap} \\ \leftarrow \text{balanced} \end{matrix} $$
+    <ul>
+      <li>Row 2 $-\ 1.2 \times$ row 1: $(-12 + 12,\ 6 - 6,\ 24 - 24) = (0, 0, 0)$.</li>
+      <li>Row 3 $-\ 0.5 \times$ row 1: $(-5 + 5,\ 2.5 - 2.5,\ 10 - 10) = (0, 0, 0)$.</li>
+      <li>One non-zero row left: <b>rank 1</b>. Every column is a multiple of $\beta = (1, 1.2, 0.5)$; every row is a multiple of $r_m^T = (-10, 5, 20)$.</li>
+    </ul>
+
+    <h4>Example C: add a second factor (rank 2)</h4>
+    <p>Suppose midcap also has a small-cap factor that adds $(4, -2, 6)$ to its returns. That's a second rank-one piece:</p>
+    $$ R_2 = \begin{bmatrix} 1 \\ 1.2 \\ 0.5 \end{bmatrix}\begin{bmatrix} -10 & 5 & 20 \end{bmatrix} + \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix}\begin{bmatrix} 4 & -2 & 6 \end{bmatrix} = \begin{bmatrix} -10 & 5 & 20 \\ -8 & 4 & 30 \\ -5 & 2.5 & 10 \end{bmatrix} $$
+    <p>Midcap's row: $(-12 + 4,\ 6 - 2,\ 24 + 6) = (-8, 4, 30)$. Is it a multiple of Nifty's row? $-8/-10 = 0.8$, $4/5 = 0.8$, but $30/20 = 1.5$. No. Balanced is still $0.5 \times$ Nifty. So <b>rank 2</b>: two factors, two rank-one pieces.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. Bigger example: the market model</h3>
+    <p>Where did Example A's covariance matrix come from? From a <b>single-factor model</b>: each fund's risk is (its beta × the market's risk) plus its own private risk.</p>
+    $$ \text{Cov} = \sigma^2\,\beta\beta^T + D \qquad \beta = \begin{bmatrix} 1 \\ 1.2 \\ 0 \end{bmatrix} \;(\text{Nifty, midcap, bonds}), \quad \sigma^2 = 400 $$
+    <p><b>Step 1, the rank-one market part:</b></p>
+    $$ 400\,\beta\beta^T = 400\begin{bmatrix} 1 \cdot 1 & 1 \cdot 1.2 & 1 \cdot 0 \\ 1.2 \cdot 1 & 1.2 \cdot 1.2 & 1.2 \cdot 0 \\ 0 & 0 & 0 \end{bmatrix} = 400\begin{bmatrix} 1 & 1.2 & 0 \\ 1.2 & 1.44 & 0 \\ 0 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 400 & 480 & 0 \\ 480 & 576 & 0 \\ 0 & 0 & 0 \end{bmatrix} $$
+    <p><b>Step 2, the private (diagonal) part:</b> Nifty 0 (it <i>is</i> the market), midcap 324, bonds 25:</p>
+    $$ D = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 324 & 0 \\ 0 & 0 & 25 \end{bmatrix} \qquad \text{Cov} = \begin{bmatrix} 400 & 480 & 0 \\ 480 & 576 + 324 & 0 \\ 0 & 0 & 25 \end{bmatrix} = \begin{bmatrix} 400 & 480 & 0 \\ 480 & 900 & 0 \\ 0 & 0 & 25 \end{bmatrix} $$
+    <p><b>Why it matters.</b> A full covariance matrix for 50 stocks lives in $S$, with $\dim = 1275$ numbers to estimate. The market model needs only 50 betas + 1 market variance + 50 private variances $= 101$. A rank-one piece plus a diagonal is a huge simplification, and it's how risk models start.</p>
+    $$ \boxed{1275 \text{ numbers (full covariance)} \;\to\; 101 \text{ numbers (one factor)}} $$
+    <h4>Try it: build a factor table</h4>
+    <div id="factor" class="lab-controls"></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. Small world graphs</h3>
+    <p>Six brokers A–F. An edge means two brokers trade directly with each other:</p>
+    <table>
+      <tr><th>Edges</th><td>A–B, A–C, B–C, B–D, C–D, D–E, E–F</td></tr>
+    </table>
+    <div class="box method" id="m-adj"><span class="label">Method · Adjacency matrix</span>
+      <p>Put a 1 in row $i$, column $j$ when nodes $i$ and $j$ are joined, 0 otherwise. It is symmetric. Its square counts <b>two-step</b> paths: entry $(i, j)$ of $A^2$ = number of ways to go from $i$ to $j$ in exactly two steps.</p>
+    </div>
+    $$ A = \begin{bmatrix} 0 & 1 & 1 & 0 & 0 & 0 \\ 1 & 0 & 1 & 1 & 0 & 0 \\ 1 & 1 & 0 & 1 & 0 & 0 \\ 0 & 1 & 1 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 & 0 & 1 \\ 0 & 0 & 0 & 0 & 1 & 0 \end{bmatrix} \qquad A^2 = \begin{bmatrix} 2 & 1 & 1 & 2 & 0 & 0 \\ 1 & 3 & 2 & 1 & 1 & 0 \\ 1 & 2 & 3 & 1 & 1 & 0 \\ 2 & 1 & 1 & 3 & 0 & 1 \\ 0 & 1 & 1 & 0 & 2 & 0 \\ 0 & 0 & 0 & 1 & 0 & 1 \end{bmatrix} $$
+    <ul>
+      <li>$(A^2)_{AD} = 2$: A reaches D in two steps two ways, A–B–D and A–C–D. Check: row A $(0, 1, 1, 0, 0, 0)$ · column D $(0, 1, 1, 0, 1, 0) = 0 + 1 + 1 + 0 + 0 + 0 = 2$ ✓.</li>
+      <li>Diagonal of $A^2$ = number of trading partners: B has 3 (A, C, D) ✓.</li>
+      <li>Distances from A: B 1, C 1, D 2, E 3, F 4. The farthest pair (A and F) is 4 steps apart.</li>
+    </ul>
+    <p><b>Why a trader cares.</b> In a financial network, distance is how many hops a shock takes to travel. "Small world" networks, where any two banks are only a few hops apart, spread trouble fast. Lesson 12 turns graphs into matrices properly, with directions on the edges.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t7">7. Final memory table</h3>
+    <table>
+      <tr><th>Concept</th><th>Key fact</th><th>Example</th></tr>
+      <tr><td><b>Matrix space $M$</b> (3 × 3)</td><td>dimension 9; basis $E_{ij}$</td><td>behaves like $\mathbb{R}^9$</td></tr>
+      <tr><td><b>Symmetric $S$</b></td><td>dimension $n(n+1)/2$</td><td>covariance: 6 numbers for 3 assets, 1275 for 50</td></tr>
+      <tr><td><b>Upper triangular $U$</b></td><td>dimension 6 (for 3 × 3)</td><td>$U$ from elimination</td></tr>
+      <tr><td><b>Diagonal $D = S \cap U$</b></td><td>dimension 3</td><td>uncorrelated assets</td></tr>
+      <tr><td><b>Sum rule</b></td><td>$\dim S + \dim U = \dim(S + U) + \dim(S \cap U)$</td><td>$6 + 6 = 9 + 3$</td></tr>
+      <tr><td><b>Rank one</b></td><td>$A = uv^T$; every row a multiple of one row</td><td>one-factor returns $\beta r_m^T$</td></tr>
+      <tr><td><b>Rank $r$</b></td><td>a sum of $r$ rank-one pieces</td><td>an $r$-factor model</td></tr>
+      <tr><td><b>Not subspaces</b></td><td>$S \cup U$; all rank-1 matrices</td><td>rank 1 + rank 1 = rank 2</td></tr>
+      <tr><td><b>Graph</b></td><td>nodes + edges; distance = fewest edges</td><td>broker network, A to F = 4</td></tr>
+      <tr><td><b>Adjacency $A$</b></td><td>$(A^2)_{ij}$ counts two-step paths</td><td>A to D: 2 ways</td></tr>
+    </table>
+    <details class="check"><summary>Check yourself (MIT problem 11.2): with $A = \left[\begin{smallmatrix} 1 & 0 & -1 \\ -1 & 1 & 0 \\ 0 & -1 & 1 \end{smallmatrix}\right]$ acting on $3 \times 3$ matrices $X$, which $X$ give $AX = 0$, and what are the dimensions?</summary>
+      <p>$A$ has rank 2 and $N(A)$ is the multiples of $(1, 1, 1)$. $AX = 0$ means every column of $X$ is in $N(A)$, so $X = \left[\begin{smallmatrix} a & b & c \\ a & b & c \\ a & b & c \end{smallmatrix}\right]$: dimension 3. The matrices $AX$ are those whose columns each add to 0: dimension 6. And $3 + 6 = 9 = \dim M$.</p>
+    </details>
+    <details class="check"><summary>Check yourself (MIT recitation): the 2 × 3 matrices whose null space contains $(2, 1, 1)$. A subspace? Dimension?</summary>
+      <p>Yes: if $A(2, 1, 1) = 0$ and $B(2, 1, 1) = 0$, then $(A + B)(2, 1, 1) = 0$ and $(cA)(2, 1, 1) = 0$. Each row $(r_1, r_2, r_3)$ must satisfy $2r_1 + r_2 + r_3 = 0$: 2 free numbers per row, 2 rows, so <b>dimension 4</b>.</p>
+    </details>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: a book of Nifty-only hedges</a></li>
+        <li><a href="#ex2">Lot sizes: clients with futures</a></li>
+        <li><a href="#ex3">Rank one lab</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, a book of Nifty-only hedges</h3>
+    <p>Three desks; columns are their exposure to (market, currency, rates). If every desk hedges only with Nifty futures $(1, 0, 0)$, holding 2, $-1$ and 3 lots:</p>
+    $$ \begin{bmatrix} 2 \\ -1 \\ 3 \end{bmatrix}\begin{bmatrix} 1 & 0 & 0 \end{bmatrix} = \begin{bmatrix} 2 & 0 & 0 \\ -1 & 0 & 0 \\ 3 & 0 & 0 \end{bmatrix} \begin{matrix} \leftarrow \text{desk 1} \\ \leftarrow \text{desk 2} \\ \leftarrow \text{desk 3} \end{matrix} $$
+    <p>Rank 1: the whole book has only <b>one</b> risk direction (market). Now desk 2 adds one IT future $(1, 1, 0)$: its row becomes $(-1 + 1,\ 0 + 1,\ 0) = (0, 1, 0)$. Rows $(2, 0, 0)$, $(0, 1, 0)$, $(3, 0, 0)$: rank 2, two risk directions.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, clients with futures</h3>
+    <p>Futures pay $(-200, 0, 200)$ points per lot at 19,800 / 20,000 / 20,200. Three clients buy 1, 2 and 3 lots:</p>
+    $$ \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}\begin{bmatrix} -200 & 0 & 200 \end{bmatrix} = \begin{bmatrix} -200 & 0 & 200 \\ -400 & 0 & 400 \\ -600 & 0 & 600 \end{bmatrix} $$
+    <p>Rank 1: every client's payoff is a multiple of one payoff. Row 2 $-\ 2 \times$ row 1 $= 0$, row 3 $-\ 3 \times$ row 1 $= 0$. Give client 3 a 20,000 call $(0, 0, 200)$ instead: row 3 becomes $(0, 0, 200)$, not a multiple of $(-200, 0, 200)$, so the table has rank 2.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Rank one lab</h3>
+    <p>Enter any table (up to 4 × 4). The lab finds its rank and, if it is rank 1, splits it into a column times a row with a full check.</p>
+    <div id="r1lab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="10_the-four-fundamental-subspaces.html">← Lesson 10: The Four Fundamental Subspaces</a>
+    <a href="12_graphs-networks-incidence-matrices.html">Next: Lesson 12: Graphs, Networks, Incidence Matrices →</a>
+  </nav>
+  </div>
+</main>
+<script>
+// Interactive pieces: Notes topic 5 (factor builder) and the Examples tab (rank one lab).
+window.addEventListener("load", function () {
+  function km(el) { if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false }); }
+  function t(v) { var r = Math.round(v * 1e4) / 1e4; if (Math.abs(r) < 1e-9) r = 0; return String(r); }
+  function mat(M) { return "\\begin{bmatrix}" + M.map(function (r) { return r.map(t).join(" & "); }).join(" \\\\ ") + "\\end{bmatrix}"; }
+  function vec(v) { return "(" + v.map(t).join(", ") + ")"; }
+  function rank(A0) {
+    var M = A0.map(function (r) { return r.slice(); }), m = M.length, n = M[0].length, row = 0;
+    var scale = Math.max(1, Math.max.apply(null, M.map(function (r) { return Math.max.apply(null, r.map(Math.abs)); })));
+    for (var c = 0; c < n && row < m; c++) {
+      var p = -1; for (var i = row; i < m; i++) if (Math.abs(M[i][c]) > 1e-9 * scale) { p = i; break; }
+      if (p < 0) continue;
+      var tmp = M[p]; M[p] = M[row]; M[row] = tmp;
+      for (var i2 = row + 1; i2 < m; i2++) { var l = M[i2][c] / M[row][c]; for (var k = 0; k < n; k++) M[i2][k] -= l * M[row][k]; }
+      row++;
+    }
+    return row;
+  }
+  function num(el) { var x = parseFloat(el.value); return isFinite(x) ? x : 0; }
+
+  // ---- Notes, topic 5: factor builder ----
+  (function () {
+    var root = document.getElementById("factor"); if (!root) return;
+    var names = ["Nifty", "Midcap", "Balanced"];
+    root.innerHTML = '<div class="lab-row"><b>Betas:</b> ' + names.map(function (nm, i) { return '<label>' + nm + ' <input type="number" step="any" class="fb" data-k="b' + i + '" value="' + [1, 1.2, 0.5][i] + '" style="width:4.5em"></label>'; }).join("") + "</div>" +
+      '<div class="lab-row"><b>Market return (%):</b> ' + ["bad", "normal", "good"].map(function (s, j) { return '<label>' + s + ' <input type="number" step="any" class="fb" data-k="m' + j + '" value="' + [-10, 5, 20][j] + '" style="width:4.5em"></label>'; }).join("") + "</div>" +
+      '<div class="lab-row"><label><input type="checkbox" class="fb2"> Add a small-cap factor to midcap: $(4, -2, 6)$</label></div><div class="fb-out mixer-out"></div>';
+    km(root);
+    var out = root.querySelector(".fb-out");
+    function update() {
+      var g = {}; root.querySelectorAll(".fb").forEach(function (el) { g[el.dataset.k] = num(el); });
+      var b = [g.b0, g.b1, g.b2], m = [g.m0, g.m1, g.m2];
+      var R = b.map(function (bi) { return m.map(function (mj) { return bi * mj; }); });
+      var extra = root.querySelector(".fb2").checked;
+      if (extra) R[1] = R[1].map(function (v, j) { return v + [4, -2, 6][j]; });
+      var r = rank(R);
+      var h = "<p>Return table (rows: Nifty, midcap, balanced; columns: bad, normal, good):</p><p>$" + (extra ? "\\beta r_m^T + (0, 1, 0)^T(4, -2, 6) = " : "\\beta r_m^T = ") + mat(R) + "$</p>";
+      h += '<p class="answer">Rank ' + r + (r === 1 ? ": one factor explains the whole table (every row is a multiple of " + vec(m) + ")." : r === 2 ? ": two factors, two rank-one pieces." : r === 0 ? ": all zero." : ": three independent directions.") + "</p>";
+      out.innerHTML = h; km(out);
+    }
+    root.addEventListener("input", update); root.addEventListener("change", update); update();
+  })();
+
+  // ---- Examples tab: rank one lab ----
+  (function () {
+    var root = document.getElementById("r1lab"); if (!root) return;
+    var presets = [
+      { label: "One-factor returns (3 × 3)", A: [[-10, 5, 20], [-12, 6, 24], [-5, 2.5, 10]] },
+      { label: "Two factors (3 × 3)", A: [[-10, 5, 20], [-8, 4, 30], [-5, 2.5, 10]] },
+      { label: "Clients with futures (3 × 3)", A: [[-200, 0, 200], [-400, 0, 400], [-600, 0, 600]] },
+      { label: "MIT example (2 × 3)", A: [[1, 4, 5], [2, 8, 10]] },
+      { label: "Covariance (not rank one)", A: [[400, 480, 0], [480, 900, 0], [0, 0, 25]] }
+    ];
+    root.innerHTML = '<div class="lab-controls"><div class="lab-row"><label>Example <select class="r1-pick">' + presets.map(function (p, i) { return '<option value="' + i + '">' + p.label + "</option>"; }).join("") +
+      '</select></label><button type="button" class="lab-btn r1-reset">Reset numbers</button></div><div class="lab-row"><label>Rows <select class="r1-m"><option>1</option><option>2</option><option>3</option><option>4</option></select></label><label>Columns <select class="r1-n"><option>1</option><option>2</option><option>3</option><option>4</option></select></label></div><div class="r1-grid"></div></div><div class="r1-out"></div>';
+    var pick = root.querySelector(".r1-pick"), mSel = root.querySelector(".r1-m"), nSel = root.querySelector(".r1-n"), grid = root.querySelector(".r1-grid"), out = root.querySelector(".r1-out");
+    function load() { var P = presets[+pick.value]; mSel.value = String(P.A.length); nSel.value = String(P.A[0].length); draw(P.A); }
+    function current() { var A = []; grid.querySelectorAll("input").forEach(function (el) { (A[+el.dataset.i] = A[+el.dataset.i] || [])[+el.dataset.j] = num(el); }); return A; }
+    function resize() { var o = current(), m = +mSel.value, n = +nSel.value, A = []; for (var i = 0; i < m; i++) { A.push([]); for (var j = 0; j < n; j++) A[i].push(o[i] && o[i][j] !== undefined ? o[i][j] : 0); } draw(A); }
+    function draw(A) {
+      var h = '<table class="lab-table sl-table">';
+      A.forEach(function (row, i) { h += "<tr>" + row.map(function (v, j) { return '<td><input type="number" step="any" data-i="' + i + '" data-j="' + j + '" value="' + v + '"></td>'; }).join("") + "</tr>"; });
+      grid.innerHTML = h + "</table>"; update();
+    }
+    function update() {
+      var A = current(), r = rank(A), h = "<p>$A = " + mat(A) + "$. Rank $= " + r + "$.</p>";
+      if (r === 1) {
+        var k = A.findIndex(function (row) { return row.some(function (v) { return Math.abs(v) > 1e-12; }); });
+        var v = A[k], j0 = v.findIndex(function (x) { return Math.abs(x) > 1e-12; });
+        var u = A.map(function (row) { return row[j0] / v[j0]; });
+        var P = u.map(function (ui) { return v.map(function (vj) { return ui * vj; }); });
+        var ok = P.every(function (row, i) { return row.every(function (x, j) { return Math.abs(x - A[i][j]) < 1e-9 * Math.max(1, Math.abs(A[i][j])); }); });
+        h += "<p>Take row " + (k + 1) + " as $v^T = " + vec(v) + "$. Each row divided by it: $u = " + vec(u) + "$.</p><p>$uv^T = " + mat(P) + "$ " + (ok ? "✓ equals $A$ entry by entry." : "") + "</p>";
+        h += '<p class="answer">Rank one: $A = uv^T$, a column times a row.</p>';
+      } else if (r === 0) h += '<p class="answer">All zero: rank 0.</p>';
+      else h += '<p class="lab-warn">Rank ' + r + ": not a single column times a row. It takes " + r + " rank-one pieces (" + r + " factors).</p>";
+      out.innerHTML = h; km(out);
+    }
+    pick.addEventListener("change", load); root.querySelector(".r1-reset").addEventListener("click", load);
+    mSel.addEventListener("change", resize); nSel.addEventListener("change", resize); grid.addEventListener("input", update);
+    load();
+  })();
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=12"></script>
+</body>
+</html>

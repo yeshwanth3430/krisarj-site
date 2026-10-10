@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graphs, Networks, Incidence Matrices · Topic 6 · Quant from First Principles</title>
+<meta name="description" content="Linear Algebra Topic 6, Lesson 12: graphs and incidence matrices, explained step by step on a network of Nifty spot and futures prices: spreads as edges, why only relative prices matter, loops as the left null space, and how a loop of quotes that doesn't add to zero is an arbitrage.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../assets/notebook.css?v=9">
+<link rel="stylesheet" href="../assets/site.css?v=5">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script src="../assets/notebook.js?v=2"></script>
+</head>
+<body data-lesson="la-06-2">
+<header class="topbar">
+  <div class="crumbs"><a href="../index.html">Quant from First Principles</a> / <a href="index.html">Linear Algebra</a> / <a href="topic-06.html">Topic 6</a> / <b>Graphs, Networks, Incidence Matrices</b></div>
+  <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode">◐</button>
+</header>
+<main class="page tabbed">
+  <nav class="tabs" role="tablist" aria-label="Lecture sections">
+    <span class="tabs-title">Lesson 12</span>
+    <button role="tab" data-tab="notes" aria-selected="true">Notes</button>
+    <button role="tab" data-tab="examples" aria-selected="false">Examples</button>
+  </nav>
+  <div class="tab-body">
+  <p class="meta">Linear Algebra · Topic 6 · Lesson 12 (MIT 18.06, Lecture 12)</p>
+  <h1>Graphs, Networks, Incidence Matrices</h1>
+  <p class="subtitle">Turn a network into a matrix and its four subspaces start talking. On a network of Nifty spot and futures prices: spreads are edges, only relative prices matter, loops are the left null space, and a loop of quotes that doesn't add to zero is an arbitrage.</p>
+  <div class="downloads no-print">
+    <span class="label">Take it with you</span>
+    <a class="dl" href="../downloads/la-12-graphs-networks-incidence-matrices-slides.pdf" download>⬇ Slides (PDF, LinkedIn carousel)</a>
+    <a class="dl" href="../downloads/la-12-graphs-networks-incidence-matrices-notes.pdf" download>⬇ Notes report (PDF)</a>
+    <a class="dl share" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Flearn.krisarj.com%2Flinear-algebra%2F12_graphs-networks-incidence-matrices" target="_blank" rel="noopener">Share on LinkedIn</a>
+  </div>
+
+  <section class="tab-panel" data-panel="notes">
+  <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#index">Index</a></li>
+        <li><a href="#prereq">Prerequisites</a></li>
+        <li><a href="#t1">Conditions and important concepts</a></li>
+        <li><a href="#t2">Procedure</a></li>
+        <li><a href="#t3">2 × 2 example</a></li>
+        <li><a href="#t4">3 × 3 example</a></li>
+        <li><a href="#t5">Bigger example: four contracts, five spreads</a></li>
+        <li><a href="#t6">Connection: the four subspaces of a graph</a></li>
+        <li><a href="#t7">Final memory table</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="index"><span class="part-n">Part 1</span> Index</h2>
+    <p>What this lesson covers, in order. Click a topic to jump to it.</p>
+    <ol class="index-list">
+      <li><a href="#t1">Conditions and important concepts</a><span>12 short definitions: directed graphs, the incidence matrix, differences, loops, Kirchhoff's law, Euler's formula, arbitrage.</span></li>
+      <li><a href="#t2">Procedure</a><span>From a network to its matrix, its loops and the arbitrage test.</span></li>
+      <li><a href="#t3">2 × 2 example</a><span>The same spread quoted on two venues.</span></li>
+      <li><a href="#t4">3 × 3 example</a><span>A triangle: spot, October and November futures.</span></li>
+      <li><a href="#t5">Bigger example: four contracts, five spreads</a><span>Two independent loops, a mispriced quote and the arbitrage trade. With a spread checker.</span></li>
+      <li><a href="#t6">Connection: the four subspaces of a graph</a><span>Dimensions $n - 1$, $1$, $n - 1$, $m - n + 1$, and Lesson 10's test.</span></li>
+      <li><a href="#t7">Final memory table</a><span>Everything on one screen.</span></li>
+    </ol>
+    <p class="methods"><span class="label">Methods in this lesson</span> <a href="#m-inc">Incidence matrix</a> <a href="#m-ground">Grounding a node</a> <a href="#m-tree">Trees and loops</a> <a href="#m-kcl">Kirchhoff's current law</a> <a href="#m-euler">Euler's formula</a> <a href="#m-arb">Loop arbitrage test</a></p>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="prereq"><span class="part-n">Part 2</span> Prerequisites</h2>
+    <p>Click any link to review it, then come back.</p>
+    <ul>
+      <li><a href="10_the-four-fundamental-subspaces.html#t1">The four subspaces</a> and <a href="10_the-four-fundamental-subspaces.html#m-test">the left null space test</a> (Lesson 10).</li>
+      <li><a href="11_matrix-spaces-rank-1-small-world-graphs.html#t6">Graphs</a> (Lesson 11).</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h2 class="part" id="explain"><span class="part-n">Part 3</span> Explanation</h2>
+
+    <div class="box finance"><span class="label">The network used in the examples</span>
+      <p><b>Nodes</b> (contracts): Nifty spot, October future, November future, December future. Their prices (in points): spot 20,000, Oct 20,100, Nov 20,250, Dec 20,400.</p>
+      <p><b>Edges</b> (quoted spreads): a spread from contract $a$ to contract $b$ is "price of $b$ minus price of $a$". Traders quote spreads directly, and a set of quotes may or may not be consistent.</p>
+    </div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t1">1. Conditions and important concepts</h3>
+
+    <h4>1. A directed graph</h4>
+    <p>A graph is nodes joined by edges (Lesson 11). Put an <b>arrow</b> on each edge to give it a direction. Here an arrow from spot to Oct means "the Oct − spot spread".</p>
+
+    <h4>2. The incidence matrix</h4>
+    <div class="box method" id="m-inc"><span class="label">Definition · Incidence matrix A</span>
+      <p>One <b>row per edge</b>, one <b>column per node</b>. If an edge runs from node $a$ to node $b$, its row has $-1$ in column $a$, $+1$ in column $b$, and 0 elsewhere. With $m$ edges and $n$ nodes, $A$ is $m \times n$.</p>
+    </div>
+
+    <h4>3. Ax = differences across the edges</h4>
+    <p>Let $x$ list the prices at the nodes. Each row of $A$ picks out (end price) $-$ (start price), so</p>
+    $$ \boxed{Ax = \text{the spread on every edge.}} $$
+
+    <h4>4. The null space: only relative prices matter</h4>
+    <p>$Ax = 0$ means every spread is zero, so all connected prices are equal: $x = c(1, 1, \dots, 1)$. For a connected graph, $\dim N(A) = 1$. In money terms: <b>add the same amount to every price and no spread changes</b>. Spreads alone can never tell you the price <i>level</i>.</p>
+
+    <h4>5. Grounding a node</h4>
+    <div class="box method" id="m-ground"><span class="label">Method · Ground one node</span>
+      <p>Fix one price (e.g. spot $= 20{,}000$) as the reference. Then the spreads decide every other price. This is the "ground" in an electrical circuit, and the <b>numeraire</b> in finance.</p>
+    </div>
+    <p>So the rank is $r = n - 1$: $n$ prices minus the one free level.</p>
+
+    <h4>6. Loops make rows dependent</h4>
+    <p>Going around a loop, the spreads must add up: Oct − spot plus Nov − Oct equals Nov − spot. So the row for the edge spot→Nov is the <b>sum</b> of the rows for spot→Oct and Oct→Nov. Loops in the graph = dependent rows of $A$.</p>
+
+    <h4>7. Trees</h4>
+    <div class="box method" id="m-tree"><span class="label">Rule · A tree = independent rows</span>
+      <p>A <b>tree</b> is a set of edges that connects every node with no loop. It has exactly $n - 1$ edges, its rows of $A$ are independent, and its spreads alone decide every price (once one node is grounded).</p>
+    </div>
+
+    <h4>8. The left null space: positions that cancel</h4>
+    <p>Hold $y_i$ lots of spread $i$ (positive = buy the spread: long its end contract, short its start contract). Then $A^Ty$ = your <b>net position in each contract</b>. $A^Ty = 0$ means you are flat in every contract: the spread positions cancel completely.</p>
+    <div class="box method" id="m-kcl"><span class="label">Rule · Kirchhoff's current law: A^T y = 0</span>
+      <p>In a circuit, $y$ is the currents and $A^Ty = 0$ says current in = current out at every node. Here it says lots in = lots out at every contract. Its solutions are flows <b>around loops</b>, and the independent loops are a basis of $N(A^T)$.</p>
+    </div>
+
+    <h4>9. Counting loops: Euler's formula</h4>
+    <p>$\dim N(A^T) = m - r = m - (n - 1)$, and that is the number of independent loops. Rearranged:</p>
+    <div class="box method" id="m-euler"><span class="label">Rule · Euler's formula (connected graph)</span>
+      $$ \text{nodes} - \text{edges} + \text{loops} = 1 $$
+    </div>
+
+    <h4>10. When are quoted spreads consistent?</h4>
+    <p>Quotes $e$ come from real prices exactly when $e = Ax$ for some $x$, i.e. $e \in C(A)$. By Lesson 10's test, that happens exactly when $y^Te = 0$ for every $y$ in $N(A^T)$:</p>
+    $$ \boxed{\text{Quotes are consistent} \iff \text{they add to zero around every loop.}} $$
+
+    <h4>11. Arbitrage</h4>
+    <div class="box method" id="m-arb"><span class="label">Rule · The loop arbitrage test</span>
+      <p>If the quotes around some loop add to something non-zero, the loop vector $y$ is a trade that is flat in every contract ($A^Ty = 0$) yet locks in $y^Te$ points. That is an <b>arbitrage</b>. No-arbitrage $\iff$ quotes in $C(A)$ $\iff$ every loop sums to zero.</p>
+    </div>
+
+    <h4>12. The four subspaces at a glance</h4>
+    <table>
+      <tr><th>Subspace</th><th>Dimension</th><th>Meaning here</th></tr>
+      <tr><td>$C(A)$</td><td>$n - 1$</td><td>spread quotes that are consistent (no arbitrage)</td></tr>
+      <tr><td>$N(A)$</td><td>$1$</td><td>shift every price by the same amount</td></tr>
+      <tr><td>$C(A^T)$</td><td>$n - 1$</td><td>net positions you can build from spreads (they always sum to zero)</td></tr>
+      <tr><td>$N(A^T)$</td><td>$m - n + 1$</td><td>loops: spread positions that cancel out</td></tr>
+    </table>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t2">2. Procedure</h3>
+    <table>
+      <tr><th>Step</th><th>What to do</th></tr>
+      <tr><td>1</td><td>Number the nodes and edges; give each edge a direction.</td></tr>
+      <tr><td>2</td><td>Write $A$: for edge $a \to b$, put $-1$ in column $a$ and $+1$ in column $b$.</td></tr>
+      <tr><td>3</td><td>Null space: all-equal vectors $c(1, \dots, 1)$. Rank $r = n - 1$.</td></tr>
+      <tr><td>4</td><td>Loops: find $m - n + 1$ independent loops; write each as $y$ (+1 along the arrow, −1 against). Check $A^Ty = 0$.</td></tr>
+      <tr><td>5</td><td>Test the quotes: add them around each loop ($y^Te$).</td></tr>
+      <tr><td>6</td><td>All zero → consistent: ground one node and read off every price. Any non-zero → arbitrage: trade the loop.</td></tr>
+    </table>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t3">3. 2 × 2 example</h3>
+    <p>Two nodes (spot, Oct) and two edges: the Oct − spot spread quoted on two venues, NSE (edge 1) and a second venue (edge 2). Both run spot → Oct:</p>
+    $$ A = \begin{bmatrix} -1 & 1 \\ -1 & 1 \end{bmatrix} \begin{matrix} \leftarrow \text{edge 1: NSE quote} \\ \leftarrow \text{edge 2: venue 2 quote} \end{matrix} $$
+    <ul>
+      <li><b>Null space:</b> row 2 $-$ row 1 $= (0, 0)$, so rank $1 = n - 1$. $N(A)$: $(1, 1)$, shift both prices.</li>
+      <li><b>Loop:</b> $m - n + 1 = 2 - 2 + 1 = 1$. Buy the spread on venue 1, sell it on venue 2: $y = (1, -1)$. Check $A^Ty = (-1 \cdot 1 + (-1)(-1),\ 1 \cdot 1 + 1 \cdot (-1)) = (0, 0)$ ✓: flat in spot and Oct.</li>
+      <li><b>Consistent quotes:</b> $(100, 100)$: $y^Te = 100 - 100 = 0$ ✓.</li>
+      <li><b>Inconsistent quotes:</b> $(100, 105)$: $y^Te = 100 - 105 = -5 \ne 0$. Arbitrage: buy the spread where it's 100, sell it where it's 105, lock in <b>5 points</b>.</li>
+    </ul>
+    <p>Euler: $2 - 2 + 1 = 1$ ✓.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t4">4. 3 × 3 example</h3>
+    <p>Three nodes (spot, Oct, Nov) and three edges: spot→Oct, Oct→Nov, spot→Nov.</p>
+    $$ A = \begin{bmatrix} -1 & 1 & 0 \\ 0 & -1 & 1 \\ -1 & 0 & 1 \end{bmatrix} \begin{matrix} \leftarrow \text{spot} \to \text{Oct} \\ \leftarrow \text{Oct} \to \text{Nov} \\ \leftarrow \text{spot} \to \text{Nov} \end{matrix} \qquad Ax = \begin{bmatrix} x_{\text{Oct}} - x_{\text{spot}} \\ x_{\text{Nov}} - x_{\text{Oct}} \\ x_{\text{Nov}} - x_{\text{spot}} \end{bmatrix} $$
+    <ul>
+      <li><b>Dependent rows:</b> row 3 = row 1 + row 2: $(-1 + 0,\ 1 - 1,\ 0 + 1) = (-1, 0, 1)$ ✓. That's the loop.</li>
+      <li><b>Rank</b> $= 2 = n - 1$. <b>Null space:</b> $(1, 1, 1)$.</li>
+      <li><b>Loop</b> ($3 - 3 + 1 = 1$): $y = (1, 1, -1)$, buy spot→Oct and Oct→Nov, sell spot→Nov. $A^Ty$: spot $-1 + 0 + 1 = 0$, Oct $1 - 1 + 0 = 0$, Nov $0 + 1 - 1 = 0$ ✓.</li>
+      <li><b>Consistent quotes</b> from the prices: $(100, 150, 250)$. Loop: $100 + 150 - 250 = 0$ ✓.</li>
+      <li><b>A mispriced quote:</b> spot→Nov quoted at 240. Loop: $100 + 150 - 240 = 10 \ne 0$. The two short spreads say Nov − spot $= 250$, the direct quote says 240: buy the direct spread at 240, sell the two-step route at 250, flat in every contract, <b>10 points</b> locked in.</li>
+    </ul>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t5">5. Bigger example: four contracts, five spreads</h3>
+    <p>Nodes 1–4: spot, Oct, Nov, Dec. Edges:</p>
+    <table>
+      <tr><th>Edge</th><th>From → to</th><th>Row of $A$</th><th>Spread from prices</th></tr>
+      <tr><td>1</td><td>spot → Oct</td><td>$(-1, 1, 0, 0)$</td><td>$20{,}100 - 20{,}000 = 100$</td></tr>
+      <tr><td>2</td><td>Oct → Nov</td><td>$(0, -1, 1, 0)$</td><td>$20{,}250 - 20{,}100 = 150$</td></tr>
+      <tr><td>3</td><td>spot → Nov</td><td>$(-1, 0, 1, 0)$</td><td>$20{,}250 - 20{,}000 = 250$</td></tr>
+      <tr><td>4</td><td>spot → Dec</td><td>$(-1, 0, 0, 1)$</td><td>$20{,}400 - 20{,}000 = 400$</td></tr>
+      <tr><td>5</td><td>Nov → Dec</td><td>$(0, 0, -1, 1)$</td><td>$20{,}400 - 20{,}250 = 150$</td></tr>
+    </table>
+    $$ A = \begin{bmatrix} -1 & 1 & 0 & 0 \\ 0 & -1 & 1 & 0 \\ -1 & 0 & 1 & 0 \\ -1 & 0 & 0 & 1 \\ 0 & 0 & -1 & 1 \end{bmatrix} \qquad m = 5 \text{ edges}, \; n = 4 \text{ nodes} $$
+    <ul>
+      <li><b>Null space:</b> $(1, 1, 1, 1)$. Rank $r = n - 1 = 3$.</li>
+      <li><b>A tree:</b> edges 1, 2, 4 (spot→Oct, Oct→Nov, spot→Dec) connect all four contracts with no loop. With spot grounded at 20,000, they give Oct $= 20{,}100$, Nov $= 20{,}250$, Dec $= 20{,}400$.</li>
+      <li><b>Loops:</b> $m - r = 5 - 3 = 2$. Euler: $4 - 5 + 2 = 1$ ✓.</li>
+    </ul>
+    <table>
+      <tr><th>Loop</th><th>$y$ (lots of each spread)</th><th>Check $A^Ty$ (spot, Oct, Nov, Dec)</th><th>Quotes around it</th></tr>
+      <tr><td>spot→Oct→Nov, back via spot→Nov</td><td>$(1, 1, -1, 0, 0)$</td><td>$(-1 + 1,\ 1 - 1,\ 1 - 1,\ 0) = (0, 0, 0, 0)$ ✓</td><td>$100 + 150 - 250 = 0$ ✓</td></tr>
+      <tr><td>spot→Nov→Dec, back via spot→Dec</td><td>$(0, 0, 1, -1, 1)$</td><td>$(-1 + 1,\ 0,\ 1 - 1,\ -1 + 1) = (0, 0, 0, 0)$ ✓</td><td>$250 + 150 - 400 = 0$ ✓</td></tr>
+    </table>
+    <p>The outer loop (spot→Oct→Nov→Dec, back via spot→Dec) is $(1, 1, 0, -1, 1)$, the <b>sum</b> of the two: not a new independent loop.</p>
+    <h4>A mispriced quote</h4>
+    <p>The market quotes spot→Nov at <b>240</b> instead of 250. Test both loops:</p>
+    $$ \text{loop 1: } 100 + 150 - 240 = \boxed{10} \qquad \text{loop 2: } 240 + 150 - 400 = \boxed{-10} $$
+    <p>Both flag the same bad quote (edge 3 is in both loops). Loop 1 says: buy the cheap direct spread at 240, sell spot→Oct and Oct→Nov (worth 250 together), and you are flat in every contract with 10 points locked in.</p>
+    <h4>Try it: the spread checker</h4>
+    <div id="spreads" class="lab-controls"></div>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t6">6. Connection: the four subspaces of a graph</h3>
+    <table>
+      <tr><th>Subspace</th><th>Dimension</th><th>Example (5 edges, 4 nodes)</th><th>Meaning</th></tr>
+      <tr><td>$N(A)$</td><td>$1$</td><td>$(1, 1, 1, 1)$</td><td>only relative prices matter</td></tr>
+      <tr><td>$C(A^T)$</td><td>$n - 1 = 3$</td><td>rows of a tree</td><td>net positions buildable from spreads</td></tr>
+      <tr><td>$C(A)$</td><td>$n - 1 = 3$</td><td>quotes from real prices</td><td>consistent, arbitrage-free spreads</td></tr>
+      <tr><td>$N(A^T)$</td><td>$m - n + 1 = 2$</td><td>the two loops</td><td>self-cancelling positions; the arbitrage test</td></tr>
+    </table>
+    <p>The pairs from Lesson 10 hold: $3 + 1 = 4 = n$ and $3 + 2 = 5 = m$ ✓.</p>
+    <p>This is Lesson 10's big idea in its most useful form: <b>the left null space is the test for which right-hand sides are reachable</b>. For a network of prices, "reachable" means "could come from real prices", and the test is "every loop adds to zero". Currency triangles work the same way using logarithms (Example 1 on the Examples tab).</p>
+    <details class="more"><summary>For the curious: the electrical version, AᵀCA</summary>
+      <p>In a circuit, $x$ is the voltages, $e = Ax$ the voltage drops, $y = Ce$ the currents (Ohm's law, with $C$ the conductances), and $A^Ty = f$ the current balance with sources $f$. Together: $A^TCAx = f$. MIT's square graph with $C = \text{diag}(1, 2, 2, 1)$ gives $A^TCA = \left[\begin{smallmatrix} 2 & -1 & 0 & -1 \\ -1 & 3 & -2 & 0 \\ 0 & -2 & 4 & -2 \\ -1 & 0 & -2 & 3 \end{smallmatrix}\right]$: symmetric, as $A^TCA$ always is.</p>
+    </details>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="t7">7. Final memory table</h3>
+    <table>
+      <tr><th>Concept</th><th>Key fact</th><th>In the spread network</th></tr>
+      <tr><td><b>Incidence matrix</b></td><td>row per edge: $-1$ at start, $+1$ at end</td><td>$Ax$ = spreads from prices</td></tr>
+      <tr><td><b>Null space</b></td><td>$c(1, \dots, 1)$; dim 1</td><td>shifting all prices changes no spread</td></tr>
+      <tr><td><b>Rank</b></td><td>$n - 1$</td><td>ground one node (numeraire)</td></tr>
+      <tr><td><b>Tree</b></td><td>$n - 1$ edges, no loop, independent rows</td><td>enough spreads to price everything</td></tr>
+      <tr><td><b>Loops</b></td><td>basis of $N(A^T)$; $m - n + 1$ of them</td><td>spread positions that cancel out</td></tr>
+      <tr><td><b>Kirchhoff</b></td><td>$A^Ty = 0$</td><td>flat in every contract</td></tr>
+      <tr><td><b>Euler</b></td><td>nodes $-$ edges $+$ loops $= 1$</td><td>$4 - 5 + 2 = 1$</td></tr>
+      <tr><td><b>No arbitrage</b></td><td>$e \in C(A) \iff y^Te = 0$ for every loop</td><td>quotes add to zero around every loop</td></tr>
+    </table>
+    <details class="check"><summary>Check yourself (MIT problem 12.1): the square graph with edges 1→2, 2→3, 4→3, 1→4. What is $N(A)$? Why is $(1, 0, 0, 0)$ not in the row space?</summary>
+      <p>$A = \left[\begin{smallmatrix} -1 & 1 & 0 & 0 \\ 0 & -1 & 1 & 0 \\ 0 & 0 & 1 & -1 \\ -1 & 0 & 0 & 1 \end{smallmatrix}\right]$. $Ax = 0$ forces $x_1 = x_2 = x_3 = x_4$, so $N(A)$ = all $(a, a, a, a)$. Every row of $A$ adds to zero, so every vector in the row space adds to zero; $(1, 0, 0, 0)$ adds to 1, so it isn't there. (In money terms: spreads can only build positions that are net flat.)</p>
+    </details>
+
+  </div>
+  </section>
+
+    <section class="tab-panel" data-panel="examples" hidden>
+    <div class="notes">
+
+    <nav class="contents"><span class="label">Contents</span>
+      <ol>
+        <li><a href="#ex1">Hedging: a currency triangle</a></li>
+        <li><a href="#ex2">Lot sizes: the arbitrage trade in lots</a></li>
+        <li><a href="#ex3">Network lab</a></li>
+      </ol>
+    </nav>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex1">Example 1: Hedging, a currency triangle</h3>
+    <p>Hedging a euro payment from India can go directly (INR→EUR) or through dollars (INR→USD→EUR). Nodes: INR, USD, EUR. Edges: INR→USD at 83 (₹ per \$), USD→EUR at 1.08 (\$ per €), INR→EUR at 89.64 (₹ per €).</p>
+    <p>Exchange rates <b>multiply</b> along a path, so use logarithms to make them <b>add</b>: with $x$ = log prices, the edge values are $\ln 83$, $\ln 1.08$, $\ln 89.64$, and the incidence matrix is the same triangle as Notes topic 4.</p>
+    <ul>
+      <li><b>Loop</b> $y = (1, 1, -1)$: $\ln 83 + \ln 1.08 - \ln 89.64 = \ln\frac{83 \times 1.08}{89.64} = \ln\frac{89.64}{89.64} = \ln 1 = 0$ ✓. Consistent.</li>
+      <li><b>Mispriced:</b> INR→EUR quoted at 90. Loop: $\ln\frac{83 \times 1.08}{90} = \ln\frac{89.64}{90} = \ln 0.996 \ne 0$. Going through dollars is 0.4% cheaper: hedge via USD, or (for an arbitrageur) buy euros the cheap way and sell them at 90.</li>
+    </ul>
+    <p>This is <b>triangular arbitrage</b>, and the left null space (the loop) is what detects it.</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex2">Example 2: Lot sizes, the arbitrage trade in lots</h3>
+    <p>With spot→Nov mispriced at 240 (Notes topic 5), trade loop 1 in lots: $y = (1, 1, -1, 0, 0)$, i.e. buy 1 lot of spot→Oct, buy 1 lot of Oct→Nov, sell 1 lot of spot→Nov.</p>
+    <table>
+      <tr><th>Contract</th><th>From spot→Oct (+1)</th><th>From Oct→Nov (+1)</th><th>From spot→Nov (−1)</th><th>Net lots ($A^Ty$)</th></tr>
+      <tr><td>Spot</td><td>$-1$</td><td>$0$</td><td>$+1$</td><td>$0$</td></tr>
+      <tr><td>Oct</td><td>$+1$</td><td>$-1$</td><td>$0$</td><td>$0$</td></tr>
+      <tr><td>Nov</td><td>$0$</td><td>$+1$</td><td>$-1$</td><td>$0$</td></tr>
+      <tr><td>Dec</td><td>$0$</td><td>$0$</td><td>$0$</td><td>$0$</td></tr>
+    </table>
+    <p>Flat in every contract, so no market risk. Locked-in value: $y^Te = 100 + 150 - 240 = 10$ points per lot. Scale it: 5 lots of each spread lock in 50 points. (Real trades also pay costs; the gap must beat them.)</p>
+
+    <!-- ====================================================== -->
+    <h3 class="topic" id="ex3">Example 3: Network lab</h3>
+    <p>Pick a network, type the quoted spread on each edge, and the lab writes the incidence matrix, finds the loops, adds the quotes around each loop, and either recovers the prices (with the first node as the reference) or shows the arbitrage.</p>
+    <div id="netlab" class="syslab"></div>
+
+    </div>
+    </section>
+
+  <nav class="pager">
+    <a href="11_matrix-spaces-rank-1-small-world-graphs.html">← Lesson 11: Matrix Spaces; Rank 1; Small World Graphs</a>
+    <span class="off">Next: Lesson 13 (coming soon)</span>
+  </nav>
+  </div>
+</main>
+<script>
+// Interactive pieces: Notes topic 5 (spread checker) and the Examples tab (network lab).
+window.addEventListener("load", function () {
+  function km(el) { if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: "$", right: "$", display: false }], throwOnError: false }); }
+  function t(v) { var r = Math.round(v * 1e4) / 1e4; if (Math.abs(r) < 1e-9) r = 0; return String(r); }
+  function mat(M) { return "\\begin{bmatrix}" + M.map(function (r) { return r.map(t).join(" & "); }).join(" \\\\ ") + "\\end{bmatrix}"; }
+  function num(el) { var x = parseFloat(el.value); return isFinite(x) ? x : 0; }
+  // Null space basis of M (rows of M are equations) via reduced row echelon form.
+  function nullBasis(M0) {
+    var M = M0.map(function (r) { return r.slice(); }), m = M.length, n = M[0].length, piv = [], row = 0;
+    for (var c = 0; c < n && row < m; c++) {
+      var p = -1; for (var i = row; i < m; i++) if (Math.abs(M[i][c]) > 1e-9) { p = i; break; }
+      if (p < 0) continue;
+      var tmp = M[p]; M[p] = M[row]; M[row] = tmp;
+      var pv = M[row][c]; for (var k = 0; k < n; k++) M[row][k] /= pv;
+      for (var i2 = 0; i2 < m; i2++) { if (i2 === row) continue; var l = M[i2][c]; if (Math.abs(l) < 1e-12) continue; for (var k2 = 0; k2 < n; k2++) M[i2][k2] -= l * M[row][k2]; }
+      piv.push([row, c]); row++;
+    }
+    var pc = piv.map(function (q) { return q[1]; }), out = [];
+    for (var f = 0; f < n; f++) { if (pc.indexOf(f) >= 0) continue; var x = new Array(n).fill(0); x[f] = 1; piv.forEach(function (q) { x[q[1]] = -M[q[0]][f]; }); out.push(x.map(function (v) { return Math.abs(v) < 1e-12 ? 0 : v; })); }
+    return { basis: out, rank: piv.length };
+  }
+  function analyse(nodes, edges, quotes) {
+    var n = nodes.length, m = edges.length;
+    var A = edges.map(function (e) { var r = new Array(n).fill(0); r[e[0]] = -1; r[e[1]] = 1; return r; });
+    var AT = A[0].map(function (_, j) { return A.map(function (r) { return r[j]; }); });
+    var loops = nullBasis(AT).basis, rank = nullBasis(A).rank;
+    var h = "<p>Incidence matrix (rows = edges, columns = " + nodes.join(", ") + "): $A = " + mat(A) + "$. Rank $" + rank + " = n - 1$; loops: $m - r = " + m + " - " + rank + " = " + loops.length + "$.</p>";
+    var bad = [];
+    loops.forEach(function (y, k) {
+      var s = y.reduce(function (acc, yi, i) { return acc + yi * quotes[i]; }, 0);
+      var terms = y.map(function (yi, i) { return yi ? (yi > 0 ? "+" : "-") + " " + t(quotes[i]) : ""; }).filter(Boolean).join(" ").replace(/^\+ /, "");
+      h += "<p>Loop " + (k + 1) + ": $y = (" + y.map(t).join(", ") + ")$. Quotes around it: $" + terms + " = " + t(s) + "$ " + (Math.abs(s) < 1e-9 ? "✓" : "✗") + "</p>";
+      if (Math.abs(s) > 1e-9) bad.push([k, s]);
+    });
+    if (!loops.length) h += "<p>No loops: a tree. Any quotes are consistent.</p>";
+    if (!bad.length) {
+      // Ground node 0 at 0 and walk the edges to recover relative prices.
+      var x = new Array(n).fill(null); x[0] = 0; var changed = true;
+      while (changed) { changed = false; edges.forEach(function (e, i) { if (x[e[0]] !== null && x[e[1]] === null) { x[e[1]] = x[e[0]] + quotes[i]; changed = true; } else if (x[e[1]] !== null && x[e[0]] === null) { x[e[0]] = x[e[1]] - quotes[i]; changed = true; } }); }
+      h += '<p class="answer">Consistent: every loop adds to 0, so the quotes come from real prices. With ' + nodes[0] + " as the reference (0): " + nodes.map(function (nm, i) { return nm + " " + (x[i] >= 0 ? "+" : "") + t(x[i]); }).join(", ") + ".</p>";
+    } else {
+      h += '<p class="lab-warn"><b>Arbitrage:</b> loop ' + (bad[0][0] + 1) + " adds to " + t(bad[0][1]) + ". Trade it: " + loops[bad[0][0]].map(function (yi, i) { return yi ? (yi * bad[0][1] < 0 ? "buy " : "sell ") + Math.abs(yi) + " × edge " + (i + 1) : ""; }).filter(Boolean).join(", ") + ". Flat in every contract ($A^Ty = 0$), locking in " + t(Math.abs(bad[0][1])) + " points.</p>";
+    }
+    return h;
+  }
+  var nets = [
+    { label: "Spot, Oct, Nov, Dec · five spreads", nodes: ["Spot", "Oct", "Nov", "Dec"], edges: [[0, 1], [1, 2], [0, 2], [0, 3], [2, 3]], quotes: [100, 150, 240, 400, 150] },
+    { label: "Triangle · spot, Oct, Nov", nodes: ["Spot", "Oct", "Nov"], edges: [[0, 1], [1, 2], [0, 2]], quotes: [100, 150, 250] },
+    { label: "Two venues · same spread", nodes: ["Spot", "Oct"], edges: [[0, 1], [0, 1]], quotes: [100, 105] },
+    { label: "Square (MIT 12.1) · 4 nodes, 4 edges", nodes: ["1", "2", "3", "4"], edges: [[0, 1], [1, 2], [3, 2], [0, 3]], quotes: [1, 2, 1, 2] }
+  ];
+  function mount(root, start, showPicker) {
+    root.innerHTML = (showPicker ? '<div class="lab-row"><label>Network <select class="nl-pick">' + nets.map(function (p, i) { return '<option value="' + i + '">' + p.label + "</option>"; }).join("") + '</select></label></div>' : "") + '<div class="nl-q lab-row"></div><div class="nl-out mixer-out"></div>';
+    var pick = root.querySelector(".nl-pick"), qbox = root.querySelector(".nl-q"), out = root.querySelector(".nl-out"), N;
+    function load() {
+      N = nets[pick ? +pick.value : start];
+      qbox.innerHTML = N.edges.map(function (e, i) { return '<label>Edge ' + (i + 1) + " (" + N.nodes[e[0]] + "→" + N.nodes[e[1]] + ') <input type="number" step="any" class="nl-in" data-i="' + i + '" value="' + N.quotes[i] + '" style="width:5em"></label>'; }).join("");
+      update();
+    }
+    function update() { var q = []; qbox.querySelectorAll(".nl-in").forEach(function (el) { q[+el.dataset.i] = num(el); }); out.innerHTML = analyse(N.nodes, N.edges, q); km(out); }
+    if (pick) pick.addEventListener("change", load);
+    qbox.addEventListener("input", update); load();
+  }
+  var s = document.getElementById("spreads"); if (s) mount(s, 0, false);
+  var l = document.getElementById("netlab"); if (l) { l.innerHTML = '<div class="lab-controls"></div>'; mount(l.firstChild, 0, true); }
+});
+</script>
+<footer class="site-foot"><div class="in">
+  <div><b>Quant from First Principles</b> · learn.krisarj.com · the maths behind the markets, explained from zero.</div>
+  <div>The Linear Algebra notes follow MIT OpenCourseWare 18.06, Linear Algebra (Prof. Gilbert Strang), used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="license">CC BY-NC-SA 4.0</a>; these pages are shared under the same licence. Not affiliated with or endorsed by MIT.</div>
+  <div><b>Educational only, not investment advice.</b> Market examples use illustrative Nifty numbers; lot sizes and prices change, so check the exchange before using any figure.</div>
+</div></footer>
+<script src="../assets/tracker.js?v=12"></script>
+</body>
+</html>

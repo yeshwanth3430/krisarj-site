@@ -79,6 +79,20 @@ const LESSONS = [
     page: "linear-algebra/10_the-four-fundamental-subspaces.html",
     slides: "linear-algebra/10_the-four-fundamental-subspaces-slides.html",
     plots: {}
+  },
+  {
+    slug: "la-11-matrix-spaces-rank-1-small-world-graphs",
+    title: "Linear Algebra · Lesson 11 · Matrix Spaces; Rank 1; Small World Graphs",
+    page: "linear-algebra/11_matrix-spaces-rank-1-small-world-graphs.html",
+    slides: "linear-algebra/11_matrix-spaces-rank-1-small-world-graphs-slides.html",
+    plots: {}
+  },
+  {
+    slug: "la-12-graphs-networks-incidence-matrices",
+    title: "Linear Algebra · Lesson 12 · Graphs, Networks, Incidence Matrices",
+    page: "linear-algebra/12_graphs-networks-incidence-matrices.html",
+    slides: "linear-algebra/12_graphs-networks-incidence-matrices-slides.html",
+    plots: {}
   }
 ];
 
@@ -88,7 +102,7 @@ async function open(browser, rel, viewport) {
   const page = await browser.newPage({ viewport, colorScheme: "light" });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto(url(rel), { waitUntil: "networkidle" });
+  await page.goto(url(rel), { waitUntil: "networkidle", timeout: 180000 });   // CDNs can be slow
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(2500);   // KaTeX + Plotly render on load
   if (errors.length) throw new Error(rel + ": " + errors.join("; "));
