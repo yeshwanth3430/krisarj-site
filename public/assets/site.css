@@ -152,3 +152,60 @@ a.rmt:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -14px var(--a
 .qf-chip.on { background: color-mix(in srgb, var(--accent) 14%, var(--paper)); color: var(--accent); border-color: var(--accent); }
 .qf-banner { padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--int-b); background: var(--int-bg); font-family: var(--sans); font-size: 15px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 @media (max-width: 640px) { .qf-toplink { padding: 6px 10px; font-size: 12.5px; } .qf-id { font-size: 22px; } }
+
+/* ---------- Equity research journey map ---------- */
+.erj-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 22px 0 8px; }
+.erj-stat { background: var(--paper-2); border: 1px solid var(--rule); border-radius: 16px; padding: 14px 16px; display: grid; gap: 2px; }
+.erj-stat b { font: 700 30px/1.1 var(--mono); color: var(--accent); }
+.erj-stat span { font: 600 11px/1.3 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+@media (max-width: 600px) { .erj-stats { grid-template-columns: repeat(2, 1fr); } }
+.erj { position: relative; margin: 18px 0 0; border-radius: 22px; overflow: hidden;
+  background: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink-soft) 22%, transparent) 1px, transparent 0) 0 0 / 22px 22px, var(--paper); border: 1px solid var(--rule); }
+.erj-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.erj-band { stroke-width: 1; }
+.erj-band.p1 { fill: color-mix(in srgb, var(--def-b) 8%, transparent); stroke: color-mix(in srgb, var(--def-b) 30%, transparent); }
+.erj-band.p2 { fill: color-mix(in srgb, var(--thm-b) 8%, transparent); stroke: color-mix(in srgb, var(--thm-b) 30%, transparent); }
+.erj-band.p3 { fill: color-mix(in srgb, var(--int-b) 8%, transparent); stroke: color-mix(in srgb, var(--int-b) 30%, transparent); }
+.erj-phase { font: 700 11px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; }
+.erj-phase.p1 { fill: var(--def-b); } .erj-phase.p2 { fill: var(--thm-b); } .erj-phase.p3 { fill: var(--int-b); }
+.erj-s1 { stop-color: var(--def-b); } .erj-s2 { stop-color: var(--thm-b); } .erj-s3 { stop-color: var(--int-b); }
+.erj-road-bed { fill: none; stroke: var(--paper-2); stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }
+.erj-road { fill: none; stroke: var(--rule); stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; transition: stroke-dashoffset 2.4s cubic-bezier(.6, .1, .2, 1); }
+.erj-done { fill: none; stroke: url(#erj-grad); stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; opacity: .85; transition: stroke-dashoffset .35s ease; }
+.erj-lane { fill: none; stroke: var(--paper); stroke-width: 2; stroke-dasharray: 10 12; opacity: .7; animation: erj-lane 1.4s linear infinite; }
+@keyframes erj-lane { to { stroke-dashoffset: -22; } }
+.erj-runner-dot { fill: var(--accent); }
+.erj-runner-halo { fill: var(--accent); opacity: .25; animation: erj-pulse 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes erj-pulse { 50% { transform: scale(1.7); opacity: .05; } }
+.erj-start circle { fill: var(--paper); stroke: var(--ink-soft); stroke-width: 3; }
+.erj-start text, .erj-flag text { font: 700 10px/1 var(--sans); letter-spacing: .14em; fill: var(--ink-soft); }
+.erj-flag path { fill: color-mix(in srgb, var(--int-b) 70%, transparent); stroke: var(--int-b); stroke-width: 2.5; stroke-linejoin: round; transform-box: fill-box; transform-origin: 0 100%; animation: erj-wave 2.2s ease-in-out infinite; }
+@keyframes erj-wave { 50% { transform: skewY(-6deg); } }
+.erj-stop { cursor: pointer; outline: none; text-decoration: none !important; }
+.erj-stop text { text-decoration: none; }
+.erj-pop { transform-box: fill-box; transform-origin: center; transform: scale(0); opacity: 0; transition: transform .25s ease; }
+.erj.in .erj-pop { animation: erj-in .55s cubic-bezier(.3, 1.6, .5, 1) forwards; animation-delay: calc(.35s + var(--i) * .16s); }
+@keyframes erj-in { to { transform: scale(1); opacity: 1; } }
+.erj-ring { fill: none; stroke-width: 2; stroke-dasharray: 4 5; opacity: .55; animation: erj-spin 18s linear infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes erj-spin { to { transform: rotate(360deg); } }
+.erj-disc { fill: var(--paper); stroke-width: 3; transition: fill .25s ease; }
+.erj-ico { fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke .25s ease; }
+.erj-num { font: 700 10px/1 var(--mono); }
+.erj-stop.p1 .erj-ring, .erj-stop.p1 .erj-disc { stroke: var(--def-b); } .erj-stop.p1 .erj-ico { stroke: var(--def-b); } .erj-stop.p1 .erj-num { fill: var(--def-b); }
+.erj-stop.p2 .erj-ring, .erj-stop.p2 .erj-disc { stroke: var(--thm-b); } .erj-stop.p2 .erj-ico { stroke: var(--thm-b); } .erj-stop.p2 .erj-num { fill: var(--thm-b); }
+.erj-stop.p3 .erj-ring, .erj-stop.p3 .erj-disc { stroke: var(--int-b); } .erj-stop.p3 .erj-ico { stroke: var(--int-b); } .erj-stop.p3 .erj-num { fill: var(--int-b); }
+.erj-stop:hover .erj-pop, .erj-stop:focus .erj-pop, .erj-stop.hot .erj-pop { filter: url(#erj-glow); }
+.erj-stop:hover .erj-disc, .erj-stop.hot .erj-disc, .erj-stop.reached .erj-disc { fill: var(--paper-2); }
+.erj-stop.reached .erj-ring { opacity: 1; stroke-dasharray: none; }
+.erj-name { font: 700 15px/1 var(--sans); fill: var(--ink); }
+.erj-meta { font: 600 11px/1 var(--sans); letter-spacing: .04em; fill: var(--ink-soft); }
+.erj-tag { font: 400 12px/1 var(--sans); fill: var(--ink-soft); }
+.erj-peek { margin: 14px 0 0; padding: 16px 20px; border-radius: 16px; border: 1px solid var(--rule); background: var(--paper-2); display: grid; gap: 4px; min-height: 92px; }
+.erj-peek b { font: 700 19px/1.25 var(--sans); color: var(--ink); }
+.erj-peek-k { font: 600 11px/1.3 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.erj-peek-txt { font: 400 14px/1.4 var(--sans); color: var(--ink-soft); }
+.erj-peek-br { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.erj-peek-br i { font: 600 12px/1 var(--sans); font-style: normal; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.erj-peek.pulse { animation: erj-peekin .35s ease; }
+@keyframes erj-peekin { from { transform: translateY(6px); opacity: .4; } }
+@media (prefers-reduced-motion: reduce) { .erj-lane, .erj-ring, .erj-runner-halo, .erj-flag path { animation: none; } .erj-runner { display: none; } .erj-pop { transform: none; opacity: 1; animation: none !important; } }
