@@ -5,21 +5,7 @@
 
   // status: "live" (published, linked), "next" (being written), "soon" (planned)
   var STAGES = [
-    { id: "found", n: "01", name: "Research Foundations", tag: "How an analyst thinks, and where the facts are",
-      about: "The research process from a question to an investment view, the habits of a good analyst, and the primary sources every view must rest on: annual reports, earnings calls and shareholding data.",
-      groups: [
-        { name: "How research works", topics: [
-          ["The research process", "from a question to an investment view", "soon"],
-          ["The analyst mindset", "scepticism, patience, writing things down", "soon"] ] },
-        { name: "Primary sources", topics: [
-          ["Reading annual reports", "where the real disclosures sit", "soon"],
-          ["Reading earnings calls", "what management says, and what it avoids", "soon"],
-          ["Following smart money", "shareholding patterns and large deals", "soon"] ] },
-        { name: "Tools", topics: [
-          ["Research tools & data sources", "screeners, filings, exchange data", "soon"],
-          ["AI in research", "faster reading, careful checking", "soon"] ] }
-      ] },
-    { id: "mgmt", n: "02", name: "Management & Governance", tag: "Who runs the company, and can you trust them?",
+    { id: "mgmt", n: "01", name: "Management & Governance", tag: "Who runs the company, and can you trust them?",
       about: "Governance from first principles, then the failures that taught the market its lessons, then a repeatable checklist for judging management, applied to a real listed company.",
       groups: [
         { name: "Governance foundations", topics: [
@@ -30,7 +16,7 @@
           ["A management checklist", "a repeatable scorecard", "soon"],
           ["Applying it to a listed company", "a full worked walkthrough", "soon"] ] }
       ] },
-    { id: "fsa", n: "03", name: "Financial Statement Analysis", tag: "The three statements, line by line",
+    { id: "fsa", n: "02", name: "Financial Statement Analysis", tag: "The three statements, line by line",
       about: "The income statement from revenue to profit after tax, the balance sheet from equity to working capital, and the cash flow statement that shows whether profit becomes cash.",
       groups: [
         { name: "Income statement", topics: [
@@ -47,7 +33,7 @@
           ["The cash flow statement", "profit vs cash", "soon"],
           ["Economic indicators", "the macro backdrop behind revenue", "soon"] ] }
       ] },
-    { id: "ratio", n: "04", name: "Ratio Analysis", tag: "Statements turned into comparable numbers",
+    { id: "ratio", n: "03", name: "Ratio Analysis", tag: "Statements turned into comparable numbers",
       about: "Profitability, activity and solvency ratios, then the return-on-capital family (ROCE, ROIC, ROE, ROIIC) that separates good businesses from busy ones.",
       groups: [
         { name: "Profitability & efficiency", topics: [
@@ -60,7 +46,7 @@
           ["ROE & DuPont", "what drives shareholder returns", "soon"],
           ["ROIIC", "returns on new investment", "soon"] ] }
       ] },
-    { id: "sector", n: "05", name: "Sector Analysis", tag: "Every industry has its own rules",
+    { id: "sector", n: "04", name: "Sector Analysis", tag: "Every industry has its own rules",
       about: "How to read an industry's structure and economics, and the key numbers that matter sector by sector, with deep dives into consumer businesses and banking.",
       groups: [
         { name: "Frameworks", topics: [
@@ -70,7 +56,7 @@
           ["Consumer: quick-service restaurants", "store-level economics", "soon"],
           ["Banking", "margins, asset quality, capital", "soon"] ] }
       ] },
-    { id: "forensic", n: "06", name: "Forensic Accounting", tag: "Red flags before the market sees them",
+    { id: "forensic", n: "05", name: "Forensic Accounting", tag: "Red flags before the market sees them",
       about: "Where reported numbers get bent (revenue, depreciation, earnings quality), how working capital and cash flows give the game away, and real collapses worked through step by step.",
       groups: [
         { name: "Where numbers bend", topics: [
@@ -83,7 +69,7 @@
         { name: "Case studies", topics: [
           ["Forensic case studies", "real collapses, step by step", "soon"] ] }
       ] },
-    { id: "val", n: "07", name: "Valuation", tag: "What is the business worth?",
+    { id: "val", n: "06", name: "Valuation", tag: "What is the business worth?",
       about: "Intrinsic value from discounted cash flows and the cost of capital, then relative value from multiples and peer sets: the bridge from analysis to a price target.",
       groups: [
         { name: "Intrinsic value", topics: [
@@ -94,7 +80,7 @@
           ["Multiples & peer sets", "P/E, EV/EBITDA, comparables", "soon"],
           ["Growth-adjusted multiples", "PEG: price against growth", "soon"] ] }
       ] },
-    { id: "ipo", n: "08", name: "IPO Analysis", tag: "Reading a new listing",
+    { id: "ipo", n: "07", name: "IPO Analysis", tag: "Reading a new listing",
       about: "How to read an offer document, judge what is really being sold, and value a new listing against its listed peers, with recent IPOs worked through.",
       groups: [
         { name: "New listings", topics: [
@@ -102,7 +88,7 @@
           ["Pricing an IPO", "valuation against listed peers", "soon"],
           ["IPO case studies", "recent listings, worked through", "soon"] ] }
       ] },
-    { id: "report", n: "09", name: "Report Writing & Presentation", tag: "From research to a recommendation",
+    { id: "report", n: "08", name: "Report Writing & Presentation", tag: "From research to a recommendation",
       about: "Turning everything before into a clear research report and presentation: the thesis, the evidence, the risks and the target, and how to pitch it.",
       groups: [
         { name: "Communicating research", topics: [
@@ -114,7 +100,6 @@
 
   // simple line icons (24 × 24, stroke) for each stage
   var ICON = {
-    found: "M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z M20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z",
     mgmt: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z M9 12l2 2 4-4",
     fsa: "M6 3h9l4 4v14H6z M15 3v4h4 M9 12h7 M9 16h7",
     ratio: "M5 19L19 5 M5 7a2 2 0 1 0 4 0a2 2 0 1 0-4 0 M15 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0",
@@ -160,7 +145,7 @@
     var branches = STAGES.reduce(function (a, s) { return a + s.groups.length; }, 0);
     root.innerHTML =
       '<div class="rm-intro rv"><h2 id="er-map" style="margin-top:8px">The research journey</h2>' +
-      '<p>From how an analyst thinks to a finished research report. Follow the road: every stop is a stage, every stage builds on the ones before, and the maths from Mathematics for Finance (ratios, growth, discounting, statistics) rides along the whole way.</p></div>' +
+      '<p>From judging management to a finished research report. Follow the road: every stop is a stage, every stage builds on the ones before, and the maths from Mathematics for Finance (ratios, growth, discounting, statistics) rides along the whole way.</p></div>' +
       '<div class="erj-stats">' +
         [[STAGES.length, "stages"], [branches, "branches"], [all, "topics"], [1, "finished report"]].map(function (x) {
           return '<div class="erj-stat"><b data-to="' + x[0] + '">0</b><span>' + x[1] + "</span></div>";
@@ -197,7 +182,7 @@
       var x0 = 46, step = 116, top2 = 84;
       H = top2 + (STAGES.length - 1) * step + 90;
       STAGES.forEach(function (s, i) { pts.push({ x: x0, y: top2 + i * step, r: Math.floor(i / 3) }); });
-      for (var r2 = 0; r2 < 3; r2++) bands.push({ x: 4, y: top2 + r2 * 3 * step - 62, w: W - 8, h: 3 * step - 10 });
+      for (var r2 = 0; r2 < 3; r2++) { var nIn = Math.min(3, STAGES.length - 3 * r2); bands.push({ x: 4, y: top2 + r2 * 3 * step - 62, w: W - 8, h: nIn * step - 10 }); }
       d = "M " + x0 + " " + (top2 - 52);
       pts.forEach(function (p, i) { var w = (i % 2 ? 18 : -18); d += " C " + (x0 + w) + " " + (p.y - step / 2) + ", " + (x0 - w) + " " + (p.y - step / 4) + ", " + p.x + " " + p.y; });
       d += " L " + x0 + " " + (pts[pts.length - 1].y + 52);
